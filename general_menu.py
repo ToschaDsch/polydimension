@@ -3,7 +3,7 @@ from functools import partial
 from PySide6 import QtGui
 from PySide6.QtCore import QSize
 from PySide6.QtGui import QFont, QPixmap, Qt
-from PySide6.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QHBoxLayout, QLabel, QPushButton
+from PySide6.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QHBoxLayout, QLabel, QPushButton, QStackedLayout
 
 from menu_lines import MenusLines
 from variables import Menus
@@ -21,8 +21,8 @@ class GeneralWindow(QMainWindow):
         # load menus
         #   menu_1 (display and menu)
         # display
-        b = int(0.5 * Menus.screen_width - Menus.b_menu)
-        h = int(0.5 * Menus.screen_height)
+        b = int(0.7 * Menus.screen_width - Menus.b_menu)
+        h = int(0.7 * Menus.screen_height)
         self.canvas_section = QtGui.QPixmap(b, h)
         self.label_canvas = QLabel()
         self.label_canvas.setPixmap(self.canvas_section)
@@ -33,13 +33,13 @@ class GeneralWindow(QMainWindow):
         self.load_display(general_layout=self._general_layout)
 
         # menu right
-        self._layout_menu = QVBoxLayout()
+        self._layout_menu = QStackedLayout()
         self._list_of_menus = []
         self._widget_layout_1 = QWidget()
         self._layout_menu_1 = self.load_menu_right()
         self._layout_menu.addWidget(self._widget_layout_1)
-        self._general_layout.addLayout(self._layout_menu)
         self._widget_layout_1.setLayout(self._layout_menu_1)
+        self._general_layout.addLayout(self._layout_menu)
 
         widget = QWidget()
         widget.setLayout(self._general_layout)
@@ -72,7 +72,7 @@ class GeneralWindow(QMainWindow):
         self._layout_menu.addWidget(self._widget_layout_2)
         self._layout_menu_2.addWidget(self._label_info)
 
-        self._widget_layout_2.setVisible(False)
+        self._layout_menu.setCurrentIndex(0)
 
     def load_display(self, general_layout: QHBoxLayout):
         display_layout = QVBoxLayout()
@@ -105,12 +105,10 @@ class GeneralWindow(QMainWindow):
                                         Qt.SmoothTransformation)
             self._label_info.setPixmap(scaled)
 
-        self._widget_layout_1.setVisible(False)
-        self._widget_layout_2.setVisible(True)
+        self._layout_menu.setCurrentIndex(1)
 
     def go_back_to_menu_1(self):
-        self._widget_layout_1.setVisible(True)
-        self._widget_layout_2.setVisible(False)
+        self._layout_menu.setCurrentIndex(0)
 
     def load_objects(self, layout_menu: QVBoxLayout):
         for line in MenusLines:
