@@ -14,7 +14,11 @@ class Menus:
 
     table_insert: bool = False
 
-    b_menu: int = 500
+    b_menu: int = 300
+    width_of_buttons: int = 200
+
+    info_height: int = 800
+    info_width: int = b_menu
     size_of_pictures_in_the_list: int = 40
     resource_path = "my_resources"
     pictures_path = resource_path + "//" + "pictures"
