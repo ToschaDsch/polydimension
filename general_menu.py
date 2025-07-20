@@ -26,7 +26,7 @@ class GeneralWindow(QMainWindow):
         self.canvas_section = QtGui.QPixmap(b, h)
         self.label_canvas = QLabel()
         self.label_canvas.setPixmap(self.canvas_section)
-        self.painter_section = QtGui.QPainter(self.canvas_section) 
+        self.painter_section = QtGui.QPainter(self.canvas_section)
         font = QFont('Century Gothic', Menus.font_height)
         self.painter_section.setFont(font)
 
@@ -51,27 +51,62 @@ class GeneralWindow(QMainWindow):
         self._label_info.setFixedWidth(Menus.info_width)
         widget_layout_2 = self.load_menu_2()
         self._layout_menu.addWidget(widget_layout_2)
+
+        # menu 3 input
+        widget_layout_3 = self.load_menu_3()
+        self._layout_menu.addWidget(widget_layout_3)
         self._layout_menu.setCurrentIndex(0)
 
         self.setCentralWidget(widget)
 
+    def load_menu_3(self) -> QWidget:
+        layout_menu_2 = QVBoxLayout()
+        widget_layout_2 = QWidget()
+
+        menu_with_icons = self.load_menu_with_icons()
+        layout_menu_2.addLayout(menu_with_icons)
+        button_back = get_button(function_to_the_button=self.go_back_to_menu_1,
+                                 path="back.png", width=Menus.width_of_button_back)
+        layout_menu_2.addWidget(button_back)
+        widget_layout_2.setLayout(layout_menu_2)
+
+        return widget_layout_2
+
+    def load_menu_with_icons(self) -> QHBoxLayout:
+        menu_with_icons = QHBoxLayout()
+        button_perspective = get_button(function_to_the_button=self.function_perspective,
+                                        path="without_perspective.png")
+        button_web = get_button(function_to_the_button=self.function_web,
+                                path="without_lines.png")
+        button_transparent = get_button(function_to_the_button=self.function_transparent,
+                                        path="with_perspective.png")
+        button_color = get_button(function_to_the_button=self.function_color,
+                                  path="cube_color.png")
+        menu_with_icons.addWidget(button_web)
+        menu_with_icons.addWidget(button_perspective)
+        menu_with_icons.addWidget(button_transparent)
+        menu_with_icons.addWidget(button_color)
+        return menu_with_icons
+
+    def function_perspective(self):
+        print("Perspective")
+
+    def function_web(self):
+        print("Web")
+
+    def function_transparent(self):
+        print("Transparent")
+
+    def function_color(self):
+        print("Color")
+
     def load_menu_2(self) -> QWidget:
         layout_menu_2 = QVBoxLayout()
         widget_layout_2 = QWidget()
-        button_back = QPushButton()
-        button_back.setFixedWidth(Menus.width_of_buttons)
-        button_back.clicked.connect(self.go_back_to_menu_1)
-        path = Menus.pictures_menu + "back.png"
-        pixmap = QPixmap(path)
-        if pixmap.isNull():
-            print('No picture', path)
-        else:
-            button_back.setIcon(pixmap)
-            button_back.setIconSize(QSize(Menus.size_of_pictures_in_the_list, Menus.size_of_pictures_in_the_list))
-            button_back.setMaximumHeight(Menus.size_of_pictures_in_the_list + 10)
-
-        layout_menu_2.addWidget(button_back)
+        button_back = get_button(function_to_the_button=self.go_back_to_menu_1,
+                                 path="back.png", width=Menus.width_of_button_back)
         layout_menu_2.addWidget(self._label_info)
+        layout_menu_2.addWidget(button_back)
         widget_layout_2.setLayout(layout_menu_2)
 
         return widget_layout_2
@@ -116,7 +151,7 @@ class GeneralWindow(QMainWindow):
             line_i = QHBoxLayout()
             # load picture
             line_i.addWidget(
-                get_the_button_for_an_object(
+                self.get_the_button_for_an_object(
                     path=line.value.pict,
                     name=line.value.name))
             # info
@@ -125,7 +160,6 @@ class GeneralWindow(QMainWindow):
 
     def info_button_action(self, path_to_the_picture: str):
         self.go_to_info(path=path_to_the_picture)
-        print(path_to_the_picture)
 
     def get_info_button(self, path_for_info: str) -> QPushButton:
         path_info_symbol = Menus.pictures_menu + "info.png"
@@ -146,16 +180,36 @@ class GeneralWindow(QMainWindow):
 
         return info_button
 
+    def get_the_button_for_an_object(self, path: str, name: str = None) -> QPushButton:
+        button_with_ico = QPushButton(name)
+        button_with_ico.setFixedWidth(Menus.width_of_buttons)
+        button_with_ico.clicked.connect(partial(self.click_on_the_list_of_the_objects, name))
+        path = Menus.pictures_preview + path
+        pixmap = QPixmap(path)
+        if pixmap.isNull():
+            print('No picture', path)
+        else:
+            button_with_ico.setIcon(pixmap)
+            button_with_ico.setIconSize(QSize(Menus.size_of_pictures_in_the_list, Menus.size_of_pictures_in_the_list))
+            button_with_ico.setMaximumHeight(Menus.size_of_pictures_in_the_list + 10)
+        return button_with_ico
 
-def get_the_button_for_an_object(path: str, name: str = None) -> QPushButton:
-    button_with_ico = QPushButton(name)
-    button_with_ico.setFixedWidth(Menus.width_of_buttons)
-    path = Menus.pictures_preview + path
+    def click_on_the_list_of_the_objects(self, name: str):
+        print(name)
+        self._layout_menu.setCurrentIndex(2)
+
+
+def get_button(function_to_the_button, path: str,
+               width: int = Menus.width_of_buttons) -> QPushButton:
+    button = QPushButton()
+    button.setFixedWidth(width)
+    button.clicked.connect(function_to_the_button)
+    path = Menus.pictures_menu + path
     pixmap = QPixmap(path)
     if pixmap.isNull():
         print('No picture', path)
     else:
-        button_with_ico.setIcon(pixmap)
-        button_with_ico.setIconSize(QSize(Menus.size_of_pictures_in_the_list, Menus.size_of_pictures_in_the_list))
-        button_with_ico.setMaximumHeight(Menus.size_of_pictures_in_the_list + 10)
-    return button_with_ico
+        button.setIcon(pixmap)
+        button.setIconSize(QSize(Menus.size_of_buttons_2, Menus.size_of_buttons_2))
+        button.setMaximumHeight(Menus.size_of_buttons_2 + 10)
+    return button
