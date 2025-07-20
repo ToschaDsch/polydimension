@@ -26,7 +26,7 @@ class GeneralWindow(QMainWindow):
         self.canvas_section = QtGui.QPixmap(b, h)
         self.label_canvas = QLabel()
         self.label_canvas.setPixmap(self.canvas_section)
-        self.painter_section = QtGui.QPainter(self.canvas_section)
+        self.painter_section = QtGui.QPainter(self.canvas_section) 
         font = QFont('Century Gothic', Menus.font_height)
         self.painter_section.setFont(font)
 
@@ -34,45 +34,47 @@ class GeneralWindow(QMainWindow):
 
         # menu right
         self._layout_menu = QStackedLayout()
-        self._list_of_menus = []
+
+        # menu 1 list of objects
+        widget_layout_1 = self.load_menu_1()
         self._widget_layout_1 = QWidget()
-        self._layout_menu_1 = self.load_menu_right()
-        self._layout_menu.addWidget(self._widget_layout_1)
-        self._widget_layout_1.setLayout(self._layout_menu_1)
+        self._layout_menu.addWidget(widget_layout_1)
         self._general_layout.addLayout(self._layout_menu)
 
         widget = QWidget()
         widget.setLayout(self._general_layout)
 
         # menu 2 (info)
-        self._widget_layout_2 = QWidget()
-        self._layout_menu_2 = QVBoxLayout()
         self._button_back = QPushButton()
         self._label_info = QLabel()
         self._label_info.setFixedWidth(Menus.info_height)
         self._label_info.setFixedWidth(Menus.info_width)
-        self.load_menu_2()
+        widget_layout_2 = self.load_menu_2()
+        self._layout_menu.addWidget(widget_layout_2)
+        self._layout_menu.setCurrentIndex(0)
 
         self.setCentralWidget(widget)
 
-    def load_menu_2(self):
-        self._button_back.setFixedWidth(Menus.width_of_buttons)
-        self._button_back.clicked.connect(self.go_back_to_menu_1)
+    def load_menu_2(self) -> QWidget:
+        layout_menu_2 = QVBoxLayout()
+        widget_layout_2 = QWidget()
+        button_back = QPushButton()
+        button_back.setFixedWidth(Menus.width_of_buttons)
+        button_back.clicked.connect(self.go_back_to_menu_1)
         path = Menus.pictures_menu + "back.png"
         pixmap = QPixmap(path)
         if pixmap.isNull():
             print('No picture', path)
         else:
-            self._button_back.setIcon(pixmap)
-            self._button_back.setIconSize(QSize(Menus.size_of_pictures_in_the_list, Menus.size_of_pictures_in_the_list))
-            self._button_back.setMaximumHeight(Menus.size_of_pictures_in_the_list + 10)
+            button_back.setIcon(pixmap)
+            button_back.setIconSize(QSize(Menus.size_of_pictures_in_the_list, Menus.size_of_pictures_in_the_list))
+            button_back.setMaximumHeight(Menus.size_of_pictures_in_the_list + 10)
 
-        self._layout_menu_2.addWidget(self._button_back)
-        self._widget_layout_2.setLayout(self._layout_menu_2)
-        self._layout_menu.addWidget(self._widget_layout_2)
-        self._layout_menu_2.addWidget(self._label_info)
+        layout_menu_2.addWidget(button_back)
+        layout_menu_2.addWidget(self._label_info)
+        widget_layout_2.setLayout(layout_menu_2)
 
-        self._layout_menu.setCurrentIndex(0)
+        return widget_layout_2
 
     def load_display(self, general_layout: QHBoxLayout):
         display_layout = QVBoxLayout()
@@ -81,16 +83,15 @@ class GeneralWindow(QMainWindow):
 
         general_layout.addLayout(display_layout)
 
-    def load_menu_right(self) -> QVBoxLayout:
-        layout_menu = QVBoxLayout()
+    def load_menu_1(self) -> QWidget:
+        """menu with list of the objects"""
+        layout_menu_1 = QVBoxLayout()
         label_name = QLabel(Menus.name_of_the_program)
-        self._list_of_menus.append(label_name)
-        layout_menu.addWidget(label_name)
-
-        self.load_objects(layout_menu=layout_menu)
-
-        layout_menu.addLayout(layout_menu)
-        return layout_menu
+        layout_menu_1.addWidget(label_name)
+        self.load_objects(layout_menu=layout_menu_1)
+        widget_layout_1 = QWidget()
+        widget_layout_1.setLayout(layout_menu_1)
+        return widget_layout_1
 
     def go_to_info(self, path: str):
         # load new picture info
@@ -121,7 +122,6 @@ class GeneralWindow(QMainWindow):
             # info
             line_i.addWidget(self.get_info_button(path_for_info=line.value.info))
             layout_menu.addLayout(line_i)
-            self._list_of_menus.append(line_i)
 
     def info_button_action(self, path_to_the_picture: str):
         self.go_to_info(path=path_to_the_picture)
