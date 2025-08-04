@@ -16,7 +16,7 @@ class Menus:
 
     b_menu: int = 300
     size_of_buttons_2: int = 30
-    width_of_buttons: int = size_of_buttons_2
+    width_of_buttons: int = 300
     width_of_button_back: int = 200
 
     info_height: int = 800

@@ -3,9 +3,11 @@ from functools import partial
 from PySide6 import QtGui
 from PySide6.QtCore import QSize
 from PySide6.QtGui import QFont, QPixmap, Qt
-from PySide6.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QHBoxLayout, QLabel, QPushButton, QStackedLayout
+from PySide6.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QHBoxLayout, QLabel, QPushButton, QStackedLayout, \
+    QTableWidget
 
 from menu_lines import MenusLines
+from my_resources.classes_for_frontend import ClickableWidget
 from variables import Menus
 
 
@@ -36,6 +38,7 @@ class GeneralWindow(QMainWindow):
         self._layout_menu = QStackedLayout()
 
         # menu 1 list of objects
+        self.table_of_the_elements = QTableWidget()
         widget_layout_1 = self.load_menu_1()
         self._widget_layout_1 = QWidget()
         self._layout_menu.addWidget(widget_layout_1)
@@ -147,16 +150,24 @@ class GeneralWindow(QMainWindow):
         self._layout_menu.setCurrentIndex(0)
 
     def load_objects(self, layout_menu: QVBoxLayout):
-        for line in MenusLines:
-            line_i = QHBoxLayout()
+        layout_menu.addWidget(self.table_of_the_elements)
+        self.table_of_the_elements.setRowCount(len(MenusLines))
+
+        self.table_of_the_elements.setColumnCount(2)    # pict, name clickable, info
+        self.table_of_the_elements.setFixedWidth(500)
+        self.table_of_the_elements.setColumnWidth(0, Menus.width_of_buttons)
+        self.table_of_the_elements.setColumnWidth(1, Menus.size_of_pictures_in_the_list)
+
+        for i, line in enumerate(MenusLines):
             # load picture
-            line_i.addWidget(
-                self.get_the_button_for_an_object(
+            button_i: ClickableWidget = self.get_the_button_for_an_object(
                     path=line.value.pict,
-                    name=line.value.name))
+                    name=line.value.name)
+            self.table_of_the_elements.setCellWidget(i, 0, button_i)
             # info
-            line_i.addWidget(self.get_info_button(path_for_info=line.value.info))
-            layout_menu.addLayout(line_i)
+            info_button_i = self.get_info_button(path_for_info=line.value.info)
+            self.table_of_the_elements.setCellWidget(i, 1, info_button_i)
+            self.table_of_the_elements.setRowHeight(i, Menus.size_of_pictures_in_the_list + 5)
 
     def info_button_action(self, path_to_the_picture: str):
         self.go_to_info(path=path_to_the_picture)
@@ -180,18 +191,12 @@ class GeneralWindow(QMainWindow):
 
         return info_button
 
-    def get_the_button_for_an_object(self, path: str, name: str = None) -> QPushButton:
-        button_with_ico = QPushButton(name)
+    def get_the_button_for_an_object(self, path: str, name: str = None) -> ClickableWidget:
+        path = Menus.pictures_preview + path
+        button_with_ico = ClickableWidget(text=name, image_path=path)
         button_with_ico.setFixedWidth(Menus.width_of_buttons)
         button_with_ico.clicked.connect(partial(self.click_on_the_list_of_the_objects, name))
-        path = Menus.pictures_preview + path
-        pixmap = QPixmap(path)
-        if pixmap.isNull():
-            print('No picture', path)
-        else:
-            button_with_ico.setIcon(pixmap)
-            button_with_ico.setIconSize(QSize(Menus.size_of_pictures_in_the_list, Menus.size_of_pictures_in_the_list))
-            button_with_ico.setMaximumHeight(Menus.size_of_pictures_in_the_list + 10)
+
         return button_with_ico
 
     def click_on_the_list_of_the_objects(self, name: str):
