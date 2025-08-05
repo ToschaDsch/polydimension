@@ -15,7 +15,8 @@ class Menus:
     table_insert: bool = False
 
     b_menu: int = 300
-    size_of_buttons_2: int = 30
+    size_of_buttons_2: int = 80     # menu 2 tools
+    frame_menu_2: int = 10
     width_of_buttons: int = 300
     width_of_button_back: int = 200
 
