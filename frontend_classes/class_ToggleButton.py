@@ -1,38 +1,38 @@
-from PySide6.QtCore import QSize, Qt
-from PySide6.QtWidgets import QWidget, QPushButton, QVBoxLayout
+from PySide6.QtCore import QSize, Qt, Signal
+from PySide6.QtWidgets import QWidget, QPushButton, QVBoxLayout, QHBoxLayout, QLabel
 from PySide6.QtGui import QIcon, QPixmap
 
 from variables import Menus
 
 
-class ToggleButton(QWidget):
-    def __init__(self, image_path_1: str,
-                 image_path_2: str,
+class ToggleButton(QLabel):
+    clicked = Signal()
+
+    def __init__(self, list_of_paths_for_images: list[str],
                  function,
-                 width: int = Menus.size_of_buttons_2,
+                 width: int = Menus.size_of_buttons_menu_2,
                  parent=None):
         super().__init__(parent)
-        self.setWindowTitle("Toggle QPushButton Images")
-        self.resize(width, Menus.size_of_buttons_2)
-
+        self.setCursor(Qt.PointingHandCursor)  # Visual cue for clickability
         self.function = function
-        self.frame: int = Menus.frame_menu_2
-        self.width = width
-        self.button = QPushButton()
-        self.button.setFixedWidth(width)
-        self.button.setFixedHeight(Menus.size_of_buttons_2)
-        self.icon2 = QIcon(self.get_pixmap(path=image_path_2))
-        self.icon1 = QIcon(self.get_pixmap(path=image_path_1))  # Replace with your image paths
-        self.toggle = True
+        self.state_i = 0
+        self.n_of_states = len(list_of_paths_for_images)
+        # Image
+        self.image_label = QLabel(self)
+        self.image_label.setFixedSize(QSize(width, width))
+        self.list_of_pixmap: list[QPixmap] = []
+        for path in list_of_paths_for_images:
+            self.list_of_pixmap.append(self.get_pixmap(path))
+        self.image_label.setPixmap(self.list_of_pixmap[0])
 
-        self.button.setIcon(self.icon1)
-        self.button.setIconSize(self.button.size())  # Optional: Adjust icon size to button
 
-        self.button.clicked.connect(self.change_icon)
-
-        layout = QVBoxLayout()
-        layout.addWidget(self.button)
-        self.setLayout(layout)
+    def mousePressEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            self.state_i += 1
+            if self.state_i >= self.n_of_states:
+                self.state_i = 0
+            self.image_label.setPixmap(self.list_of_pixmap[self.state_i])
+            self.function(self.state_i)
 
     def get_pixmap(self, path: str) -> QPixmap | None:
         path = Menus.pictures_menu + path
@@ -42,19 +42,9 @@ class ToggleButton(QWidget):
             print('No picture', path)
             return None
         else:
-            new_size = QSize(self.button.width() - self.frame, self.button.height() - self.frame)
+            new_size = QSize(self.image_label.size())
             scaled = pixmap.scaled(new_size,
                                    Qt.KeepAspectRatio,
                                    Qt.SmoothTransformation)
-            self.button.setIcon(scaled)
-            self.button.setIconSize(QSize(self.width, Menus.size_of_buttons_2))
         return scaled
 
-    def change_icon(self):
-        if self.toggle:
-            self.button.setIcon(self.icon2)
-        else:
-            self.button.setIcon(self.icon1)
-        self.toggle = not self.toggle
-
-        self.function()

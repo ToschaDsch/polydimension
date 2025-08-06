@@ -15,14 +15,17 @@ class Menus:
     table_insert: bool = False
 
     b_menu: int = 300
-    size_of_buttons_2: int = 80     # menu 2 tools
-    frame_menu_2: int = 10
-    width_of_buttons: int = 300
-    width_of_button_back: int = 200
 
+    size_of_buttons_menu_2: int = int(b_menu/8)     # menu 2 tools
+    frame_menu_2: int = 10
     info_height: int = 800
     info_width: int = b_menu
     size_of_pictures_in_the_list: int = 40
+    width_of_buttons_menu_1: int = b_menu - size_of_pictures_in_the_list - 20
+    width_of_button_back: int = b_menu-20
+    content_margin: int = 1
+
+
 
     resource_path = "my_resources"
     pictures_path = resource_path + "//" + "pictures"

@@ -8,12 +8,12 @@ from variables import Menus
 class ClickableWidget(QWidget):
     clicked = Signal()
 
-    def __init__(self, image_path, text, parent=None):
+    def __init__(self, image_path, text, parent=None, width: int = Menus.width_of_buttons_menu_1):
         super().__init__(parent)
         self.setCursor(Qt.PointingHandCursor)  # Visual cue for clickability
 
         layout = QHBoxLayout(self)
-        layout.setContentsMargins(1, 1, 1, 1)
+        layout.setContentsMargins(Menus.content_margin, Menus.content_margin, Menus.content_margin, Menus.content_margin)
 
         # Image
         self.image_label = QLabel()
@@ -24,8 +24,10 @@ class ClickableWidget(QWidget):
         self.image_label.setPixmap(pixmap.scaled(size, size, Qt.KeepAspectRatio, Qt.SmoothTransformation))
         layout.addWidget(self.image_label)
 
+
         # Text
         self.text_label = QLabel(text)
+
         self.text_label.setAlignment(Qt.AlignVCenter | Qt.AlignLeft)
         layout.addWidget(self.text_label)
 
