@@ -23,12 +23,12 @@ class ClickableWidget(QWidget):
         size: int = Menus.size_of_pictures_in_the_list
         self.image_label.setPixmap(pixmap.scaled(size, size, Qt.KeepAspectRatio, Qt.SmoothTransformation))
         layout.addWidget(self.image_label)
-
+        layout.setAlignment(Qt.AlignmentFlag.AlignLeft)
 
         # Text
         self.text_label = QLabel(text)
 
-        self.text_label.setAlignment(Qt.AlignVCenter | Qt.AlignLeft)
+        self.text_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.addWidget(self.text_label)
 
     def mousePressEvent(self, event):

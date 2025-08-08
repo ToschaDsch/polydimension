@@ -9,7 +9,7 @@ from PySide6.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QHBoxLayout, QL
 from frontend_classes.class_ToggleButton import ToggleButton
 from menu_lines import MenusLines
 from frontend_classes.class_ClickableWidget import ClickableWidget
-from variables import Menus
+from variables import Menus, GraphicRegimes, Transparency, MyCoordinates
 
 
 class GeneralWindow(QMainWindow):
@@ -20,15 +20,15 @@ class GeneralWindow(QMainWindow):
         h = int(0.7 * Menus.screen_height)
         self.setFixedWidth(b)
         self._general_layout = QHBoxLayout()
+        self._general_layout.setContentsMargins(Menus.frame, Menus.frame, Menus.frame, Menus.frame)
 
         # variables to calculate
 
         # load menus
         #   menu_1 (display and menu)
         # display
-        b_display = b - Menus.b_menu
-        self.canvas_section = QtGui.QPixmap(b_display, h)
-        print(b, b_display)
+        b_display = b - Menus.b_menu - 2*Menus.frame
+        self.canvas_section = QtGui.QPixmap(b_display, h-2*Menus.frame)
         self.label_canvas = QLabel()
         self.label_canvas.setFixedSize(self.canvas_section.size())
         self.label_canvas.setPixmap(self.canvas_section)
@@ -59,6 +59,8 @@ class GeneralWindow(QMainWindow):
         self._layout_menu.addWidget(widget_layout_2)
 
         # menu 3 input
+        self.button_minus = QPushButton('-')
+        self.label_dimensions = QLabel(Menus.label_dimensions)
         widget_layout_3 = self.load_menu_3()
         self._layout_menu.addWidget(widget_layout_3)
         self._layout_menu.setCurrentIndex(0)
@@ -74,10 +76,44 @@ class GeneralWindow(QMainWindow):
         layout_menu_2.addLayout(menu_with_icons)
         button_back = get_button(function_to_the_button=self.go_back_to_menu_1,
                                  path="back.png", width=Menus.width_of_button_back)
+        menu_with_dimensions = self.load_buttons_with_dimensions()
+        layout_menu_2.addLayout(menu_with_dimensions)
         layout_menu_2.addWidget(button_back)
         widget_layout_2.setLayout(layout_menu_2)
 
         return widget_layout_2
+
+    def load_buttons_with_dimensions(self) -> QHBoxLayout:
+        layout_dimensions = QHBoxLayout()
+
+        self.button_minus.setFixedHeight(Menus.size_of_pictures_in_the_list)
+        self.button_minus.setEnabled(False)
+        self.button_minus.clicked.connect(self.minus_dimensions)
+        layout_dimensions.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.label_dimensions.setFixedHeight(Menus.size_of_pictures_in_the_list)
+        button_plus = QPushButton('+')
+        button_plus.setFixedHeight(Menus.size_of_pictures_in_the_list)
+        layout_dimensions.addWidget(self.button_minus)
+        layout_dimensions.addWidget(self.label_dimensions)
+        layout_dimensions.addWidget(button_plus)
+        button_plus.clicked.connect(self.plus_dimensions)
+        return layout_dimensions
+
+    def minus_dimensions(self):
+        if MyCoordinates.dimensions == 4:
+            self.button_minus.setEnabled(False)
+        MyCoordinates.dimensions -= 1
+        self.write_dimensions_in_the_label(new_dimensions=MyCoordinates.dimensions)
+
+    def plus_dimensions(self):
+        MyCoordinates.dimensions += 1
+        self.button_minus.setEnabled(True)
+        self.write_dimensions_in_the_label(new_dimensions=MyCoordinates.dimensions)
+
+
+    def write_dimensions_in_the_label(self, new_dimensions: int):
+        new_string = str(str(new_dimensions) + "d")
+        self.label_dimensions.setText(new_string)
 
     def load_menu_with_icons(self) -> QHBoxLayout:
         menu_with_icons = QHBoxLayout()
@@ -86,13 +122,15 @@ class GeneralWindow(QMainWindow):
                                                                     "with_perspective.png"])
         button_web = ToggleButton(function=self.function_web,
                                   list_of_paths_for_images=["without_lines.png",
-                                  "with_perspective.png"])
+                                                            "with_lines.png"])
         button_transparent = ToggleButton(function=self.function_transparent,
-                                          list_of_paths_for_images=["transparent.png",
-                                          "with_perspective.png"])
+                                          list_of_paths_for_images=["with_perspective.png",
+                                                                    "sceleton.png",
+                                                                    "transparent.png",
+                                                                    ])
         button_color = ToggleButton(function=self.function_color,
                                     list_of_paths_for_images=["cube_color.png",
-                                    "with_perspective.png"])
+                                                                "with_lines.png"])
         menu_with_icons.addWidget(button_web)
         menu_with_icons.addWidget(button_perspective)
         menu_with_icons.addWidget(button_transparent)
@@ -100,16 +138,20 @@ class GeneralWindow(QMainWindow):
         return menu_with_icons
 
     def function_perspective(self, i: int):
-        print("Perspective", i)
+        GraphicRegimes.perspective = bool(i)
+        print("Perspective", i, GraphicRegimes.perspective)
 
     def function_web(self, i: int):
-        print("Web", i)
+        GraphicRegimes.web = bool(i)
+        print("Web", i, GraphicRegimes.web)
 
     def function_transparent(self, i: int):
-        print("Transparent", i)
+        GraphicRegimes.transparent = list(Transparency)[i]
+        print("Transparent", i, GraphicRegimes.transparent)
 
     def function_color(self, i: int):
-        print("Color", i)
+        GraphicRegimes.color = bool(i)
+        print("Color", i, GraphicRegimes.color)
 
     def load_menu_2(self) -> QWidget:
         layout_menu_2 = QVBoxLayout()
@@ -148,8 +190,8 @@ class GeneralWindow(QMainWindow):
             print('No picture', path)
         else:
             scaled = pixmap_info.scaled(self._label_info.size(),
-                                        Qt.KeepAspectRatio,
-                                        Qt.SmoothTransformation)
+                                        Qt.AspectRatioMode.KeepAspectRatio,
+                                        Qt.TransformationMode.SmoothTransformation)
             self._label_info.setPixmap(scaled)
 
         self._layout_menu.setCurrentIndex(1)
@@ -162,15 +204,13 @@ class GeneralWindow(QMainWindow):
         self.table_of_the_elements.setRowCount(len(MenusLines))
 
         self.table_of_the_elements.setColumnCount(2)  # pict, name clickable, info
-        self.table_of_the_elements.setFixedWidth(Menus.b_menu)
+        self.table_of_the_elements.setFixedWidth(Menus.table_1_width)
         self.table_of_the_elements.setColumnWidth(0, Menus.width_of_buttons_menu_1)
         self.table_of_the_elements.setColumnWidth(1, Menus.size_of_pictures_in_the_list)
 
         for i, line in enumerate(MenusLines):
             # load picture
-            button_i: ClickableWidget = self.get_the_button_for_an_object(
-                path=line.value.pict,
-                name=line.value.name)
+            button_i: ClickableWidget = self.get_the_button_for_an_object(line=line)
             self.table_of_the_elements.setCellWidget(i, 0, button_i)
             # info
             info_button_i = self.get_info_button(path_for_info=line.value.info)
@@ -192,23 +232,22 @@ class GeneralWindow(QMainWindow):
             print('No picture', path_info_symbol)
         else:
             scaled = pixmap_info.scaled(info_button.size(),
-                                        Qt.KeepAspectRatio,
-                                        Qt.SmoothTransformation)
+                                        Qt.AspectRatioMode.KeepAspectRatio,
+                                        Qt.TransformationMode.SmoothTransformation)
             info_button.setIcon(scaled)
         info_button.clicked.connect(partial(self.info_button_action, path_for_info))
 
         return info_button
 
-    def get_the_button_for_an_object(self, path: str, name: str = None) -> ClickableWidget:
-        path = Menus.pictures_preview + path
-        button_with_ico = ClickableWidget(text=name, image_path=path)
+    def get_the_button_for_an_object(self, line: MenusLines) -> ClickableWidget:
+        path = Menus.pictures_preview + line.value.pict
+        button_with_ico = ClickableWidget(text=line.value.name, image_path=path)
         button_with_ico.setFixedWidth(Menus.width_of_buttons_menu_1)
-        button_with_ico.clicked.connect(partial(self.click_on_the_list_of_the_objects, name))
+        button_with_ico.clicked.connect(partial(self.click_on_the_list_of_the_objects, line.value.dimensions))
 
         return button_with_ico
 
-    def click_on_the_list_of_the_objects(self, name: str):
-        print(name)
+    def click_on_the_list_of_the_objects(self, dimensions: str):
         self._layout_menu.setCurrentIndex(2)
 
 
@@ -226,8 +265,8 @@ def get_button(function_to_the_button, path: str,
     else:
         new_size = QSize(button.width() - frame, button.height() - frame)
         scaled = pixmap.scaled(new_size,
-                               Qt.KeepAspectRatio,
-                               Qt.SmoothTransformation)
+                               Qt.AspectRatioMode.KeepAspectRatio,
+                               Qt.TransformationMode.SmoothTransformation)
         button.setIcon(scaled)
         button.setIconSize(QSize(width, Menus.size_of_buttons_menu_2))
     return button
