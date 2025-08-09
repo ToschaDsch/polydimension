@@ -1,7 +1,17 @@
 from dataclasses import dataclass
 from enum import Enum
 
-from PySide6.QtGui import QColor, Qt
+from PySide6.QtGui import QColor
+
+
+class MyCoordinates:
+    dimensions: int = 4
+    angles: list[int] = [1, 2, 3, 4, 4, 5, 6]
+    displacement: list[int] = [1, 2, 3, 4]
+    list_of_displacements: list[str] = ["x", "y", "z", "x1"]
+    list_of_rotations: list[str] = ["x_y", "x_z", "x_x1", "y_z", "y_x1", "z_x1"]
+    current_displacement: int = 0 # x
+    current_rotation: int = 0 # xy
 
 
 @dataclass
@@ -28,16 +38,17 @@ class Menus:
     info_width: int = b_menu - 2 * frame
 
     # menu 3
+    name_ot_menu_3 = "displace and rotate the object"
     size_of_buttons_menu_3: int = int(b_menu / 4 - frame) - 10    # menu 2 tools
     frame_menu_3: int = 10
     separators_height: int = 300
 
 
     width_of_button_back: int = b_menu-2*frame
-    height_of_button_back: int = 30
+    height_of_button_back: int = 35
     content_margin: int = 1
 
-    label_dimensions = "3d"
+    label_dimensions = str(MyCoordinates.dimensions) + "d"
     name_of_the_layout_displacement = "displacement"
     name_of_the_layout_rotation = "rotation"
 
@@ -73,8 +84,4 @@ class MyColors:
 
 
 
-class MyCoordinates:
-    dimensions: int = 3
-    angles: list[float] = [0,0,0]
-    displacement: list[float] = [0,0,0]
 

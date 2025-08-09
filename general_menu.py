@@ -9,6 +9,8 @@ from PySide6.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QHBoxLayout, QL
 from frontend_classes.class_ToggleButton import ToggleButton
 from menu_lines import MenusLines
 from frontend_classes.class_ClickableWidget import ClickableWidget
+from single_functions import get_list_of_all_dimensions, correct_global_variables_by_change_dimensions, \
+    number_of_displacement_changed, current_displacement_changed, current_rotation_changed, number_of_rotation_changed
 from variables import Menus, GraphicRegimes, Transparency, MyCoordinates
 
 
@@ -61,15 +63,21 @@ class GeneralWindow(QMainWindow):
         # menu 3 input
         self.button_minus = QPushButton('-')
         self.label_dimensions = QLabel(Menus.label_dimensions)
+        self.combobox_displacement = QComboBox()
+        self.combobox_rotation = QComboBox()
+        self.slider_displacement = QSlider(Qt.Orientation.Horizontal)
+        self.slider_rotation = QSlider(Qt.Orientation.Horizontal)
         widget_layout_3 = self.load_menu_3()
         self._layout_menu.addWidget(widget_layout_3)
         self._layout_menu.setCurrentIndex(0)
 
         self.setCentralWidget(widget)
 
+
+
     def load_menu_3(self) -> QWidget:
         layout_menu_2 = QVBoxLayout()
-        layout_menu_2.addWidget(QLabel('Menu 3'))
+        layout_menu_2.addWidget(QLabel(Menus.name_ot_menu_3))
         widget_layout_2 = QWidget()
 
         menu_with_icons = self.load_menu_with_icons()
@@ -80,14 +88,21 @@ class GeneralWindow(QMainWindow):
         menu_with_dimensions = self.load_buttons_with_dimensions()
         layout_menu_2.addLayout(menu_with_dimensions)
 
+        list_of_displacements, list_of_rotations = get_list_of_all_dimensions(number_of_dimensions=MyCoordinates.dimensions)
         layout_displacement = self.get_sub_layout_to_change_coordinate(
             name_of_the_layout=Menus.name_of_the_layout_displacement,
-            list_of_dimensions=["x", "y", "z", "x1"],
-            )
+            list_of_dimensions=list_of_displacements,
+            combobox=self.combobox_displacement,
+            slider=self.slider_displacement,
+            function_to_the_combobox=number_of_displacement_changed,
+            function_to_the_slider=current_displacement_changed)
         layout_rotation = self.get_sub_layout_to_change_coordinate(
             name_of_the_layout=Menus.name_of_the_layout_rotation,
-            list_of_dimensions=["x_y", "x_z", "x_x1", "y_z", "y_x1", "z_x1"],
-            )
+            list_of_dimensions=list_of_rotations,
+            combobox=self.combobox_rotation,
+            slider=self.slider_rotation,
+            function_to_the_combobox=number_of_rotation_changed,
+            function_to_the_slider=current_rotation_changed)
         layout_menu_2.addLayout(layout_displacement)
         layout_menu_2.addLayout(layout_rotation)
 
@@ -133,8 +148,24 @@ class GeneralWindow(QMainWindow):
 
 
     def write_dimensions_in_the_label(self, new_dimensions: int):
+        # correct the label
         new_string = str(str(new_dimensions) + "d")
         self.label_dimensions.setText(new_string)
+
+        # correct combo-boxes
+        list_of_displacements, list_of_rotations = get_list_of_all_dimensions(number_of_dimensions=new_dimensions)
+        for combobox, list_of_items in ((self.combobox_displacement, list_of_displacements),(self.combobox_rotation, list_of_rotations)):
+            combobox.clear()
+            for key in list_of_items:
+                combobox.addItem(key)
+            combobox.setCurrentIndex(0)
+
+        # correct global variables
+        correct_global_variables_by_change_dimensions(dimensions=new_dimensions,
+                                                      list_of_displacements=list_of_displacements,
+                                                      list_of_rotations=list_of_rotations)
+
+
 
     def load_menu_with_icons(self) -> QHBoxLayout:
         menu_with_icons = QHBoxLayout()
@@ -272,7 +303,10 @@ class GeneralWindow(QMainWindow):
     def click_on_the_list_of_the_objects(self, dimensions: str):
         self._layout_menu.setCurrentIndex(2)
 
-    def get_sub_layout_to_change_coordinate(self, name_of_the_layout: str, list_of_dimensions: list[str]=None,
+    def get_sub_layout_to_change_coordinate(self, name_of_the_layout: str,
+                                            combobox: QComboBox,
+                                            list_of_dimensions: list[str]=None,
+                                            slider: QSlider=None,
                                             function_to_the_combobox=None,
                                             function_to_the_slider=None) -> QVBoxLayout:
         layout = QVBoxLayout()
@@ -280,16 +314,19 @@ class GeneralWindow(QMainWindow):
         # dropbox
         if list_of_dimensions is None:
             list_of_dimensions: list[str] = ["x", "y", "z", "x1"]
-        combobox = QComboBox()
         combobox.clear()
         for key in list_of_dimensions:
             combobox.addItem(key)
         combobox.setCurrentIndex(0)
+        combobox.currentIndexChanged.connect(function_to_the_combobox)
         layout.addWidget(combobox)
         # slider
-        slider = QSlider(Qt.Orientation.Horizontal)
         slider.setMinimum(-180)
         slider.setMaximum(180)
+        slider.setSingleStep(1)
+        slider.setValue(0)
+        slider.setSliderPosition(0)
+        slider.valueChanged.connect(function_to_the_slider)
 
 
         layout.addWidget(slider)
