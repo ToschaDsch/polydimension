@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum
+from typing import Any
 
 from PySide6.QtGui import QColor
 
@@ -13,10 +14,14 @@ class MyCoordinates:
     current_displacement: int = 0 # x
     current_rotation: int = 0 # xy
 
+class CoordinatesScreen:
+    dx_dy = 0, 0
+    df_dj = 0, 0
 
 @dataclass
 class Menus:
     general_window = None
+    animation = None
     name_of_the_program = 'polydimension'
     screen_width: int = 100
     screen_height: int = 100
@@ -80,8 +85,32 @@ class PenThicknessToDraw:
 
 @dataclass
 class MyColors:
+    general_screen: QColor = QColor("#000000")
     carbon = QColor(0, 130, 130)
 
 
+@dataclass
+class TypeOfTheObjects:
+    dotted = 'dotted'
+    axes = 'axes'
+    normal = 'normal'
+    selected = 'selected'
+    line = 'Line'
+    light_line = 'LightLine'
+    surface = 'Surface'
+    temporary_surface = 'temporary_surface'
+    light_surface = 'LightSurface'
+    light_surface_of_a_combine_beam = "light_surface_of_a_combine_beam"
+    text = 'text'
+    color = 'color'
+    point = 'point'
 
+class ObjectToDraw:
+    def __init__(self, self_object: Any, type_of: str = 'normal', color: QColor = QColor(50, 50, 50), text: str = '',
+                 type_of_the_objects: str = TypeOfTheObjects.line):
+        self.self_object = self_object
+        self.type_of: str = type_of
+        self.color: QColor = color
+        self.text: str = text
+        self.type_of_the_objects = type_of_the_objects
 

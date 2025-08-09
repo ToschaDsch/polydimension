@@ -6,9 +6,7 @@ from graphic.functions_for_class_draw.draw_the_model import show_the_model
 from graphic.functions_for_class_draw.send_to_draw_dict import shift_and_draw_on_the_canvas
 from geometry.class_line import Line
 from geometry.class_point import Point
-from geometry.class_geometry_change_point import GeometryChangePoint
-from solve.get_results.functions_and_classes_for_result import upgrade_result
-from variables.general_variables import Variables, Geometry, Finite
+from  geometry.class_geometry_change_point import GeometryChangePoint
 
 
 class DrawAll:
@@ -244,14 +242,3 @@ class DrawAll:
                 point_1.coord_n[1] * self._scale + self._dx_dy[1] + self._x0y0[1])
             point_1.real_coordinate = x0_y0
 
-    def _make_lines_for_axes(self) -> [Line]:
-        a = 2
-        return [Line(id=-1,
-                     point_0=Point(external_id=-1, coord_0=[-self._x_c - .1 * a, -self._y_c, -self._z_c]),
-                     point_1=Point(external_id=-2, coord_0=[-self._x_c + 1 * a, -self._y_c, -self._z_c])),  # x line
-                Line(id=-2,
-                     point_0=Point(external_id=-3, coord_0=[-self._x_c, -self._y_c - .1 * a, -self._z_c]),
-                     point_1=Point(external_id=-4, coord_0=[-self._x_c, -self._y_c + 1 * a, -self._z_c])),  # y line
-                Line(id=-3,
-                     point_0=Point(external_id=-5, coord_0=[-self._x_c, -self._y_c, -self._z_c - .1 * a]),
-                     point_1=Point(external_id=-6, coord_0=[-self._x_c, -self._y_c, -self._z_c + 1 * a]))]  # z line
