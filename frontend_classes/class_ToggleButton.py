@@ -10,7 +10,7 @@ class ToggleButton(QLabel):
 
     def __init__(self, list_of_paths_for_images: list[str],
                  function,
-                 width: int = Menus.size_of_buttons_menu_2,
+                 width: int = Menus.size_of_buttons_menu_3,
                  parent=None):
         super().__init__(parent)
         self.setCursor(Qt.PointingHandCursor)  # Visual cue for clickability

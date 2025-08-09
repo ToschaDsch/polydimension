@@ -19,17 +19,29 @@ class Menus:
     table_1_width: int = b_menu - 2*frame
     table_1_height: int = 100
     table_2_width: int = 100
-
-    size_of_buttons_menu_2: int = int(b_menu/4-frame) - 10    # menu 2 tools
-    frame_menu_2: int = 10
-    info_height: int = 800
-    info_width: int = b_menu-2*frame
+    # menu 1
     size_of_pictures_in_the_list: int = 40
     width_of_buttons_menu_1: int = table_1_width - size_of_pictures_in_the_list - 20
+
+    # menu 2 info
+    info_height: int = 800
+    info_width: int = b_menu - 2 * frame
+
+    # menu 3
+    size_of_buttons_menu_3: int = int(b_menu / 4 - frame) - 10    # menu 2 tools
+    frame_menu_3: int = 10
+    separators_height: int = 300
+
+
     width_of_button_back: int = b_menu-2*frame
+    height_of_button_back: int = 30
     content_margin: int = 1
 
     label_dimensions = "3d"
+    name_of_the_layout_displacement = "displacement"
+    name_of_the_layout_rotation = "rotation"
+
+
 
     resource_path = "my_resources"
     pictures_path = resource_path + "//" + "pictures"

@@ -4,7 +4,7 @@ from PySide6 import QtGui
 from PySide6.QtCore import QSize
 from PySide6.QtGui import QFont, QPixmap, Qt
 from PySide6.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QHBoxLayout, QLabel, QPushButton, QStackedLayout, \
-    QTableWidget
+    QTableWidget, QComboBox, QSlider
 
 from frontend_classes.class_ToggleButton import ToggleButton
 from menu_lines import MenusLines
@@ -75,10 +75,31 @@ class GeneralWindow(QMainWindow):
         menu_with_icons = self.load_menu_with_icons()
         layout_menu_2.addLayout(menu_with_icons)
         button_back = get_button(function_to_the_button=self.go_back_to_menu_1,
-                                 path="back.png", width=Menus.width_of_button_back)
+                                 path="back.png", width=Menus.width_of_button_back,
+                                 height=Menus.height_of_button_back)
         menu_with_dimensions = self.load_buttons_with_dimensions()
         layout_menu_2.addLayout(menu_with_dimensions)
+
+        layout_displacement = self.get_sub_layout_to_change_coordinate(
+            name_of_the_layout=Menus.name_of_the_layout_displacement,
+            list_of_dimensions=["x", "y", "z", "x1"],
+            )
+        layout_rotation = self.get_sub_layout_to_change_coordinate(
+            name_of_the_layout=Menus.name_of_the_layout_rotation,
+            list_of_dimensions=["x_y", "x_z", "x_x1", "y_z", "y_x1", "z_x1"],
+            )
+        layout_menu_2.addLayout(layout_displacement)
+        layout_menu_2.addLayout(layout_rotation)
+
+
+        # separator
+        separator = QLabel()
+        separator.setFixedHeight(Menus.separators_height)
+        layout_menu_2.addWidget(separator)
+
+        # button back
         layout_menu_2.addWidget(button_back)
+
         widget_layout_2.setLayout(layout_menu_2)
 
         return widget_layout_2
@@ -157,7 +178,8 @@ class GeneralWindow(QMainWindow):
         layout_menu_2 = QVBoxLayout()
         widget_layout_2 = QWidget()
         button_back = get_button(function_to_the_button=self.go_back_to_menu_1,
-                                 path="back.png", width=Menus.width_of_button_back)
+                                 path="back.png", width=Menus.width_of_button_back,
+                                 height=Menus.height_of_button_back)
         layout_menu_2.addWidget(self._label_info)
         layout_menu_2.addWidget(button_back)
         widget_layout_2.setLayout(layout_menu_2)
@@ -250,16 +272,42 @@ class GeneralWindow(QMainWindow):
     def click_on_the_list_of_the_objects(self, dimensions: str):
         self._layout_menu.setCurrentIndex(2)
 
+    def get_sub_layout_to_change_coordinate(self, name_of_the_layout: str, list_of_dimensions: list[str]=None,
+                                            function_to_the_combobox=None,
+                                            function_to_the_slider=None) -> QVBoxLayout:
+        layout = QVBoxLayout()
+        layout.addWidget(QLabel(name_of_the_layout))
+        # dropbox
+        if list_of_dimensions is None:
+            list_of_dimensions: list[str] = ["x", "y", "z", "x1"]
+        combobox = QComboBox()
+        combobox.clear()
+        for key in list_of_dimensions:
+            combobox.addItem(key)
+        combobox.setCurrentIndex(0)
+        layout.addWidget(combobox)
+        # slider
+        slider = QSlider(Qt.Orientation.Horizontal)
+        slider.setMinimum(-180)
+        slider.setMaximum(180)
+
+
+        layout.addWidget(slider)
+
+
+        return layout
+
 
 def get_button(function_to_the_button, path: str,
-               width: int = Menus.size_of_buttons_menu_2, path_for_picture_2: str = None) -> QPushButton:
+               width: int = Menus.size_of_buttons_menu_3,
+               height: int = Menus.size_of_buttons_menu_3) -> QPushButton:
     button = QPushButton()
     button.setFixedWidth(width)
-    button.setFixedHeight(Menus.size_of_buttons_menu_2)
+    button.setFixedHeight(height)
     button.clicked.connect(function_to_the_button)
     path = Menus.pictures_menu + path
     pixmap = QPixmap(path)
-    frame = Menus.frame_menu_2
+    frame = Menus.frame_menu_3
     if pixmap.isNull():
         print('No picture', path)
     else:
@@ -268,5 +316,5 @@ def get_button(function_to_the_button, path: str,
                                Qt.AspectRatioMode.KeepAspectRatio,
                                Qt.TransformationMode.SmoothTransformation)
         button.setIcon(scaled)
-        button.setIconSize(QSize(width, Menus.size_of_buttons_menu_2))
+        button.setIconSize(QSize(width, Menus.size_of_buttons_menu_3))
     return button
