@@ -16,8 +16,7 @@ class DrawAll:
     draws all object from the dict - modul draw_from_draw_dict"""
 
     def __init__(self, canvas: Canvas = None):
-        Variables.geometry_change_point = GeometryChangePoint()
-        self._geometry: GeometryChangePoint = Variables.geometry_change_point
+        self._geometry: GeometryChangePoint = GeometryChangePoint()
         self._canvas: Canvas = canvas
         self._sin_f: float = 1
         self._cos_f: float = 0

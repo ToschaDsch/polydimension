@@ -57,8 +57,7 @@ class Menus:
     name_of_the_layout_displacement = "displacement"
     name_of_the_layout_rotation = "rotation"
 
-
-
+    #paths to resources
     resource_path = "my_resources"
     pictures_path = resource_path + "//" + "pictures"
     pictures_preview = pictures_path + "//preview//"
@@ -85,6 +84,7 @@ class PenThicknessToDraw:
 
 @dataclass
 class MyColors:
+    web = QColor(0, 0, 0)
     general_screen: QColor = QColor("#000000")
     carbon = QColor(0, 130, 130)
 
