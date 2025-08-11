@@ -1,6 +1,6 @@
 import itertools
 
-from variables import MyCoordinates
+from variables.geometry_var import MyCoordinates
 
 
 def get_list_of_all_dimensions(number_of_dimensions: int = 4) -> tuple[list[str], list[str]]:

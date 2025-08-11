@@ -6,7 +6,7 @@ from sortedcontainers import SortedDict
 from geometry.class_line import Line
 from geometry.class_point import Point
 from geometry.class_surface import Surface
-from variables import TypeOfTheObjects, ObjectToDraw
+from variables.geometry_var import TypeOfTheObjects, ObjectToDraw
 
 
 class GeometryChangePoint:

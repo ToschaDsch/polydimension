@@ -4,7 +4,7 @@ import sys
 from PySide6 import QtWidgets, QtGui
 
 from general_menu import GeneralWindow
-from variables import Menus
+from variables.menus import Menus
 
 
 def load_general_menu():

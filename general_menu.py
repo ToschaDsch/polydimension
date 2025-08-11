@@ -11,7 +11,9 @@ from menu_lines import MenusLines
 from frontend_classes.class_ClickableWidget import ClickableWidget
 from single_functions import get_list_of_all_dimensions, correct_global_variables_by_change_dimensions, \
     number_of_displacement_changed, current_displacement_changed, current_rotation_changed, number_of_rotation_changed
-from variables import Menus, GraphicRegimes, Transparency, MyCoordinates
+from variables.menus import Menus
+from variables.graphics import Transparency, GraphicRegimes
+from variables.geometry_var import MyCoordinates
 
 
 class GeneralWindow(QMainWindow):

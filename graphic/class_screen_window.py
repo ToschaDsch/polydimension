@@ -2,7 +2,9 @@ from PySide6 import QtGui, QtCore
 from PySide6.QtGui import QColor, QFont, QPolygonF, QPixmap, QPen
 from PySide6.QtWidgets import QLabel
 
-from variables import MyColors, Menus, CoordinatesScreen
+from variables.geometry_var import CoordinatesScreen
+from variables.geometry_var import Menus
+from variables.geometry_var import MyColors
 
 
 class Draw:

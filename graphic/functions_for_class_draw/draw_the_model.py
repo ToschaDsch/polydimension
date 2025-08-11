@@ -4,7 +4,7 @@ from PySide6.QtGui import QColor
 from geometry.small_geometry_classes import TypeOfTheObjects
 from graphic.functions_for_class_draw.draw_from_draw_dict import draw_a_text, draw_a_line_many_coordinate
 from solve.class_node import Node
-from variables.general_variables import Finite, Variables, Hinge
+from variables.geometry_var import Finite, Variables, Hinge
 
 
 def show_the_model(scale: float, dx_dy: [int], x0y0: [int], key=None):

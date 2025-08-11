@@ -2,7 +2,7 @@ from PySide6.QtWidgets import QWidget, QLabel, QHBoxLayout
 from PySide6.QtCore import Signal, Qt
 from PySide6.QtGui import QPixmap
 
-from variables import Menus
+from variables.menus import Menus
 
 
 class ClickableWidget(QWidget):

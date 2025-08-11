@@ -1,8 +1,8 @@
 from PySide6.QtCore import QSize, Qt, Signal
-from PySide6.QtWidgets import QWidget, QPushButton, QVBoxLayout, QHBoxLayout, QLabel
-from PySide6.QtGui import QIcon, QPixmap
+from PySide6.QtWidgets import QLabel
+from PySide6.QtGui import QPixmap
 
-from variables import Menus
+from variables.menus import Menus
 
 
 class ToggleButton(QLabel):
