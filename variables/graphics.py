@@ -24,11 +24,6 @@ class PenThicknessToDraw:
     boards = 2
 
 
-@dataclass
-class MyColors:
-    web = QColor(0, 0, 0)
-    general_screen: QColor = QColor("#000000")
-    carbon = QColor(0, 130, 130)
 
 
 @dataclass
@@ -56,3 +51,12 @@ class ObjectToDraw:
         self.color: QColor = color
         self.text: str = text
         self.type_of_the_objects = type_of_the_objects
+
+
+
+class MyColors:
+    def __init__(self):
+        self.color = QColor(50, 50, 50)
+        self.web: QColor = QColor(0, 0, 0)
+        self.general_screen: QColor = QColor(255,255,255)
+        self.carbon = QColor(0, 130, 130)

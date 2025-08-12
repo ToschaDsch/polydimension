@@ -1,3 +1,5 @@
+from geometry.class_point import Point
+
 
 class MyCoordinates:
     dimensions: int = 4
@@ -12,4 +14,6 @@ class CoordinatesScreen:
     dx_dy = 0, 0
     df_dj = 0, 0
 
+class Geometry:
+    points: list[Point] = []
 

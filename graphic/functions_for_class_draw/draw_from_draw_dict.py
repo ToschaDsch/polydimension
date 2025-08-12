@@ -1,7 +1,6 @@
 from PySide6.QtCore import QPoint
 from PySide6.QtGui import QColor, QPolygon
 
-from variables import geometry_var
 from geometry.class_line import Line
 from geometry.class_point import Point
 from geometry.class_surface import Surface
@@ -43,7 +42,7 @@ def draw_from_dict(geometry, scale: float, dx_dy: list[int], x0y0: list[int]):
 
 
 def draw_a_surface(surface: Surface, type_of_line: str, color: QColor):
-    Variables.animation_screen.change_brush(type_of_line=type_of_line,
+    animation.change_brush(type_of_line=type_of_line,
                                             color=color)
     polygon = QPolygon()
     for point_i in surface.list_of_points:
@@ -83,7 +82,7 @@ def draw_a_text(x0_y0, text: str, type_of_point: str, color=QColor(0, 255, 0)):
 
 
 def draw_a_line(line: Line, type_of_line: str, color=None, text: str = None):
-    color = variables.graphics.MyColors.lines if color is None else color
+
     x1 = line.point_0.real_coordinate[0]
     y1 = line.point_0.real_coordinate[1]
     x2 = line.point_1.real_coordinate[0]

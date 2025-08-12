@@ -3,21 +3,20 @@ from PySide6.QtGui import QColor, QFont, QPolygonF, QPixmap, QPen
 from PySide6.QtWidgets import QLabel
 
 from variables.geometry_var import CoordinatesScreen
-from variables.geometry_var import Menus
-from variables.geometry_var import MyColors
+from variables.menus import Menus
 
 
-class Draw:
+class ScreenWindow:
     """the window shows the model and graphic"""
 
     def __init__(self, label: QLabel, canvas: QPixmap, parent=None):
         self._right_button = False
         self._middle_button = False
         self._ctrl: bool = False  # is ctrl pressed
-
-
+        # make parent a label + self
         self.canvas = canvas
         self.label = label
+        print("label", label)
         self.label.setPixmap(self.canvas)
         self.painter = QtGui.QPainter(self.canvas)
         font = QFont('Century Gothic', 10)
@@ -25,10 +24,8 @@ class Draw:
 
         pen = QPen()
         self.painter.setPen(pen)
-        self.canvas.fill(MyColors.general_screen)
+        self.canvas.fill(QColor(255,0,0))
         self.label.setMouseTracking(True)
-
-        # Create the context menu and add so
 
     def resizeEvent(self, event):
         Menus.screen_width, Menus.screen_height = self.label.geometry()
@@ -54,9 +51,11 @@ class Draw:
         self.painter.drawPolygon(polygon)
 
     def mouseMoveEvent(self, event):
+        print("mouseMoveEvent", event.buttons)
         match str(event.buttons()):
             case 'MouseButton.NoButton':
                 #  the function checks collapse by mouse motion
+
                 pass
             case 'MouseButton.RightButton|MiddleButton':
                 #rotate(x=event.x(), y=event.y())
@@ -120,7 +119,7 @@ class Draw:
 
     def draw_all(self):
         canvas = self.label.pixmap()
-        canvas.fill(MyColors.general_screen)
+        canvas.fill(QColor(0,0,0))
         self.painter = QtGui.QPainter(canvas)
 
         Menus.animation.draw_all(dx_dy=CoordinatesScreen.dx_dy, df_dj=CoordinatesScreen.df_dj)

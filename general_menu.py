@@ -7,12 +7,13 @@ from PySide6.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QHBoxLayout, QL
     QTableWidget, QComboBox, QSlider
 
 from frontend_classes.class_ToggleButton import ToggleButton
+from graphic.class_screen_window import ScreenWindow
 from menu_lines import MenusLines
 from frontend_classes.class_ClickableWidget import ClickableWidget
 from single_functions import get_list_of_all_dimensions, correct_global_variables_by_change_dimensions, \
     number_of_displacement_changed, current_displacement_changed, current_rotation_changed, number_of_rotation_changed
+from variables.graphics import GraphicRegimes, Transparency
 from variables.menus import Menus
-from variables.graphics import Transparency, GraphicRegimes
 from variables.geometry_var import MyCoordinates
 
 
@@ -20,7 +21,7 @@ class GeneralWindow(QMainWindow):
     def __init__(self, *args):
         super(GeneralWindow, self).__init__()
         self.setWindowTitle(Menus.name_of_the_program)
-        b = int(0.5*Menus.screen_width)
+        b = int(0.5 * Menus.screen_width)
         h = int(0.7 * Menus.screen_height)
         self.setFixedWidth(b)
         self._general_layout = QHBoxLayout()
@@ -40,6 +41,7 @@ class GeneralWindow(QMainWindow):
         self.painter_section = QtGui.QPainter(self.canvas_section)
         font = QFont('Century Gothic', Menus.font_height)
         self.painter_section.setFont(font)
+        Menus.screen_window = ScreenWindow(label=self.label_canvas, canvas=self.canvas_section)
 
         self.load_display(general_layout=self._general_layout)
 

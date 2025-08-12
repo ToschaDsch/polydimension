@@ -2,11 +2,11 @@ import math
 from tkinter import Canvas
 
 from graphic.functions_for_class_draw.draw_from_draw_dict import draw_from_dict
-from graphic.functions_for_class_draw.draw_the_model import show_the_model
 from graphic.functions_for_class_draw.send_to_draw_dict import shift_and_draw_on_the_canvas
 from geometry.class_line import Line
 from geometry.class_point import Point
 from  geometry.class_geometry_change_point import GeometryChangePoint
+from variables.menus import Menus
 
 
 class DrawAll:
@@ -22,7 +22,7 @@ class DrawAll:
         self._cos_f: float = 0
         self._cos_j: float = 1
         self._sin_j: float = 0
-        self._x0y0 = (int(Variables.screen_BH[0] * 0.5), int(Variables.screen_BH[1] * 0.5))
+        self._x0y0 = (int(Menus.screen_width[0] * 0.5), int(Menus.screen_height[1] * 0.5))
         self._df_dj = (0.0, 0.0)
         self._f0_j0 = (math.pi * 0.3, math.pi * 0.3)
         self._dx_dy = (0, 0)
