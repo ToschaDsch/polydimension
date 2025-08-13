@@ -3,34 +3,37 @@ from PySide6.QtGui import QColor, QFont, QPolygonF, QPixmap, QPen
 from PySide6.QtWidgets import QLabel
 
 from variables.geometry_var import CoordinatesScreen
+from variables.graphics import MyColors
 from variables.menus import Menus
 
 
-class ScreenWindow:
+class ScreenWindow(QLabel):
     """the window shows the model and graphic"""
 
-    def __init__(self, label: QLabel, canvas: QPixmap, parent=None):
+    def __init__(self, canvas: QPixmap, parent=None):
+        super().__init__(parent)
         self._right_button = False
         self._middle_button = False
         self._ctrl: bool = False  # is ctrl pressed
         # make parent a label + self
         self.canvas = canvas
-        self.label = label
-        print("label", label)
-        self.label.setPixmap(self.canvas)
+        self.label = QLabel(self)
+        print("label", self)
+        self.setPixmap(self.canvas)
         self.painter = QtGui.QPainter(self.canvas)
         font = QFont('Century Gothic', 10)
         self.painter.setFont(font)
 
         pen = QPen()
         self.painter.setPen(pen)
-        self.canvas.fill(QColor(255,0,0))
-        self.label.setMouseTracking(True)
+        self.canvas.fill(QColor(*MyColors.general_screen))
+        self.setPixmap(self.canvas)
+        self.setMouseTracking(True)
 
     def resizeEvent(self, event):
-        Menus.screen_width, Menus.screen_height = self.label.geometry()
+        #Menus.screen_width, Menus.screen_height = self.geometry()
         canvas = self.canvas.scaled(Menus.screen_width, Menus.screen_height)
-        self.label.setPixmap(canvas)
+        self.setPixmap(canvas)
 
     def draw_a_point(self, x: int = 0, y: int = 0, type_of_point: str = 'normal'):
         self.painter.drawPoint(x, y)  #
@@ -112,17 +115,18 @@ class ScreenWindow:
 
     def wheelEvent(self, event):
         """MOUSEWHEEL:"""
-        ds = event.angleDelta().y()
-        print(event.x(), event.y())
+        ds = event.angleDelta()
         print(ds)
         self.draw_all()
 
     def draw_all(self):
-        canvas = self.label.pixmap()
-        canvas.fill(QColor(0,0,0))
+        canvas = self.pixmap()
+        canvas.fill(QColor(*MyColors.general_screen))
         self.painter = QtGui.QPainter(canvas)
-
-        Menus.animation.draw_all(dx_dy=CoordinatesScreen.dx_dy, df_dj=CoordinatesScreen.df_dj)
+        #Menus.animation.draw_all(dx_dy=CoordinatesScreen.dx_dy, df_dj=CoordinatesScreen.df_dj)
         self.painter.end()
-        self.label.setPixmap(canvas)
+        self.setPixmap(canvas)
+
+
+
 

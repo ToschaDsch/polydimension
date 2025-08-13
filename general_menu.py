@@ -24,6 +24,7 @@ class GeneralWindow(QMainWindow):
         b = int(0.5 * Menus.screen_width)
         h = int(0.7 * Menus.screen_height)
         self.setFixedWidth(b)
+        self.setFixedHeight(h)
         self._general_layout = QHBoxLayout()
         self._general_layout.setContentsMargins(Menus.frame, Menus.frame, Menus.frame, Menus.frame)
 
@@ -33,16 +34,14 @@ class GeneralWindow(QMainWindow):
         #   menu_1 (display and menu)
         # display
         b_display = b - Menus.b_menu - 2*Menus.frame
-        self.canvas_section = QtGui.QPixmap(b_display, h-2*Menus.frame)
-        self.label_canvas = QLabel()
-        self.label_canvas.setFixedSize(self.canvas_section.size())
-        self.label_canvas.setPixmap(self.canvas_section)
-        self.label_canvas.setPixmap(self.canvas_section)
+        h_display = h - 2*Menus.frame
+        self.canvas_section = QtGui.QPixmap(b_display, h_display)
+
         self.painter_section = QtGui.QPainter(self.canvas_section)
         font = QFont('Century Gothic', Menus.font_height)
         self.painter_section.setFont(font)
-        Menus.screen_window = ScreenWindow(label=self.label_canvas, canvas=self.canvas_section)
-
+        Menus.screen_window = ScreenWindow(canvas=self.canvas_section)
+        self.label_canvas = Menus.screen_window
         self.load_display(general_layout=self._general_layout)
 
         # menu right
@@ -224,7 +223,6 @@ class GeneralWindow(QMainWindow):
     def load_display(self, general_layout: QHBoxLayout):
         display_layout = QVBoxLayout()
         display_layout.addWidget(self.label_canvas)
-        self.painter_section = QtGui.QPainter(self.canvas_section)
 
         general_layout.addLayout(display_layout)
 

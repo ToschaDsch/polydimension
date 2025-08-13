@@ -54,9 +54,9 @@ class ObjectToDraw:
 
 
 
+@dataclass
 class MyColors:
-    def __init__(self):
-        self.color = QColor(50, 50, 50)
-        self.web: QColor = QColor(0, 0, 0)
-        self.general_screen: QColor = QColor(255,255,255)
-        self.carbon = QColor(0, 130, 130)
+    color: tuple = (50, 50, 50)
+    web: tuple = (0, 0, 0)
+    general_screen: tuple[int] = (100,100,255)
+    carbon: tuple = (0, 130, 130)

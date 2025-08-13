@@ -17,7 +17,7 @@ class DrawInterface(ABC):
         self.my_volumes: list[Volume] = []
         self._solid: bool = True
         self.transparent: bool = True
-        self.color_of_lines: QColor =
+        self.color_of_lines: QColor = QColor(0,0,0)
 
     def make_geometry(self):
         self.make_geometry()
