@@ -8,7 +8,7 @@ from geometry.class_surface import Surface
 from geometry.class_volume import Volume
 
 
-class DrawInterface(ABC):
+class DrawObject(ABC):
     def __init__(self):
         self.dimensions = 4
         self.my_points: list[Point] = []

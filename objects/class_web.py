@@ -1,9 +1,9 @@
 from geometry.class_line import Line
 from geometry.class_point import Point
-from objects.class_draw_interface import DrawInterface
+from objects.class_draw_interface import DrawObject
 
 
-class Web(DrawInterface):
+class Web(DrawObject):
     def __init__(self, a: int, n: int):
         super().__init__()
         self.a = a  #seze of a cell
