@@ -10,6 +10,7 @@ from frontend_classes.class_ToggleButton import ToggleButton
 from graphic.class_screen_window import ScreenWindow
 from menu_lines import MenusLines
 from frontend_classes.class_ClickableWidget import ClickableWidget
+from objects.cube_3d import Cube3d
 from single_functions import get_list_of_all_dimensions, correct_global_variables_by_change_dimensions, \
     number_of_displacement_changed, current_displacement_changed, current_rotation_changed, number_of_rotation_changed
 from variables.graphics import GraphicRegimes, Transparency
@@ -73,6 +74,10 @@ class GeneralWindow(QMainWindow):
         widget_layout_3 = self.load_menu_3()
         self._layout_menu.addWidget(widget_layout_3)
         self._layout_menu.setCurrentIndex(0)
+
+        # draw the object
+        self.my_object = Cube3d()
+        print(self.my_object)
 
         self.setCentralWidget(widget)
 

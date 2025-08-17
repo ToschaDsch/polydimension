@@ -11,8 +11,10 @@ class MyCoordinates:
     current_rotation: int = 0 # xy
 
 class CoordinatesScreen:
-    dx_dy = 0, 0
+    dx_dy: tuple[int, int] = 0, 0
     df_dj = 0, 0
+    scale: float = 1
+    init_size_of_the_object: int = 1
 
 class Geometry:
     points: list[Point] = []

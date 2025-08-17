@@ -19,6 +19,8 @@ class DrawAll:
     def __init__(self, list_of_draw_objects: list[DrawObject],
                  initial_dimensions: int = 3,   #2d
                  canvas: Canvas = None):
+
+        # a class to change coordinates of the objects
         self._geometry: GeometryChangePoint = GeometryChangePoint()
         self._canvas: Canvas = canvas
 
@@ -37,7 +39,7 @@ class DrawAll:
         self._dx_dy = (0, 0)        # vector of displacements
         self._df_dj = (0.0, 0.0)    # vector of rotation
 
-        self._scale: float = 10
+        self._scale: float = 1
 
         # TODO correct the variables
         self.coordinate_0 = []
@@ -102,25 +104,16 @@ class DrawAll:
         # new_pos = (mouse_pos[0] - self._dx_dy[0] - self._xy_scale[0], mouse_pos[1] - self._dx_dy[1] - self._xy_scale[1])
         self._scale += ds * .03
         Geometry.scale = self._scale
-        # print('old scale = ', self._scale)
-        # print('new_pos = ', new_pos)
         if self._scale < 1:
             self._scale = 1
-        # d = self._scale / old_scale
-
-        # self._xy_scale = (self._dx_dy[0] - new_pos[0] * d * ds,
-        #                  self._dx_dy[1] - new_pos[1] * d * ds)
-        # self._xy_scale = (mouse_pos[0] * (self._scale - old_scale),
-        #                  mouse_pos[1] * (self._scale - old_scale))
-        # print('dx,dy = ', self._xy_scale)
 
     def first_scale(self):
-        point_0: Point = list(Geometry.points.values())[0]
+        point_0: Point = self._list_of_all_points[0]
         x_max = point_0.coord_n[0]
         y_max = point_0.coord_n[1]
         x_min = point_0.coord_n[0]
         y_min = point_0.coord_n[1]
-        for key, point in Geometry.points.items():
+        for key, point in self._list_of_all_points:
             if point.coord_n[0] > x_max:
                 x_max = point.coord_n[0]
             elif point.coord_n[0] < x_min:
@@ -134,11 +127,11 @@ class DrawAll:
         if max_value_x == 0:
             scale_x = 1
         else:
-            scale_x = (Variables.screen_BH[0] - 10) / max_value_x * 0.3
+            scale_x = (Menus.screen_width - 10) / max_value_x * 0.3
         if max_value_y == 0:
             scale_y = 1
         else:
-            scale_y = (Variables.screen_BH[1] - 10) / max_value_y * 0.3
+            scale_y = (Menus.screen_height - 10) / max_value_y * 0.3
         self._scale = min(scale_x, scale_y)
         self.change_isometry()
 
@@ -188,7 +181,6 @@ class DrawAll:
         shift_and_draw_on_the_canvas(geometry=self._geometry, line_axes=self._line_axes,
                                      scale=self._scale, dx_dy=self._dx_dy, x0y0=self._x0y0)
         draw_from_dict(geometry=self._geometry, scale=self._scale, dx_dy=self._dx_dy, x0y0=self._x0y0)
-        Variables.animation_screen.draw_picked_frame()
 
     def end_of_rotate(self):
         self._f0_j0 = (self._f0_j0[0] + self._df_dj[0],
@@ -199,23 +191,11 @@ class DrawAll:
         self._geometry.rotate_a_big_point(point=point)
 
     def _calculate_all_points(self):
-        for key, point_i in Geometry.points.items():
-            x0_y0: () = (
+        for point_i in self._list_of_all_points:
+            x0_y0: tuple[float, float] = (
                 -point_i.coord_n[0] * self._scale + self._dx_dy[0] + self._x0y0[0],
                 point_i.coord_n[1] * self._scale + self._dx_dy[1] + self._x0y0[1])
 
-            point_i.real_coordinate = x0_y0
+            point_i.coord_n = x0_y0
 
-        for axes_i in self._line_axes:
-            point_0 = axes_i.point_0
-            x0_y0: () = (
-                -point_0.coord_n[0] * self._scale + self._dx_dy[0] + self._x0y0[0],
-                point_0.coord_n[1] * self._scale + self._dx_dy[1] + self._x0y0[1])
-            point_0.real_coordinate = x0_y0
-
-            point_1 = axes_i.point_1
-            x0_y0: () = (
-                -point_1.coord_n[0] * self._scale + self._dx_dy[0] + self._x0y0[0],
-                point_1.coord_n[1] * self._scale + self._dx_dy[1] + self._x0y0[1])
-            point_1.real_coordinate = x0_y0
 

@@ -24,8 +24,6 @@ class PenThicknessToDraw:
     boards = 2
 
 
-
-
 @dataclass
 class TypeOfTheObjects:
     dotted = 'dotted'
