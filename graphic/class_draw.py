@@ -2,11 +2,12 @@ import math
 from tkinter import Canvas
 
 from graphic.functions_for_class_draw.draw_from_draw_dict import draw_from_dict
-from graphic.functions_for_class_draw.send_to_draw_dict import shift_and_draw_on_the_canvas
 from geometry.class_line import Line
 from geometry.class_point import Point
 from  geometry.class_geometry_change_point import GeometryChangePoint
+from graphic.functions_for_screen_window import get_scale
 from objects.class_draw_interface import DrawObject
+from variables.geometry_var import CoordinatesScreen
 from variables.menus import Menus
 
 
@@ -86,13 +87,14 @@ class DrawAll:
             self.change_isometry()
 
     def by_reset_point_list(self):
-        if len(Geometry.points) > 0:
+        if len(self._list_of_all_points) > 0:
             self.make_center()
             self.change_isometry()
             self.first_scale()
             self.draw_all()
 
-    def draw_all(self, dx_dy: () = (0, 0), df_dj: () = (0, 0)):
+    def draw_all(self, dx_dy: tuple[int, int] = (0, 0), 
+                 df_dj: tuple[int, int] = (0, 0)):
         self._dx_dy = dx_dy
         if self._df_dj != df_dj:
             self._df_dj = df_dj
@@ -103,36 +105,14 @@ class DrawAll:
         # old_scale = self._scale
         # new_pos = (mouse_pos[0] - self._dx_dy[0] - self._xy_scale[0], mouse_pos[1] - self._dx_dy[1] - self._xy_scale[1])
         self._scale += ds * .03
-        Geometry.scale = self._scale
+        CoordinatesScreen.scale = self._scale
         if self._scale < 1:
             self._scale = 1
 
     def first_scale(self):
-        point_0: Point = self._list_of_all_points[0]
-        x_max = point_0.coord_n[0]
-        y_max = point_0.coord_n[1]
-        x_min = point_0.coord_n[0]
-        y_min = point_0.coord_n[1]
-        for key, point in self._list_of_all_points:
-            if point.coord_n[0] > x_max:
-                x_max = point.coord_n[0]
-            elif point.coord_n[0] < x_min:
-                x_min = point.coord_n[0]
-            if point.coord_n[1] > y_max:
-                y_max = point.coord_n[1]
-            elif point.coord_n[1] < y_min:
-                y_min = point.coord_n[1]
-        max_value_x = max(abs(x_max), abs(x_min))
-        max_value_y = max(abs(y_max), abs(y_min))
-        if max_value_x == 0:
-            scale_x = 1
-        else:
-            scale_x = (Menus.screen_width - 10) / max_value_x * 0.3
-        if max_value_y == 0:
-            scale_y = 1
-        else:
-            scale_y = (Menus.screen_height - 10) / max_value_y * 0.3
-        self._scale = min(scale_x, scale_y)
+        self._scale = get_scale(list_of_point=self._list_of_all_points,
+                                screen_height=Menus.screen_height,
+                                screen_width=Menus.screen_width,)
         self.change_isometry()
 
     def change_isometry(self):
@@ -171,10 +151,6 @@ class DrawAll:
 
     def _shift_and_draw_on_the_canvas(self):
         self._geometry.clean_dict_of_draw_objects()
-        # draw only the map
-        if Geometry.show_elements:
-            show_the_model(scale=self._scale, dx_dy=self._dx_dy, x0y0=self._x0y0)
-            return None
         # draw the model
         self._calculate_all_points()
 
