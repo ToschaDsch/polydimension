@@ -5,6 +5,8 @@ from graphic.functions_for_class_draw.draw_from_draw_dict import draw_from_dict
 from geometry.class_line import Line
 from geometry.class_point import Point
 from  geometry.class_geometry_change_point import GeometryChangePoint
+from graphic.functions_for_class_draw.send_to_draw_dict import shift_and_draw_on_the_canvas, \
+    add_all_draw_objects_to_the_dict
 from graphic.functions_for_screen_window import get_scale
 from objects.class_draw_interface import DrawObject
 from variables.geometry_var import CoordinatesScreen
@@ -101,7 +103,7 @@ class DrawAll:
             self.change_isometry()
         self._shift_and_draw_on_the_canvas()
 
-    def scale_change(self, ds: int, mouse_pos: () = (0, 0)):
+    def scale_change(self, ds: int, mouse_pos: tuple[int, int] = (0, 0)):
         # old_scale = self._scale
         # new_pos = (mouse_pos[0] - self._dx_dy[0] - self._xy_scale[0], mouse_pos[1] - self._dx_dy[1] - self._xy_scale[1])
         self._scale += ds * .03
@@ -156,7 +158,13 @@ class DrawAll:
 
         shift_and_draw_on_the_canvas(geometry=self._geometry, line_axes=self._line_axes,
                                      scale=self._scale, dx_dy=self._dx_dy, x0y0=self._x0y0)
+        add_all_draw_objects_to_the_dict(list_of_all_objects=self._list_of_draw_objects,
+                                         geometry=self._geometry)
         draw_from_dict(geometry=self._geometry, scale=self._scale, dx_dy=self._dx_dy, x0y0=self._x0y0)
+
+
+
+
 
     def end_of_rotate(self):
         self._f0_j0 = (self._f0_j0[0] + self._df_dj[0],
