@@ -5,11 +5,11 @@ from graphic.functions_for_class_draw.draw_from_draw_dict import draw_from_dict
 from geometry.class_line import Line
 from geometry.class_point import Point
 from  geometry.class_geometry_change_point import GeometryChangePoint
-from graphic.functions_for_class_draw.send_to_draw_dict import shift_and_draw_on_the_canvas, \
-    add_all_draw_objects_to_the_dict
+from graphic.functions_for_class_draw.send_to_draw_dict import add_all_draw_objects_to_the_dict
 from graphic.functions_for_screen_window import get_scale
 from objects.class_draw_interface import DrawObject
 from variables.geometry_var import CoordinatesScreen
+from variables.graphics import ObjectToDraw
 from variables.menus import Menus
 
 
@@ -19,7 +19,7 @@ class DrawAll:
     sends all object to dict for draw (objects there are sorted by z coordinate) - modul send_to_draw_doct
     draws all object from the dict - modul draw_from_draw_dict"""
 
-    def __init__(self, list_of_draw_objects: list[DrawObject],
+    def __init__(self, list_of_draw_objects: list[ObjectToDraw],
                  initial_dimensions: int = 3,   #2d
                  canvas: Canvas = None):
 
@@ -27,7 +27,7 @@ class DrawAll:
         self._geometry: GeometryChangePoint = GeometryChangePoint()
         self._canvas: Canvas = canvas
 
-        self._list_of_draw_objects: list[DrawObject] = list_of_draw_objects
+        self._list_of_draw_objects: list[ObjectToDraw] = list_of_draw_objects
         self._list_of_all_points: list[Point] = self._take_all_the_points(
             list_of_draw_objects=self._list_of_draw_objects) # take all the points of the objects,
         self._sin_f: float = 1
@@ -69,7 +69,7 @@ class DrawAll:
             list_of_axis.append(Line(point_0=point_0, point_1=point_i))
         return list_of_axis
 
-    def _take_all_the_points(self, list_of_draw_objects: list[DrawObject]) -> list[Point]:
+    def _take_all_the_points(self, list_of_draw_objects: list[ObjectToDraw]) -> list[Point]:
         list_of_points: list[Point] = []
         # add points of all objects
         for draw_object in list_of_draw_objects:
@@ -98,6 +98,7 @@ class DrawAll:
     def draw_all(self, dx_dy: tuple[int, int] = (0, 0), 
                  df_dj: tuple[int, int] = (0, 0)):
         self._dx_dy = dx_dy
+        # correct all the points
         if self._df_dj != df_dj:
             self._df_dj = df_dj
             self.change_isometry()
@@ -156,8 +157,6 @@ class DrawAll:
         # draw the model
         self._calculate_all_points()
 
-        shift_and_draw_on_the_canvas(geometry=self._geometry, line_axes=self._line_axes,
-                                     scale=self._scale, dx_dy=self._dx_dy, x0y0=self._x0y0)
         add_all_draw_objects_to_the_dict(list_of_all_objects=self._list_of_draw_objects,
                                          geometry=self._geometry)
         draw_from_dict(geometry=self._geometry, scale=self._scale, dx_dy=self._dx_dy, x0y0=self._x0y0)
