@@ -1,8 +1,10 @@
 import math
 
 import numpy as np
+from numpy.ma.core import identity
 from sortedcontainers import SortedDict
 
+from geometry import class_point, class_line, class_surface, class_volume
 from geometry.class_line import Line
 from geometry.class_point import Point
 from geometry.class_surface import Surface
@@ -13,23 +15,19 @@ class GeometryChangePoint:
     """the class is a singleton
     it calculates new coordinate for the object and send it to a dict
     """
-    corner_f: float = math.pi * 0.25
-    corner_j: float = math.pi * 0.25
-    sin_j = math.sin(corner_j)
-    cos_j = math.cos(corner_j)
-    sin_f = math.sin(corner_f)
-    cos_f = math.cos(corner_f)
+    corner_f_init: float = math.pi * 0.25
+    corner_j_init: float = math.pi * 0.25
+    sin_j_init = math.sin(corner_j_init)
+    cos_j_init = math.cos(corner_j_init)
+    sin_f_init = math.sin(corner_f_init)
+    cos_f_init = math.cos(corner_f_init)
 
     def __init__(self):
-        self.corner_f = 0
-        self.corner_j = 0
-        self.sin_j = 0
-        self.cos_j = 0
-        self.sin_f = 0
-        self.cos_f = 0
-        self.dx = 0
-        self.dy = 0
-        self.dz = 0
+        self.angles: list[float] = [math.pi * 0.25, math.pi * 0.25, math.pi * 0.25,
+                                0.0, 0.0, 0.0] # xy, xz, xd1, yz, yd1, zd1
+        self.sin: list[float] = [math.sin(x) for x in self.angles]
+        self.cos: list[float] = [math.cos(x) for x in self.angles]
+        self.dxi: list[float] = [0,0,0,0]
         self.rotate_j = np.array([[self.cos_j, - self.sin_j, 0],
                                   [self.sin_j, self.cos_j, 0],
                                   [0, 0, 1]])
@@ -39,6 +37,35 @@ class GeometryChangePoint:
                                   [0, self.sin_f, self.cos_f]])
 
         self.dict_of_objects_to_draw: SortedDict = SortedDict()
+
+    def get_rotate_matrix(self, sinx: list[float], cosx: list[float], dimensional: int = 3) -> np.ndarray:
+        """
+        :param sinx: list of sin a, b, g
+        :param cosx: list of cos a, b, g
+        :param dimensional: 3d, 4d
+        :return: rotate matrix. for 3d -> Ra*Rb*Rg
+        """
+        r = []
+        if dimensional == 3:
+            r[0] = np.array([[cosx[0], -sinx[0], 0],
+                          [sinx[0], cosx[0], 0],
+                           [0, 0, 1]
+                          ])
+            r[1] = np.array([[cosx[1], 0 -sinx[1]],
+                           [0, 1, 0],
+                           [-sinx[1], 0, cosx[1]]
+                           ])
+            r[2] = np.array([[1,0,0],
+                           [0, cosx[2], -sinx[2]],
+                           [0, -sinx[2], cosx[2]]
+                           ])
+        elif dimensional == 4:
+            r[0] = np.array([[cosx[2], 0 -sinx[2]],])
+        result_matrix = np.identity(dimensional, dtype=np.float64)
+        print("identity matrix", identity)
+        for r_i in r:
+            result_matrix = np.dot(r_i, result_matrix)
+        return result_matrix
 
     def change_corners(self, f: float, j: float, dx: float = 0, dy: float = 0, dz: float = 0):
         self.corner_f = f
@@ -90,16 +117,16 @@ class GeometryChangePoint:
     def clean_dict_of_draw_objects(self):
         self.dict_of_objects_to_draw.clear()
 
-    def add_the_draw_element_to_sorted_dict(self, draw_object: ObjectToDraw):
-        match draw_object.type_of_the_objects:
-            case TypeOfTheObjects.point:
+    def add_the_draw_element_to_sorted_dict(self, draw_object: Line | Surface):
+        match draw_object:
+            case class_point.Point:
                 self._add_to_dict_a_point(draw_object)
-            case TypeOfTheObjects.text:
-                self._add_to_dict_a_text(draw_object)
-            case TypeOfTheObjects.light_line:
-                self._add_to_dict_a_light_line(draw_object)
-            case TypeOfTheObjects.line:
+            case class_line.Line:
                 self._add_to_dict_a_line(draw_object)
+            case class_surface.Surface:
+                self._add_to_dict_a_surface(draw_object)
+            case class_volume.Volume:
+                self._add_to_dict_a_volume(draw_object)
             case TypeOfTheObjects.surface:
                 self._add_to_dict_a_surface(draw_object)
             case other:

@@ -1,9 +1,13 @@
 from geometry.class_line import Line
 from geometry.class_point import Point
 from objects.class_draw_interface import DrawObject
+from variables.graphics import GraphicRegimes
 
 
-class Web(DrawObject):
+class Line2dWeb(DrawObject):
+    def make_volumes(self):
+        pass
+
     def __init__(self, a: int, n: int):
         super().__init__()
         self.a = a  #seze of a cell
@@ -38,3 +42,5 @@ class Web(DrawObject):
                 )
                 )
 
+    def get_geometric_objects(self) -> list[Line]:
+        return self.my_lines

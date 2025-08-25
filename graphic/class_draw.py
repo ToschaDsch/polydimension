@@ -8,6 +8,7 @@ from  geometry.class_geometry_change_point import GeometryChangePoint
 from graphic.functions_for_class_draw.send_to_draw_dict import add_all_draw_objects_to_the_dict
 from graphic.functions_for_screen_window import get_scale
 from objects.class_draw_interface import DrawObject
+from objects.class_web import Line2dWeb
 from variables.geometry_var import CoordinatesScreen
 from variables.graphics import ObjectToDraw
 from variables.menus import Menus
@@ -19,15 +20,25 @@ class DrawAll:
     sends all object to dict for draw (objects there are sorted by z coordinate) - modul send_to_draw_doct
     draws all object from the dict - modul draw_from_draw_dict"""
 
-    def __init__(self, list_of_draw_objects: list[ObjectToDraw],
+    def __init__(self, list_of_draw_objects: list[DrawObject],
                  initial_dimensions: int = 3,   #2d
+                 n_web: int=10,  #number of cells in the web
                  canvas: Canvas = None):
-
+        """
+        this is the general class to draw
+        :param list_of_draw_objects: list[DrawObject], n-dimensional object to draw
+        :param initial_dimensions: number of dimensions (3)
+        :param n_web: number of cells in the web
+        :param canvas: link to the canvas
+        """
+        # general variables
+        self._length_axes = 1
         # a class to change coordinates of the objects
         self._geometry: GeometryChangePoint = GeometryChangePoint()
         self._canvas: Canvas = canvas
-
-        self._list_of_draw_objects: list[ObjectToDraw] = list_of_draw_objects
+        web: DrawObject = Line2dWeb(a=self._length_axes, n=n_web)
+        self._list_of_draw_objects: list[DrawObject] = [web]
+        self._list_of_draw_objects.extend(list_of_draw_objects) # there are the web and the object(s) to draw
         self._list_of_all_points: list[Point] = self._take_all_the_points(
             list_of_draw_objects=self._list_of_draw_objects) # take all the points of the objects,
         self._sin_f: float = 1
@@ -55,7 +66,7 @@ class DrawAll:
         self._z_c: int = 0
 
         self.init_points()      # set new center
-        self._length_axes = 1
+
         self._line_axes: list[Line] = self._make_lines_for_axes()
 
     def _make_lines_for_axes(self) -> list[Line]:
@@ -69,7 +80,7 @@ class DrawAll:
             list_of_axis.append(Line(point_0=point_0, point_1=point_i))
         return list_of_axis
 
-    def _take_all_the_points(self, list_of_draw_objects: list[ObjectToDraw]) -> list[Point]:
+    def _take_all_the_points(self, list_of_draw_objects: list[DrawObject]) -> list[Point]:
         list_of_points: list[Point] = []
         # add points of all objects
         for draw_object in list_of_draw_objects:
@@ -120,12 +131,8 @@ class DrawAll:
 
     def change_isometry(self):
         corner_j = self._f0_j0[0] + self._df_dj[0]
-        self._sin_j = math.sin(corner_j)
-        self._cos_j = math.cos(corner_j)
 
         corner_f = self._f0_j0[1] + self._df_dj[1]
-        self._sin_f = math.sin(corner_f)
-        self._cos_f = math.cos(corner_f)
 
         self._geometry.change_corners(f=corner_f, j=corner_j, dx=self._x_c, dy=self._y_c, dz=self._z_c)
 
