@@ -1,5 +1,7 @@
-import numpy
 import numpy as np
+from PySide6.QtGui import QColor
+
+from variables.graphics import MyColors
 
 
 class Point:
@@ -7,6 +9,7 @@ class Point:
         self._coordinates = coordinates if coordinates is not None else np.array([0.0, 0.0, 0.0, 0.0])
         self.coord_n = self._coordinates
         self._dimension = len(self._coordinates)
+        self.color = QColor(*MyColors.default_point_color)
 
 
     @property
@@ -26,6 +29,8 @@ class Point:
         change_dimensions_of_the_point(point=self, new_dimension=new_dimension)
         self._dimension = new_dimension
 
+    def get_color(self) -> QColor:
+        return self.color
 
     def __str__(self):
         return f"point {self._coordinates}"

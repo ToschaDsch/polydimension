@@ -1,5 +1,15 @@
 import numpy as np
 
+from geometry.class_point import Point
+
+
+def get_center_from_list_of_points(list_of_points: list[Point]) -> Point:
+    dimension = list_of_points[0].dimension
+    summ_vector = np.empty((dimension, dimension), float)
+    for point in list_of_points:
+        summ_vector += point.coord_0
+    coordinate_of_the_center = summ_vector / len(list_of_points)
+    return Point(coordinates=coordinate_of_the_center)
 
 def get_rotate_matrix(sin: list[float], cos: list[float], dimensional: int = 3) -> np.ndarray:
     """

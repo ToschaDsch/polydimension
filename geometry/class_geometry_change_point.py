@@ -4,10 +4,11 @@ import numpy as np
 from sortedcontainers import SortedDict
 
 from geometry import class_point, class_line, class_surface, class_volume
+from geometry.class_geometric_object import GeometricObject
 from geometry.class_line import Line
 from geometry.class_point import Point
 from geometry.class_surface import Surface
-from geometry.get_rotation_matrix import get_rotate_matrix
+from geometry.geometry_functions import get_rotate_matrix
 from variables.graphics import ObjectToDraw, TypeOfTheObjects
 
 
@@ -36,57 +37,45 @@ class GeometryChangePoint:
 
 
 
-    def change_corners(self, f: float, j: float, dx: float = 0, dy: float = 0, dz: float = 0):
-        self.corner_f = f
-        self.corner_j = j
-        self.sin_j = math.sin(self.corner_j)
-        self.cos_j = math.cos(self.corner_j)
-        self.sin_f = math.sin(self.corner_f)
-        self.cos_f = math.cos(self.corner_f)
-        self.dx = dx
-        self.dy = dy
-        self.dz = dz
-        self.rotate_j = np.array([[self.cos_j, - self.sin_j, 0],
-                                  [self.sin_j, self.cos_j, 0],
-                                  [0, 0, 1]])
-
-        self.rotate_f = np.array([[1, 0, 0],
-                                  [0, self.cos_f, - self.sin_f],
-                                  [0, self.sin_f, self.cos_f]])
+    def change_corners(self, angles: list[float], dx: list[float]):
+        self.angles = angles
+        self.sin: list[float] = [math.sin(x) for x in self.angles]
+        self.cos: list[float] = [math.cos(x) for x in self.angles]
+        self.dxi: np.ndarray = np.array(dx)
+        self.rotation_matrix: np.ndarray = get_rotate_matrix(sin=self.sin,
+                                                             cos=self.cos,
+                                                             dimensional=self.dimensional)
         self.dict_of_objects_to_draw = SortedDict()
 
     def rotate_a_point(self, point: Point):
         point.coord_n = self.rotate_coord_0(coord_0=point.coord_0)
 
-    def rotate_coord_0(self, coord_0: list[float]) -> list[float]:
-        coord_1 = np.array(coord_0) - np.array([self.dx, self.dy, self.dz])
+    def rotate_coord_0(self, coord_0: list[float]) -> list[np.ndarray]:
+        coord_1 = np.array(coord_0) - self.dxi
         coord_0 = np.vstack(coord_1)
-        result = np.matmul(self.rotate_f, np.matmul(self.rotate_j, coord_0))
+        result: np.ndarray = np.matmul(self.rotation_matrix, coord_0)
         return [result[0][0], result[1][0], result[2][0]]
 
     def rotate_a_point_without_shift(self, point: Point):
         coord_1 = np.array(point.coord_0)
         coord_0 = np.vstack(coord_1)
-        result = np.matmul(self.rotate_f, np.matmul(self.rotate_j, coord_0))
+        result = np.matmul(self.rotation_matrix, coord_0)
         point.coord_n = [result[0][0], result[1][0], result[2][0]]
 
     def rotate_a_big_point(self, point):
         coord_0 = np.vstack(point.coord_0)
-        result = np.matmul(self.rotate_f, np.matmul(self.rotate_j, coord_0))
+        result: np.ndarray = np.matmul(self.rotation_matrix, coord_0)
         point.coord_n = [result[0][0], result[1][0], result[2][0]]
 
     def rotate_a_line(self, line: Line):
         for point in (line.point_0, line.point_1):
             self.rotate_a_point(point)
 
-    def rotate_a_line_without_shift(self, line: Line):
-        for point in (line.point_0, line.point_1):
-            self.rotate_a_point_without_shift(point)
 
     def clean_dict_of_draw_objects(self):
         self.dict_of_objects_to_draw.clear()
 
-    def add_the_draw_element_to_sorted_dict(self, draw_object: Line | Surface):
+    def add_the_draw_element_to_sorted_dict(self, draw_object: GeometricObject|Point):
         match draw_object:
             case class_point.Point:
                 self._add_to_dict_a_point(draw_object)

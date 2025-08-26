@@ -57,4 +57,7 @@ class MyColors:
     color: tuple = (50, 50, 50)
     web: tuple = (0, 0, 0)
     general_screen: tuple[int] = (100,100,255)
-    carbon: tuple = (0, 130, 130)
+    default_point_color: tuple = (0, 130, 130)
+    default_line_color: tuple = (100, 100, 100)
+    default_surface_color: tuple = (100, 100, 100)
+    default_volume_color: tuple = (100, 100, 100)
