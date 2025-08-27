@@ -6,10 +6,10 @@ import numpy
 from geometry.class_line import Line
 from geometry.class_point import Point
 from geometry.class_surface import Surface
-from objects.class_draw_interface import DrawObject
+from objects.class_draw_interface import NDimensionalObject
 
 
-class Cube3d(DrawObject):
+class Cube3d(NDimensionalObject):
     def make_volumes(self):
         pass
 

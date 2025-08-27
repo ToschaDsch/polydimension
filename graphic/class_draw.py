@@ -7,7 +7,7 @@ from geometry.class_point import Point
 from  geometry.class_geometry_change_point import GeometryChangePoint
 from graphic.functions_for_class_draw.send_to_draw_dict import add_all_draw_objects_to_the_dict
 from graphic.functions_for_screen_window import get_scale
-from objects.class_draw_interface import DrawObject
+from objects.class_draw_interface import NDimensionalObject
 from objects.class_web import Line2dWeb
 from variables.geometry_var import CoordinatesScreen
 from variables.graphics import ObjectToDraw
@@ -20,8 +20,8 @@ class DrawAll:
     sends all object to dict for draw (objects there are sorted by z coordinate) - modul send_to_draw_doct
     draws all object from the dict - modul draw_from_draw_dict"""
 
-    def __init__(self, list_of_draw_objects: list[DrawObject],
-                 initial_dimensions: int = 3,   #2d
+    def __init__(self, list_of_draw_objects: list[NDimensionalObject],
+                 initial_dimensions: int = 3,  #2d
                  n_web: int=10,  #number of cells in the web
                  canvas: Canvas = None):
         """
@@ -36,8 +36,8 @@ class DrawAll:
         # a class to change coordinates of the objects
         self._geometry: GeometryChangePoint = GeometryChangePoint()
         self._canvas: Canvas = canvas
-        web: DrawObject = Line2dWeb(a=self._length_axes, n=n_web)
-        self._list_of_draw_objects: list[DrawObject] = [web]
+        web: NDimensionalObject = Line2dWeb(a=self._length_axes, n=n_web)
+        self._list_of_draw_objects: list[NDimensionalObject] = [web]
         self._list_of_draw_objects.extend(list_of_draw_objects) # there are the web and the object(s) to draw
         self._list_of_all_points: list[Point] = self._take_all_the_points(
             list_of_draw_objects=self._list_of_draw_objects) # take all the points of the objects,
@@ -80,7 +80,7 @@ class DrawAll:
             list_of_axis.append(Line(point_0=point_0, point_1=point_i))
         return list_of_axis
 
-    def _take_all_the_points(self, list_of_draw_objects: list[DrawObject]) -> list[Point]:
+    def _take_all_the_points(self, list_of_draw_objects: list[NDimensionalObject]) -> list[Point]:
         list_of_points: list[Point] = []
         # add points of all objects
         for draw_object in list_of_draw_objects:
@@ -178,7 +178,7 @@ class DrawAll:
         self._df_dj = (0, 0)
 
     def _rotate_a_point(self, point: Point):
-        self._geometry.rotate_a_big_point(point=point)
+        self._geometry.rotate_a_point(point=point)
 
     def _calculate_all_points(self):
         for point_i in self._list_of_all_points:

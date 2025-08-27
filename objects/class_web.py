@@ -1,10 +1,10 @@
 from geometry.class_line import Line
 from geometry.class_point import Point
-from objects.class_draw_interface import DrawObject
+from objects.class_draw_interface import NDimensionalObject
 from variables.graphics import GraphicRegimes
 
 
-class Line2dWeb(DrawObject):
+class Line2dWeb(NDimensionalObject):
     def make_volumes(self):
         pass
 

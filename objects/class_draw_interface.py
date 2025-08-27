@@ -10,7 +10,7 @@ from variables.geometry_var import CoordinatesScreen
 from variables.graphics import GraphicRegimes, Transparency
 
 
-class DrawObject(ABC):
+class NDimensionalObject(ABC):
     def __init__(self, size: int = CoordinatesScreen.init_size_of_the_object):
         self.dimensions = 4
         self.my_points: list[Point] = []

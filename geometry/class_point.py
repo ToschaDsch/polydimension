@@ -11,6 +11,8 @@ class Point:
         self._dimension = len(self._coordinates)
         self.color = QColor(*MyColors.default_point_color)
 
+    def get_center(self):
+        return self
 
     @property
     def coord_0(self) -> list[float]:
