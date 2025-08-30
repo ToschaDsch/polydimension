@@ -5,7 +5,6 @@ from dataclasses import dataclass
 @dataclass
 class Menus:
     general_window = None
-    animation = None
     screen_window = None
     name_of_the_program = 'polydimension'
     screen_width: int = 100

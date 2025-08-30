@@ -12,25 +12,23 @@ class GeometryChangePoint:
     """the class is a singleton
     it calculates new coordinate for the object and send it to a dict
     """
-    corner_f_init: float = math.pi * 0.25
-    corner_j_init: float = math.pi * 0.25
-    sin_j_init = math.sin(corner_j_init)
-    cos_j_init = math.cos(corner_j_init)
-    sin_f_init = math.sin(corner_f_init)
-    cos_f_init = math.cos(corner_f_init)
+    corner_init: float = math.pi * 0.25
 
     def __init__(self):
         self.dimensional: int = 4
-        self.angles: list[float] = [math.pi * 0.25, math.pi * 0.25, math.pi * 0.25,
-                                0.0, 0.0, 0.0] # xy, xz, xd1, yz, yd1, zd1
+        self.angles: list[float] = [GeometryChangePoint.corner_init,
+                                    GeometryChangePoint.corner_init,
+                                    GeometryChangePoint.corner_init,
+                                    0.0, 0.0, 0.0] # xy, xz, xd1, yz, yd1, zd1
         self.sin: list[float] = [math.sin(x) for x in self.angles]
         self.cos: list[float] = [math.cos(x) for x in self.angles]
         self.dxi: list[float] = [0,0,0,0]
         self.rotation_matrix: np.ndarray = get_rotate_matrix(sin=self.sin,
                                                              cos=self.cos,
                                                              dimensional=self.dimensional)
+        self.scale: float = 1.0
+        self.x0y0: list[int] = [0,0]
         self.dict_of_objects_to_draw: SortedDict = SortedDict()
-
 
     def change_corners(self, angles: list[float], dx: list[float]):
         self.angles = angles
@@ -42,11 +40,14 @@ class GeometryChangePoint:
                                                              dimensional=self.dimensional)
         self.dict_of_objects_to_draw = SortedDict()
 
-    def rotate_a_point(self, point):
+    def rotate_and_shift_a_point(self, point: Point):
         coord_0 = np.vstack(point.coord_0)
         result: np.ndarray = np.matmul(self.rotation_matrix, coord_0)
         point.coord_n = [result[0][0], result[1][0], result[2][0]]
-
+        x0_y0 = (
+            -point.coord_n[0] * self.scale + self.dxi[0] + self.x0y0[0],
+            point.coord_n[1] * self.scale + self.dxi[1] + self.x0y0[1])
+        point.coord_n = x0_y0
 
     def clean_dict_of_draw_objects(self):
         self.dict_of_objects_to_draw.clear()

@@ -35,16 +35,18 @@ class ScreenWindow(QLabel):
         canvas = self.canvas.scaled(Menus.screen_width, Menus.screen_height)
         self.setPixmap(canvas)
 
-    def draw_a_point(self, x: int = 0, y: int = 0, type_of_point: str = 'normal'):
-        self.painter.drawPoint(x, y)  #
+    def draw_a_point(self, x: int = 0, y: int = 0, radius: int=2):
+        if radius == 0:
+            self.painter.drawEllipse((x, y))
+        else:
+            self.painter.drawEllipse(int(x - radius), int(y - radius), 2 * radius, 2 * radius)
 
 
-    def draw_a_point_text(self, x0_y0, text: str, type_of_point, color=QColor(0, 255, 0)):
+    def draw_a_point_text(self, x0_y0, text: str):
         self.painter.drawText(x0_y0[0] + 8, x0_y0[1] + 8, text)
 
 
-    def draw_a_line(self, x1: int, y1: int, x2: int, y2: int, type_of_line: str = None,
-                    color: QColor = QColor(50, 50, 50)):
+    def draw_a_line(self, x1: int, y1: int, x2: int, y2: int):
         self.painter.drawLine(x1, y1, x2, y2)
 
     def draw_a_circle(self, x: int, y: int, r: int, type_of_line: str = None):
