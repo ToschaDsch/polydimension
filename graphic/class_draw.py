@@ -10,6 +10,7 @@ from objects.class_draw_interface import NDimensionalObject
 from objects.class_web import Line2dWeb
 from variables.geometry_var import CoordinatesScreen
 from variables.menus import Menus
+import numpy as np
 
 
 class DrawAll:
@@ -67,11 +68,11 @@ class DrawAll:
     def _make_lines_for_axes(self) -> list[Line]:
         list_of_axis: list[Line] = []
         coordinate_0 = [0]*self._dimensions
-        point_0 = Point(coordinates=coordinate_0)
+        point_0 = Point(coordinates=np.array(coordinate_0))
         for i in range(self._dimensions):
             coordinate_i = [0]*self._dimensions
             coordinate_i[i] = self._length_axes
-            point_i = Point(coordinates=coordinate_i)
+            point_i = Point(coordinates=np.array(coordinate_i))
             list_of_axis.append(Line(point_0=point_0, point_1=point_i))
         return list_of_axis
 
@@ -109,6 +110,7 @@ class DrawAll:
             self._df_dj = df_dj
             self.change_isometry()
         self._draw_on_the_canvas()
+        print("I draw")
 
     def scale_change(self, ds: int, mouse_pos: tuple[int, int] = (0, 0)):
         # old_scale = self._scale
@@ -160,6 +162,7 @@ class DrawAll:
         self._f0_j0 = (self._f0_j0[0] + self._df_dj[0],
                        self._f0_j0[1] + self._df_dj[1])
         self._df_dj = (0, 0)
+        self.draw_all()
 
 
 

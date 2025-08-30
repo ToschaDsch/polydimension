@@ -20,55 +20,55 @@ def get_rotate_matrix(sin: list[float], cos: list[float], dimensional: int = 3) 
     """
     r = []
     if dimensional == 3:
-        r[0] = np.array([[cos[0], -sin[0], 0],
+        r.append(np.array([[cos[0], -sin[0], 0],
                          [sin[0], cos[0], 0],
                          [0, 0, 1]
-                         ])
-        r[1] = np.array([[cos[1], 0 - sin[1]],
+                         ]))
+        r.append(np.array([[cos[1], 0 - sin[1]],
                          [0, 1, 0],
                          [sin[1], 0, cos[1]]
-                         ])
-        r[2] = np.array([[1, 0, 0],
+                         ]))
+        r.append(np.array([[1, 0, 0],
                          [0, cos[2], -sin[2]],
                          [0, sin[2], cos[2]]
-                         ])
+                         ]))
     elif dimensional == 4:
         i = 0
-        r[i] = np.array([[cos[i], -sin[i], 0, 0],
+        r.append(np.array([[cos[i], -sin[i], 0, 0],
                          [sin[i], cos[i], 0, 0],
                          [0, 0, 1, 0],
                          [0, 0, 0, 1]
-                         ])
-        i=+1
-        r[i] = np.array([[cos[i], 0, - sin[i], 0],
+                         ]))
+        i =+ 1
+        r.append(np.array([[cos[i], 0, - sin[i], 0],
                          [0, 1, 0, 0],
                          [sin[i], 0, cos[i], 0],
                          [0, 0, 0, 1],
-                         ])
-        i = +1
-        r[i] = np.array([[cos[i], 0, 0, - sin[i]],
+                         ]))
+        i =+1
+        r.append(np.array([[cos[i], 0, 0, - sin[i]],
                          [0, 1, 0, 0],
                          [0, 0, 1, 0],
                          [sin[i], 0, 0, cos[i]]
-                         ])
+                         ]))
         i = +1
-        r[i] = np.array([[1, 0, 0, 0],
+        r.append(np.array([[1, 0, 0, 0],
                          [0, cos[i], -sin[i], 0],
                          [0, sin[i], cos[i], 0],
                          [0, 0, 0, 1],
-                         ])
+                         ]))
         i = +1
-        r[i] = np.array([[1, 0, 0, 0],
+        r.append(np.array([[1, 0, 0, 0],
                          [0, cos[i], 0, -sin[i]],
                          [0, 0, 1, 0],
                          [0, sin[i], 0, cos[i]],
-                         ])
+                         ]))
         i = +1
-        r[i] = np.array([[1, 0, 0, 0],
+        r.append(np.array([[1, 0, 0, 0],
                          [0, 1, 0, 0],
                          [0, 0, cos[i], -sin[i]],
                          [0, 0, sin[i], cos[i]],
-                         ])
+                         ]))
     result_matrix = np.identity(dimensional, dtype=np.float64)
     print("identity matrix", result_matrix)
     for r_i in r:

@@ -18,7 +18,7 @@ class Line(GeometricObject):
     def __init__(self, point_0: Point, point_1: Point):
         self.point_0 = point_0
         self.point_1 = point_1
-        coord_center: np.ndarray = 0.5*(point_0.coord_0 + point_1.coord_0)
+        coord_center: np.ndarray = (point_0.coord_0 + point_1.coord_0)/2
         self.center = Point(coordinates=coord_center)
         self.color = QColor(*MyColors.default_line_color)
 

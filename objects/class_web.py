@@ -1,7 +1,7 @@
 from geometry.class_line import Line
 from geometry.class_point import Point
 from objects.class_draw_interface import NDimensionalObject
-from variables.graphics import GraphicRegimes
+import numpy as np
 
 
 class Line2dWeb(NDimensionalObject):
@@ -9,10 +9,11 @@ class Line2dWeb(NDimensionalObject):
         pass
 
     def __init__(self, a: int, n: int):
-        super().__init__()
-        self.a = a  #seze of a cell
-        self.n = n  #numbers of the cells
+        self.a = a  # size of a cell
+        self.n = n  # numbers of the cells
         self._list_of_points: list[list[Point]] = []
+        super().__init__()
+
 
     def make_points(self):
         x0 = -self.a*self.n/2
@@ -23,7 +24,8 @@ class Line2dWeb(NDimensionalObject):
                 y = x0 + y*self.n/2
                 coordinate = [x, y]
                 coordinate.extend([t for t in range(self.dimensions-2)])
-                point_i = Point(coordinate)
+                coordinate = np.array(coordinate)
+                point_i = Point(coordinates=coordinate)
                 line_of_points.append(point_i)
             self._list_of_points.append(line_of_points)
             self.my_points.extend(line_of_points)

@@ -18,7 +18,6 @@ class ScreenWindow(QLabel):
         # make parent a label + self
         self.canvas = canvas
         self.label = QLabel(self)
-        print("label", self)
         self.setPixmap(self.canvas)
         self.painter = QtGui.QPainter(self.canvas)
         font = QFont('Century Gothic', 10)
@@ -56,35 +55,33 @@ class ScreenWindow(QLabel):
         self.painter.drawPolygon(polygon)
 
     def mouseMoveEvent(self, event):
-        print("mouseMoveEvent", event.buttons)
-        match str(event.buttons()):
-            case 'MouseButton.NoButton':
+        match event.buttons():
+            case QtCore.Qt.MouseButton.NoButton:
                 #  the function checks collapse by mouse motion
 
                 pass
-            case 'MouseButton.RightButton|MiddleButton':
+            case QtCore.Qt.MouseButton.RightButton|QtCore.Qt.MouseButton.MiddleButton:
                 #rotate(x=event.x(), y=event.y())
                 pass
-            case 'MouseButton.LeftButton':
+            case QtCore.Qt.MouseButton.LeftButton:
                 self.move_left_button(event)
-            case 'MouseButton.RightButton':
+            case QtCore.Qt.MouseButton.RightButton:
                 pass
-            case 'MouseButton.MiddleButton':
+            case QtCore.Qt.MouseButton.MiddleButton:
                 pass
                 #shift(x=event.x(), y=event.y())
 
         self.draw_all()
 
     def move_left_button(self, event):
-        print(event.x(), event.y())
         self.draw_all()
 
     def mousePressEvent(self, event):
-        print(event.x(), event.y())
         self.draw_all()
 
     def mouseDoubleClickEvent(self, event):
         print("mause_double_click")
+        self.draw_all()
 
     def mouseReleaseEvent(self, event):
         match event.button():
@@ -118,14 +115,13 @@ class ScreenWindow(QLabel):
     def wheelEvent(self, event):
         """MOUSEWHEEL:"""
         ds = event.angleDelta()
-        print(ds)
         self.draw_all()
 
     def draw_all(self):
         canvas = self.pixmap()
         canvas.fill(QColor(*MyColors.general_screen))
         self.painter = QtGui.QPainter(canvas)
-        #Menus.animation.draw_all(dx_dy=CoordinatesScreen.dx_dy, df_dj=CoordinatesScreen.df_dj)
+        Menus.animation.draw_all(dx_dy=CoordinatesScreen.dx_dy, df_dj=CoordinatesScreen.df_dj)
         self.painter.end()
         self.setPixmap(canvas)
 

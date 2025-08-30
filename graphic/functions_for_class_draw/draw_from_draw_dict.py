@@ -1,11 +1,8 @@
-from functools import partial
-
 from PySide6.QtCore import QPoint
 from PySide6.QtGui import QColor, QPolygon
 from sortedcontainers import SortedDict
 
 import geometry.class_point
-from geometry.class_geometric_object import GeometricObject
 from geometry.class_line import Line
 from geometry.class_point import Point
 from geometry.class_text import TextDraw

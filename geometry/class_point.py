@@ -5,21 +5,21 @@ from variables.graphics import MyColors
 
 
 class Point:
-    def __init__(self, coordinates = None):
-        self._coordinates = coordinates if coordinates is not None else np.array([0.0, 0.0, 0.0, 0.0])
-        self.coord_n = self._coordinates
-        self._dimension = len(self._coordinates)
+    def __init__(self, coordinates: np.ndarray = None):
+        self._coordinates: np.ndarray = coordinates if coordinates is not None else np.array([0.0, 0.0, 0.0, 0.0])
+        self.coord_n: np.ndarray = self._coordinates
+        self._dimension: int = len(self._coordinates)
         self.color = QColor(*MyColors.default_point_color)
 
     def get_center(self):
         return self
 
     @property
-    def coord_0(self) -> list[float]:
+    def coord_0(self) -> np.ndarray:
         return self._coordinates
 
     @coord_0.setter
-    def coord_0(self, coordinates: list[float]):
+    def coord_0(self, coordinates:  np.ndarray):
         self._coordinates = coordinates
 
     @property

@@ -7,6 +7,7 @@ from PySide6.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QHBoxLayout, QL
     QTableWidget, QComboBox, QSlider
 
 from frontend_classes.class_ToggleButton import ToggleButton
+from graphic.class_draw import DrawAll
 from graphic.class_screen_window import ScreenWindow
 from menu_lines import MenusLines
 from frontend_classes.class_ClickableWidget import ClickableWidget
@@ -41,6 +42,7 @@ class GeneralWindow(QMainWindow):
         self.painter_section = QtGui.QPainter(self.canvas_section)
         font = QFont('Century Gothic', Menus.font_height)
         self.painter_section.setFont(font)
+        Menus.animation = DrawAll(list_of_draw_objects=[], initial_dimensions=4)
         Menus.screen_window = ScreenWindow(canvas=self.canvas_section)
         self.label_canvas = Menus.screen_window
         self.load_display(general_layout=self._general_layout)
