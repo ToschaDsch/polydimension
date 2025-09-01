@@ -7,7 +7,6 @@ from geometry.class_point import Point
 from geometry.class_surface import Surface
 from geometry.class_volume import Volume
 from variables.geometry_var import CoordinatesScreen
-from variables.graphics import GraphicRegimes, Transparency
 
 
 class NDimensionalObject(ABC):
@@ -33,8 +32,12 @@ class NDimensionalObject(ABC):
     @abstractmethod
     def make_points(self):
         pass
+
+    @abstractmethod
     def make_lines(self):
         pass
+
+    @abstractmethod
     def make_surfaces(self):
         pass
     @abstractmethod
@@ -59,10 +62,10 @@ class NDimensionalObject(ABC):
         self._solid = solid
 
     def get_geometric_objects(self) -> list[Line] | list[Surface]:
-        if GraphicRegimes.transparency == Transparency.sceleton:
-            return self.my_lines
-        else:
+        if self.solid:
             return self.my_surfaces
+        else:
+            return self.my_lines
 
     def __str__(self):
         list_of_points: list[str] = [str(x) for x in self.my_points]

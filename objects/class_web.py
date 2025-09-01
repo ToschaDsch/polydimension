@@ -5,6 +5,9 @@ import numpy as np
 
 
 class Line2dWeb(NDimensionalObject):
+    def make_surfaces(self):
+        pass
+
     def make_volumes(self):
         pass
 
@@ -46,3 +49,7 @@ class Line2dWeb(NDimensionalObject):
 
     def get_geometric_objects(self) -> list[Line]:
         return self.my_lines
+
+    @property
+    def solid(self):
+        return False
