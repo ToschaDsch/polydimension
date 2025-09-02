@@ -14,18 +14,19 @@ class Axis(NDimensionalObject):
         for i in range(0, len(self.my_points), 2):
             axes_i = Line(point_0=self.my_points[i],
                             point_1=self.my_points[i+1])
-            axes_i.color = QColor(default_palette[i/2])
+            axes_i.color = QColor(*default_palette[int(i/2)])
             self.my_lines.append(axes_i)
-            self.solid = False
+            self._solid = False
 
     def make_surfaces(self):
         pass
 
     def __init__(self, dimension: int):
-        super().__init__()
         self.dimension = dimension
         self.k1: float = 1.2
         self.k2: float = 0.2
+        super().__init__()
+
 
     def make_points(self):
         list_of_the_points: list[Point] = []

@@ -43,11 +43,11 @@ class GeometryChangePoint:
     def rotate_and_shift_a_point(self, point: Point):
         coord_0 = np.vstack(point.coord_0)
         result: np.ndarray = np.matmul(self.rotation_matrix, coord_0)
-        point.coord_n = [result[0][0], result[1][0], result[2][0]]
+        point.coord_n = np.array([result[0][0], result[1][0], result[2][0]])
         x0_y0 = (
             -point.coord_n[0] * self.scale + self.dxi[0] + self.x0y0[0],
             point.coord_n[1] * self.scale + self.dxi[1] + self.x0y0[1])
-        point.coord_n = x0_y0
+        point.coord_n = np.array(x0_y0)
 
     def clean_dict_of_draw_objects(self):
         self.dict_of_objects_to_draw.clear()

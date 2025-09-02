@@ -6,6 +6,7 @@ from geometry.class_point import Point
 from  geometry.class_geometry_change_point import GeometryChangePoint
 from graphic.functions_for_class_draw.send_to_draw_dict import add_all_draw_objects_to_the_dict
 from graphic.functions_for_screen_window import get_scale
+from objects.class_axis import Axis
 from objects.class_draw_interface import NDimensionalObject
 from objects.class_web import Line2dWeb
 from variables.geometry_var import CoordinatesScreen
@@ -33,7 +34,8 @@ class DrawAll:
         # a class to change coordinates of the objects
         self._geometry: GeometryChangePoint = GeometryChangePoint()
         web: NDimensionalObject = Line2dWeb(a=self._length_axes, n=n_web)
-        self._list_of_draw_objects: list[NDimensionalObject] = [web]
+        axis: Axis = Axis(dimension=initial_dimensions)
+        self._list_of_draw_objects: list[NDimensionalObject] = [web, axis]
         self._list_of_draw_objects.extend(list_of_draw_objects) # there are the web and the object(s) to draw
         self._list_of_all_points: list[Point] = self._take_all_the_points(
             list_of_draw_objects=self._list_of_draw_objects) # take all the points of the objects,
@@ -63,7 +65,6 @@ class DrawAll:
 
         self.init_points()      # set new center
 
-        self._line_axes: list[Line] = self._make_lines_for_axes()
 
     def _make_lines_for_axes(self) -> list[Line]:
         list_of_axis: list[Line] = []
@@ -82,11 +83,6 @@ class DrawAll:
         for draw_object in list_of_draw_objects:
             list_of_points.extend(draw_object.my_points)
 
-        #add points of the axis
-        for line_i in self._line_axes:
-            list_of_points.append(line_i.point_1)
-        # nul point
-        list_of_points.append(self._line_axes[0].point_0)
         return list_of_points
 
 
@@ -131,7 +127,7 @@ class DrawAll:
 
         corner_f = self._f0_j0[1] + self._df_dj[1]
 
-        self._geometry.change_corners(f=corner_f, j=corner_j, dx=self._x_c, dy=self._y_c, dz=self._z_c)
+        self._geometry.change_corners(angles=[corner_j, corner_f, 0,0,0], dx=self._dx_dy)
 
         # upgrade all points
         for point_i in self._list_of_all_points:
