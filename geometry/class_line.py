@@ -21,6 +21,7 @@ class Line(GeometricObject):
         coord_center: np.ndarray = (point_0.coord_0 + point_1.coord_0)/2
         self.center = Point(coordinates=coord_center)
         self.color = QColor(*MyColors.default_line_color)
+        self.dimension: int = point_0.dimension
 
     def __str__(self):
         return f"line ({str(self.point_0)}-{str(self.point_1)})"

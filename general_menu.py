@@ -42,10 +42,10 @@ class GeneralWindow(QMainWindow):
         self.painter_section = QtGui.QPainter(self.canvas_section)
         font = QFont('Century Gothic', Menus.font_height)
         self.painter_section.setFont(font)
-        Menus.animation = DrawAll(list_of_draw_objects=[], initial_dimensions=4)
         Menus.screen_window = ScreenWindow(canvas=self.canvas_section)
         self.label_canvas = Menus.screen_window
         self.load_display(general_layout=self._general_layout)
+        Menus.animation = DrawAll(list_of_draw_objects=[], initial_dimensions=4)
 
         # menu right
         self._layout_menu = QStackedLayout()
@@ -80,9 +80,8 @@ class GeneralWindow(QMainWindow):
         # draw the object
         self.my_object = Cube3d()
         print(self.my_object)
-
+        #Menus.animation.draw_all()
         self.setCentralWidget(widget)
-
 
 
     def load_menu_3(self) -> QWidget:

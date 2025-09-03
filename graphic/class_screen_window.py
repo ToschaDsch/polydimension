@@ -114,14 +114,15 @@ class ScreenWindow(QLabel):
 
     def wheelEvent(self, event):
         """MOUSEWHEEL:"""
-        ds = event.angleDelta()
+        ds = int(event.angleDelta())
+        CoordinatesScreen.scale =+0.1*ds
         self.draw_all()
 
     def draw_all(self):
         canvas = self.pixmap()
         canvas.fill(QColor(*MyColors.general_screen))
         self.painter = QtGui.QPainter(canvas)
-        Menus.animation.draw_all(dx_dy=CoordinatesScreen.dx_dy, df_dj=CoordinatesScreen.df_dj)
+        Menus.animation.draw_all()
         self.painter.end()
         self.setPixmap(canvas)
 

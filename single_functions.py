@@ -1,6 +1,9 @@
 import itertools
 
+import numpy as np
+
 from variables.geometry_var import MyCoordinates
+from variables.menus import Menus
 
 
 def get_list_of_all_dimensions(number_of_dimensions: int = 4) -> tuple[list[str], list[str]]:
@@ -45,9 +48,12 @@ def number_of_rotation_changed(number_of_rotations: int = 0) -> None:
     MyCoordinates.current_rotation = number_of_rotations
 
 def current_displacement_changed(displacement: int = 0) -> None:
-    MyCoordinates.displacement[MyCoordinates.current_displacement] = displacement
+    MyCoordinates.displacement[MyCoordinates.current_displacement] = MyCoordinates.displacement[MyCoordinates.current_displacement] + displacement
+    Menus.animation.draw_all(dx_dy=MyCoordinates.displacement, df_dj=MyCoordinates.angles)
     print("displacement:", *MyCoordinates.displacement)
 
 def current_rotation_changed(rotations: int = 0) -> None:
     MyCoordinates.angles[MyCoordinates.current_rotation] = rotations
+    MyCoordinates.angles[MyCoordinates.current_rotation] = MyCoordinates.angles[MyCoordinates.current_rotation] + rotations
+    Menus.animation.draw_all(dx_dy=MyCoordinates.displacement, df_dj=MyCoordinates.angles)
     print("rotations:", *MyCoordinates.angles)

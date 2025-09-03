@@ -64,6 +64,7 @@ class DrawAll:
         self._z_c: int = 0
 
         self.init_points()      # set new center
+        self.draw_all()
 
 
     def _make_lines_for_axes(self) -> list[Line]:
@@ -98,8 +99,8 @@ class DrawAll:
             self.first_scale()
             self.draw_all()
 
-    def draw_all(self, dx_dy: tuple[int, int] = (0, 0), 
-                 df_dj: tuple[int, int] = (0, 0)):
+    def draw_all(self, dx_dy: tuple[int, int] = (0, 0, 0, 0),
+                 df_dj: tuple[int, int] = (0, 0, 0, 0, 0, 0)):
         self._dx_dy = dx_dy
         # correct all the points
         if self._df_dj != df_dj:
