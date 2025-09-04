@@ -1,4 +1,5 @@
 import itertools
+import math
 
 import numpy as np
 
@@ -32,14 +33,14 @@ def correct_global_variables_by_change_dimensions(dimensions: int = 4,
     MyCoordinates.current_rotation = 0
 
     dn = len(MyCoordinates.list_of_rotations) - len(list(MyCoordinates.angles))
-    if MyCoordinates.dimensions > len(MyCoordinates.displacement):
-        MyCoordinates.displacement.append(0)
+    if MyCoordinates.dimensions > len(MyCoordinates.displacement):  # append new coordinates
+        np.append(MyCoordinates.displacement, 0.0)
         for i in range(dn):
-            MyCoordinates.angles.append(0)
-    else:
-        MyCoordinates.displacement.pop()
+            np.append(MyCoordinates.angles, 0.0)
+    else:           # reduce coordinates
+        np.delete(MyCoordinates.displacement, -1)
         for i in range(-dn):
-            MyCoordinates.angles.pop()
+            np.delete(MyCoordinates.angles, -1)
 
 def number_of_displacement_changed(number_of_displacement: int = 0) -> None:
     MyCoordinates.current_displacement = number_of_displacement
@@ -48,12 +49,11 @@ def number_of_rotation_changed(number_of_rotations: int = 0) -> None:
     MyCoordinates.current_rotation = number_of_rotations
 
 def current_displacement_changed(displacement: int = 0) -> None:
-    MyCoordinates.displacement[MyCoordinates.current_displacement] = MyCoordinates.displacement[MyCoordinates.current_displacement] + displacement
-    Menus.animation.draw_all(dx_dy=MyCoordinates.displacement, df_dj=MyCoordinates.angles)
-    print("displacement:", *MyCoordinates.displacement)
+    MyCoordinates.displacement[MyCoordinates.current_displacement] = displacement
+    Menus.animation.draw_all(dxi=MyCoordinates.displacement, angles=MyCoordinates.angles)
+    Menus.screen_window.draw_all()
 
 def current_rotation_changed(rotations: int = 0) -> None:
-    MyCoordinates.angles[MyCoordinates.current_rotation] = rotations
-    MyCoordinates.angles[MyCoordinates.current_rotation] = MyCoordinates.angles[MyCoordinates.current_rotation] + rotations
-    Menus.animation.draw_all(dx_dy=MyCoordinates.displacement, df_dj=MyCoordinates.angles)
-    print("rotations:", *MyCoordinates.angles)
+    MyCoordinates.angles[MyCoordinates.current_rotation] = rotations*math.pi/180
+    Menus.animation.draw_all(dxi=MyCoordinates.displacement, angles=MyCoordinates.angles)
+    Menus.screen_window.draw_all()

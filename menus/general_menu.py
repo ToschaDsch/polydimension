@@ -1,4 +1,5 @@
 from functools import partial
+from token import MINUS
 
 from PySide6 import QtGui
 from PySide6.QtCore import QSize
@@ -9,10 +10,10 @@ from PySide6.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QHBoxLayout, QL
 from frontend_classes.class_ToggleButton import ToggleButton
 from graphic.class_draw import DrawAll
 from graphic.class_screen_window import ScreenWindow
-from menu_lines import MenusLines
+from menus.menu_lines import MenusLines
 from frontend_classes.class_ClickableWidget import ClickableWidget
 from objects.cube_3d import Cube3d
-from single_functions import get_list_of_all_dimensions, correct_global_variables_by_change_dimensions, \
+from menus.single_functions import get_list_of_all_dimensions, correct_global_variables_by_change_dimensions, \
     number_of_displacement_changed, current_displacement_changed, current_rotation_changed, number_of_rotation_changed
 from variables.graphics import GraphicRegimes, Transparency
 from variables.menus import Menus
@@ -23,8 +24,8 @@ class GeneralWindow(QMainWindow):
     def __init__(self, *args):
         super(GeneralWindow, self).__init__()
         self.setWindowTitle(Menus.name_of_the_program)
-        b = int(0.5 * Menus.screen_width)
-        h = int(0.7 * Menus.screen_height)
+        b = int(0.5 * Menus.window_width)
+        h = int(0.7 * Menus.window_height)
         self.setFixedWidth(b)
         self.setFixedHeight(h)
         self._general_layout = QHBoxLayout()
@@ -37,6 +38,8 @@ class GeneralWindow(QMainWindow):
         # display
         b_display = b - Menus.b_menu - 2*Menus.frame
         h_display = h - 2*Menus.frame
+        Menus.display_width = b_display
+        Menus.display_height = h_display
         self.canvas_section = QtGui.QPixmap(b_display, h_display)
 
         self.painter_section = QtGui.QPainter(self.canvas_section)
@@ -45,7 +48,7 @@ class GeneralWindow(QMainWindow):
         Menus.screen_window = ScreenWindow(canvas=self.canvas_section)
         self.label_canvas = Menus.screen_window
         self.load_display(general_layout=self._general_layout)
-        Menus.animation = DrawAll(list_of_draw_objects=[], initial_dimensions=4)
+
 
         # menu right
         self._layout_menu = QStackedLayout()
@@ -80,8 +83,9 @@ class GeneralWindow(QMainWindow):
         # draw the object
         self.my_object = Cube3d()
         print(self.my_object)
-        #Menus.animation.draw_all()
+        Menus.animation = DrawAll(list_of_draw_objects=[self.my_object], initial_dimensions=4)
         self.setCentralWidget(widget)
+        Menus.screen_window.draw_all()
 
 
     def load_menu_3(self) -> QWidget:

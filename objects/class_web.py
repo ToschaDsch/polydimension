@@ -12,10 +12,15 @@ class Line2dWeb(NDimensionalObject):
         pass
 
     def __init__(self, a: int, n: int):
-        self.a = a  # size of a cell
+        self.a = a/n  # size of a cell
         self.n = n  # numbers of the cells
-        self._list_of_points: list[list[Point]] = []
+        self._list_of_points: list[list[Point]] = []    # 2d array to make lines
         super().__init__()
+        print(self)
+
+    def __str__(self):
+        return (f"I am Line2dWeb \n"
+                f"{self._list_of_points}")
 
 
     def make_points(self):
@@ -23,10 +28,10 @@ class Line2dWeb(NDimensionalObject):
         for x in range(self.n):
             line_of_points: list[Point] = []
             for y in range(self.n):
-                x = x0 + x*self.n/2
-                y = x0 + y*self.n/2
-                coordinate = [x, y]
-                coordinate.extend([t for t in range(self.dimensions-2)])
+                x_i = x0 + x*self.a
+                y_i = x0 + y*self.a
+                coordinate = [x_i, y_i]
+                coordinate.extend([0 for _ in range(self.dimensions-2)])
                 coordinate = np.array(coordinate)
                 point_i = Point(coordinates=coordinate)
                 line_of_points.append(point_i)

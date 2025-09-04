@@ -8,8 +8,10 @@ class Menus:
     screen_window = None
     animation = None
     name_of_the_program = 'polydimension'
-    screen_width: int = 100
-    screen_height: int = 100
+    window_width: int = 100
+    window_height: int = 100
+    display_width: int = 100
+    display_height: int = 100
     frame: int = 10
     font_height: int = 15
 

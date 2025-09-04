@@ -12,14 +12,14 @@ def get_scale(list_of_point: list[Point],
     for point in list_of_point:
         if point.coord_n[0] > x_max:
             x_max = point.coord_n[0]
-        elif point.coord_n[0] < x_min:
+        elif point.coord_n[0]< x_min:
             x_min = point.coord_n[0]
         if point.coord_n[1] > y_max:
             y_max = point.coord_n[1]
         elif point.coord_n[1] < y_min:
             y_min = point.coord_n[1]
-    max_value_x = max(abs(x_max), abs(x_min))
-    max_value_y = max(abs(y_max), abs(y_min))
+    max_value_x = x_max - x_min
+    max_value_y = y_max - y_min
     if max_value_x == 0:
         scale_x = 1
     else:

@@ -24,3 +24,4 @@ class Volume(GeometricObject):
         self.list_of_surfaces: list[Surface] = []
         self.color = QColor(*MyColors.default_volume_color)
         self.center: Point = get_center_from_list_of_points(list_of_points=self.list_of_points)
+        print("center volume", self.center)

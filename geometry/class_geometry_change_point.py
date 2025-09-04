@@ -6,35 +6,41 @@ from sortedcontainers import SortedDict
 from geometry.class_geometric_object import GeometricObject
 from geometry.class_point import Point
 from geometry.geometry_functions import get_rotate_matrix
+from variables.geometry_var import MyCoordinates, CoordinatesScreen
+from variables.menus import Menus
 
 
-class GeometryChangePoint:
+class  GeometryChangePoint:
     """the class is a singleton
     it calculates new coordinate for the object and send it to a dict
     """
-    corner_init: float = math.pi * 0.25
+    corner_init: float = math.pi * 0.0
 
     def __init__(self):
         self.dimensional: int = 4
-        self.angles: list[float] = [GeometryChangePoint.corner_init,
+        self.angles: np.ndarray = np.array([GeometryChangePoint.corner_init,
                                     GeometryChangePoint.corner_init,
                                     GeometryChangePoint.corner_init,
-                                    0.0, 0.0, 0.0] # xy, xz, xd1, yz, yd1, zd1
+                                    0.0, 0.0, 0.0]) # xy, xz, xd1, yz, yd1, zd1
         self.sin: list[float] = [math.sin(x) for x in self.angles]
         self.cos: list[float] = [math.cos(x) for x in self.angles]
-        self.dxi: list[float] = [0,0,0,0]
+        self.dxi: np.ndarray = np.array([0,0,0,0])
         self.rotation_matrix: np.ndarray = get_rotate_matrix(sin=self.sin,
                                                              cos=self.cos,
+
                                                              dimensional=self.dimensional)
-        self.scale: float = 1.0
-        self.x0y0: list[int] = [0,0]
+        self.scale: float = CoordinatesScreen.scale
+        self.x0y0: tuple[int, int] = int(Menus.display_width / 2), int(Menus.display_height / 2)
         self.dict_of_objects_to_draw: SortedDict = SortedDict()
 
-    def change_corners(self, angles: list[float], dx: list[float]):
-        self.angles = angles
+    def change_corners(self, angles: np.ndarray=None, dx: np.ndarray=None):
+
+        if angles is not None and dx is not None:
+            self.angles = angles
+            self.dxi = dx
         self.sin: list[float] = [math.sin(x) for x in self.angles]
         self.cos: list[float] = [math.cos(x) for x in self.angles]
-        self.dxi: np.ndarray = np.array(dx)
+
         self.rotation_matrix: np.ndarray = get_rotate_matrix(sin=self.sin,
                                                              cos=self.cos,
                                                              dimensional=self.dimensional)

@@ -3,7 +3,7 @@ import sys
 
 from PySide6 import QtWidgets, QtGui
 
-from general_menu import GeneralWindow
+from menus.general_menu import GeneralWindow
 from variables.menus import Menus
 
 
@@ -15,8 +15,8 @@ def load_general_menu():
     app.setWindowIcon(QtGui.QIcon(basedir))
     screen = app.primaryScreen()
     size = screen.size()
-    Menus.screen_width = size.width()
-    Menus.screen_height = size.height()
+    Menus.window_width = size.width()
+    Menus.window_height = size.height()
     Menus.general_window = GeneralWindow()
     Menus.general_window.show()
     sys.exit(app.exec())

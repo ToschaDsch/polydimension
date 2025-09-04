@@ -31,7 +31,7 @@ class ScreenWindow(QLabel):
 
     def resizeEvent(self, event):
         #Menus.screen_width, Menus.screen_height = self.geometry()
-        canvas = self.canvas.scaled(Menus.screen_width, Menus.screen_height)
+        canvas = self.canvas.scaled(Menus.window_width, Menus.window_height)
         self.setPixmap(canvas)
 
     def draw_a_point(self, x: int = 0, y: int = 0, radius: int=2):
@@ -55,6 +55,7 @@ class ScreenWindow(QLabel):
         self.painter.drawPolygon(polygon)
 
     def mouseMoveEvent(self, event):
+        print("mouseMoveEvent")
         match event.buttons():
             case QtCore.Qt.MouseButton.NoButton:
                 #  the function checks collapse by mouse motion
@@ -125,6 +126,7 @@ class ScreenWindow(QLabel):
         Menus.animation.draw_all()
         self.painter.end()
         self.setPixmap(canvas)
+        print("i draw it**************************************************************")
 
 
 

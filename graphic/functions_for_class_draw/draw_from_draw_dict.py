@@ -34,6 +34,7 @@ def draw_from_dict(dick_of_draw_objects: SortedDict):
             case _:
                 print('object is not found')
 
+
 def draw_a_volume(volume: Volume):
     pass
 
