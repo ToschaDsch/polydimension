@@ -34,7 +34,6 @@ class  GeometryChangePoint:
         self.dict_of_objects_to_draw: SortedDict = SortedDict()
 
     def change_corners(self, angles: np.ndarray=None, dx: np.ndarray=None):
-
         if angles is not None and dx is not None:
             self.angles = angles
             self.dxi = dx
@@ -65,7 +64,7 @@ class  GeometryChangePoint:
 
     def _add_an_object_to_the_dict(self, z: float, draw_object: GeometricObject|Point):
         if z in self.dict_of_objects_to_draw:
-            z += 0.01
+            z += 0.0000001
             self._add_an_object_to_the_dict(z=z, draw_object=draw_object)
         else:
             self.dict_of_objects_to_draw[z] = draw_object

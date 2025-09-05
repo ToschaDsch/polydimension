@@ -10,7 +10,7 @@ from variables.geometry_var import CoordinatesScreen
 
 
 class NDimensionalObject(ABC):
-    def __init__(self, size: int = CoordinatesScreen.init_size_of_the_object):
+    def __init__(self, size: int = CoordinatesScreen.init_size_of_the_object, color: QColor=None):
         self.dimensions = 4
         self.my_points: list[Point] = []
         self.my_lines: list[Line] = []
@@ -18,7 +18,7 @@ class NDimensionalObject(ABC):
         self.my_volumes: list[Volume] = []
         self._solid: bool = True
         self.transparent: bool = True
-        self.color_of_lines: QColor = QColor(0,0,0)
+        self.color_of_lines: QColor = color if color else QColor(*[255,0,0])
         self.size: int = size
         self.name_of_the_object: str = "Noname"
         self.make_geometry()

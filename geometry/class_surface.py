@@ -27,7 +27,6 @@ class Surface(GeometricObject):
         self.dimension: int = list_of_points[0].dimension
         self.normal: np.ndarray[tuple[Any]] = self.get_normal()
         self.center = get_center_from_list_of_points(list_of_points=self._list_of_points)
-        print("center surface", self.center)
         self.color = QColor(*MyColors.default_surface_color)
 
     def make_lines(self):
@@ -54,8 +53,6 @@ class Surface(GeometricObject):
         b = self.list_of_lines[1].point_0.coord_0 - self.list_of_lines[1].point_1.coord_0
         a = np.resize(a, (3,))
         b = np.resize(b, (3,))
-        print("a = ", a)
-        print("b = ", b)
         normal = np.cross(a, b)
         return normal/np.linalg.norm(normal)
 

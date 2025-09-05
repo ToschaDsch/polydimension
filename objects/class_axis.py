@@ -16,7 +16,7 @@ class Axis(NDimensionalObject):
                             point_1=self.my_points[i+1])
             axes_i.color = QColor(*default_palette[int(i/2)])
             self.my_lines.append(axes_i)
-            self._solid = False
+
 
     def make_surfaces(self):
         pass
@@ -26,6 +26,8 @@ class Axis(NDimensionalObject):
         self.k1: float = 1.2
         self.k2: float = 0.2
         super().__init__()
+        self._solid = False
+        self.name_of_the_object = "Axis"
 
 
     def make_points(self):
@@ -35,7 +37,7 @@ class Axis(NDimensionalObject):
             coord_i1 = init_coordinate.copy()
             coord_i1[i] = self.size*self.k1
             coord_i2 = init_coordinate.copy()
-            coord_i2[i] = self.size*self.k2
+            coord_i2[i] = -self.size*self.k2
             list_of_the_points.append(Point(coordinates=coord_i1))
             list_of_the_points.append(Point(coordinates=coord_i2))
         self.my_points = list_of_the_points

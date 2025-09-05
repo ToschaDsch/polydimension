@@ -1,5 +1,4 @@
 from functools import partial
-from token import MINUS
 
 from PySide6 import QtGui
 from PySide6.QtCore import QSize
@@ -46,7 +45,7 @@ class GeneralWindow(QMainWindow):
         font = QFont('Century Gothic', Menus.font_height)
         self.painter_section.setFont(font)
         Menus.screen_window = ScreenWindow(canvas=self.canvas_section)
-        self.label_canvas = Menus.screen_window
+        self.screen_window = Menus.screen_window
         self.load_display(general_layout=self._general_layout)
 
 
@@ -82,10 +81,12 @@ class GeneralWindow(QMainWindow):
 
         # draw the object
         self.my_object = Cube3d()
-        print(self.my_object)
         Menus.animation = DrawAll(list_of_draw_objects=[self.my_object], initial_dimensions=4)
+        self.animation = Menus.animation
         self.setCentralWidget(widget)
-        Menus.screen_window.draw_all()
+
+        self.animation.draw_all(dxi=MyCoordinates.displacement, angles=MyCoordinates.angles)
+        self.screen_window.draw_all()
 
 
     def load_menu_3(self) -> QWidget:
@@ -232,7 +233,7 @@ class GeneralWindow(QMainWindow):
 
     def load_display(self, general_layout: QHBoxLayout):
         display_layout = QVBoxLayout()
-        display_layout.addWidget(self.label_canvas)
+        display_layout.addWidget(self.screen_window)
 
         general_layout.addLayout(display_layout)
 

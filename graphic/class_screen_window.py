@@ -1,5 +1,5 @@
 from PySide6 import QtGui, QtCore
-from PySide6.QtGui import QColor, QFont, QPolygonF, QPixmap, QPen
+from PySide6.QtGui import QColor, QFont, QPolygonF, QPixmap, QPen, QBrush
 from PySide6.QtWidgets import QLabel
 
 from variables.geometry_var import CoordinatesScreen
@@ -16,23 +16,26 @@ class ScreenWindow(QLabel):
         self._middle_button = False
         self._ctrl: bool = False  # is ctrl pressed
         # make parent a label + self
-        self.canvas = canvas
-        self.label = QLabel(self)
+        self.canvas = QtGui.QPixmap(Menus.display_width, Menus.display_height)
         self.setPixmap(self.canvas)
+        self.my_size = self.canvas.size()
         self.painter = QtGui.QPainter(self.canvas)
         font = QFont('Century Gothic', 10)
         self.painter.setFont(font)
 
-        pen = QPen()
-        self.painter.setPen(pen)
+        self.pen = QPen()
+        self.brush = QBrush()
+        self.painter.setPen(self.pen)
+        self.painter.setBrush(self.brush)
         self.canvas.fill(QColor(*MyColors.general_screen))
-        self.setPixmap(self.canvas)
         self.setMouseTracking(True)
 
     def resizeEvent(self, event):
         #Menus.screen_width, Menus.screen_height = self.geometry()
+        print("resize event")
         canvas = self.canvas.scaled(Menus.window_width, Menus.window_height)
         self.setPixmap(canvas)
+        self.draw_all()
 
     def draw_a_point(self, x: int = 0, y: int = 0, radius: int=2):
         if radius == 0:
@@ -45,13 +48,20 @@ class ScreenWindow(QLabel):
         self.painter.drawText(x0_y0[0] + 8, x0_y0[1] + 8, text)
 
 
-    def draw_a_line(self, x1: int, y1: int, x2: int, y2: int):
+    def draw_a_line(self, x1: int, y1: int, x2: int, y2: int, color=None):
+        """if color:
+            self.brush.setColor(color)
+            self.pen.setColor(color)
+            self.pen.setWidth(3)
+            self.pen.setBrush(self.brush)
+            self.painter.setPen(self.pen)
+            self.painter.setBrush(self.brush)"""
         self.painter.drawLine(x1, y1, x2, y2)
 
     def draw_a_circle(self, x: int, y: int, r: int, type_of_line: str = None):
         self.painter.drawEllipse(int(x - r), int(y - r), 2 * r, 2 * r)
 
-    def draw_a_polygon(self, polygon: QPolygonF, type_of_line: str, color=QColor(50, 50, 50)):
+    def draw_a_polygon(self, polygon: QPolygonF):
         self.painter.drawPolygon(polygon)
 
     def mouseMoveEvent(self, event):
@@ -120,13 +130,18 @@ class ScreenWindow(QLabel):
         self.draw_all()
 
     def draw_all(self):
-        canvas = self.pixmap()
+        canvas = QtGui.QPixmap(self.my_size)
         canvas.fill(QColor(*MyColors.general_screen))
         self.painter = QtGui.QPainter(canvas)
+        print(self.painter)
+        print(canvas)
+
         Menus.animation.draw_all()
         self.painter.end()
         self.setPixmap(canvas)
-        print("i draw it**************************************************************")
+
+
+        print("i have drown it**************************************************************")
 
 
 

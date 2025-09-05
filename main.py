@@ -3,6 +3,7 @@ import sys
 
 from PySide6 import QtWidgets, QtGui
 
+from graphic.class_draw import DrawAll
 from menus.general_menu import GeneralWindow
 from variables.menus import Menus
 

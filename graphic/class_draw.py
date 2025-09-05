@@ -43,7 +43,6 @@ class DrawAll:
         self._z_c: int = 0
 
         self.init_points()      # set new center
-        self.draw_all()
 
     def _take_all_the_points(self, list_of_draw_objects: list[NDimensionalObject]) -> list[Point]:
         list_of_points: list[Point] = []
@@ -76,17 +75,18 @@ class DrawAll:
                           screen_height=Menus.window_height,
                           screen_width=Menus.window_width)
         MyCoordinates.scale = scale
+        print("scale", scale)
         return scale
 
 
     def change_isometry(self, angles:np.ndarray=None, dxi:np.ndarray=None):
+        if angles is None and dxi is None:
+            return None
         self._geometry.change_corners(angles=angles, dx=dxi)
-
         # upgrade all points
         for point_i in self._list_of_all_points:
             self._geometry.rotate_and_shift_a_point(point=point_i)
         return None
-
 
     def make_center(self):
         #TODO correct it to make universal
@@ -101,6 +101,7 @@ class DrawAll:
         # draw the model
         add_all_draw_objects_to_the_dict(list_of_all_objects=self._list_of_draw_objects,
                                          geometry=self._geometry)
+        print("dict length", len(self._list_of_draw_objects))
         draw_from_dict(dick_of_draw_objects=self._geometry.dict_of_objects_to_draw)
 
 

@@ -54,7 +54,7 @@ class ObjectToDraw:
 @dataclass
 class MyColors:
     color: tuple = (50, 50, 50)
-    web: tuple = (0, 0, 0)
+    web: tuple = (0, 255, 255)
     general_screen: tuple[int] = (100, 100, 255)
     default_point_color: tuple = (0, 130, 130)
     default_line_color: tuple = (100, 100, 100)

@@ -1,3 +1,5 @@
+import math
+
 import numpy as np
 
 from geometry.class_point import Point
@@ -5,8 +7,11 @@ from geometry.class_point import Point
 
 class MyCoordinates:
     dimensions: int = 4
-    angles: np.ndarray = np.array([0.0,0.0,0.0,0.0,0.0,0.0])
-    displacement: np.ndarray = np.array([0.0,0.0,0.0,0.0])
+    init_angle: float = math.pi / 4
+    init_x: float = 0.0
+    init_y: float = 0.0
+    angles: np.ndarray = np.array([init_angle,init_angle,init_angle,0.0,0.0,0.0])
+    displacement: np.ndarray = np.array([init_x,init_y,0.0,0.0])
     list_of_displacements: list[str] = ["x", "y", "z", "x1"]
     list_of_rotations: list[str] = ["x_y", "x_z", "x_x1", "y_z", "y_x1", "z_x1"]
     current_displacement: int = 0 # x

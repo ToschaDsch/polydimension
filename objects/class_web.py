@@ -1,7 +1,11 @@
+from PySide6.QtGui import QColor
+
 from geometry.class_line import Line
 from geometry.class_point import Point
 from objects.class_draw_interface import NDimensionalObject
 import numpy as np
+
+from variables.graphics import MyColors
 
 
 class Line2dWeb(NDimensionalObject):
@@ -15,7 +19,8 @@ class Line2dWeb(NDimensionalObject):
         self.a = a/n  # size of a cell
         self.n = n  # numbers of the cells
         self._list_of_points: list[list[Point]] = []    # 2d array to make lines
-        super().__init__()
+        default_color = QColor(*MyColors.web)
+        super().__init__(color=default_color)
         print(self)
 
     def __str__(self):
@@ -41,16 +46,17 @@ class Line2dWeb(NDimensionalObject):
     def make_lines(self):
         for i in range(self.n-1):
             for j in range(self.n-1):
-                self.my_lines.append(Line(
+                line_i = Line(
                     point_0 = self._list_of_points[i][j],
-                    point_1 = self._list_of_points[i+1][j]
+                    point_1 = self._list_of_points[i+1][j],
+                    color=self.color_of_lines
                 )
-                )
-                self.my_lines.append(Line(
+                self.my_lines.append(line_i)
+                line_j = Line(
                     point_0=self._list_of_points[j][i],
-                    point_1=self._list_of_points[j+1][i]
-                )
-                )
+                    point_1=self._list_of_points[j+1][i],
+                    color=self.color_of_lines)
+                self.my_lines.append(line_j)
 
     def get_geometric_objects(self) -> list[Line]:
         return self.my_lines

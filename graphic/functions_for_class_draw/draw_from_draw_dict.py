@@ -43,7 +43,7 @@ def draw_a_surface(surface: Surface):
     polygon = QPolygon()
     for point_i in surface.list_of_points:
         coord = point_i.coord_n
-        polygon.append(QPoint(coord[0], coord[1]))
+        polygon.append(QPoint(int(coord[0]), int(coord[1])))
     Menus.screen_window.draw_a_polygon(polygon=polygon)
 
 
@@ -57,7 +57,8 @@ def draw_a_line(line: Line):
     y1 = line.point_0.coord_n[1]
     x2 = line.point_1.coord_n[0]
     y2 = line.point_1.coord_n[1]
-    Menus.screen_window.draw_a_line(x1=x1, y1=y1, x2=x2, y2=y2)
+    color=line.color
+    Menus.screen_window.draw_a_line(x1=x1, y1=y1, x2=x2, y2=y2, color=color)
 
 
 def draw_a_point(point: Point, radius: int=2):
