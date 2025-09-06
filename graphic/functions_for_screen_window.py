@@ -1,4 +1,8 @@
+import math
+
 from geometry.class_point import Point
+from menus.single_functions import current_displacement_changed, current_rotation_changed
+from variables.geometry_var import MyCoordinates
 
 
 def get_scale(list_of_point: list[Point],
@@ -29,3 +33,41 @@ def get_scale(list_of_point: list[Point],
     else:
         scale_y = (screen_height - 10) / max_value_y * 0.3
     return min(scale_x, scale_y)
+
+def shift(x: int, y: int):
+    MyCoordinates.displacement[0] = MyCoordinates.displacement[0] + x
+    MyCoordinates.displacement[1] = MyCoordinates.displacement[1] + y
+
+
+
+def rotate_the_object(x: int, y: int):
+    for ni, di in enumerate([x, y]):  # xy, xz angles
+        MyCoordinates.current_rotation = ni
+        rotation = di + MyCoordinates.angles[ni] - MyCoordinates.x0_y0[ni]*math.pi/180
+        current_rotation_changed(rotations=rotation)
+
+    MyCoordinates.x0_y0 = x, y
+
+
+def shift_the_object(x: int, y: int):
+    for ni, di in enumerate([x, y]):    # x, y coordinates
+        MyCoordinates.current_displacement = ni
+        displacement = di + MyCoordinates.displacement[ni] - MyCoordinates.x0_y0[ni]
+        current_displacement_changed(displacement=displacement)
+
+    MyCoordinates.x0_y0 = x, y
+
+
+def left_release(x: int, y: int):
+    pass
+
+def right_release(x: int, y: int):
+    pass
+
+def start_shift(x: int, y: int):
+    """first click of the left button"""
+    MyCoordinates.x0_y0 = (x, y)
+
+def start_to_rotate(x: int, y: int):
+    """first click of the right button"""
+    MyCoordinates.x0_y0 = (x, y)

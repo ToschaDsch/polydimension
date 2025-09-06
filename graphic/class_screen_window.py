@@ -2,6 +2,8 @@ from PySide6 import QtGui, QtCore
 from PySide6.QtGui import QColor, QFont, QPolygonF, QPixmap, QPen, QBrush
 from PySide6.QtWidgets import QLabel
 
+from graphic.functions_for_screen_window import rotate_the_object, shift_the_object, left_release, right_release, \
+    start_shift, start_to_rotate
 from variables.geometry_var import CoordinatesScreen
 from variables.graphics import MyColors
 from variables.menus import Menus
@@ -65,30 +67,25 @@ class ScreenWindow(QLabel):
         self.painter.drawPolygon(polygon)
 
     def mouseMoveEvent(self, event):
-        print("mouseMoveEvent")
         match event.buttons():
             case QtCore.Qt.MouseButton.NoButton:
                 #  the function checks collapse by mouse motion
 
                 pass
             case QtCore.Qt.MouseButton.RightButton|QtCore.Qt.MouseButton.MiddleButton:
-                #rotate(x=event.x(), y=event.y())
-                pass
+                rotate_the_object(x=event.x(), y=event.y())
+                self.draw_all()
             case QtCore.Qt.MouseButton.LeftButton:
-                self.move_left_button(event)
+                shift_the_object(x=event.x(), y=event.y())
+                self.draw_all()
             case QtCore.Qt.MouseButton.RightButton:
                 pass
             case QtCore.Qt.MouseButton.MiddleButton:
                 pass
                 #shift(x=event.x(), y=event.y())
 
-        self.draw_all()
 
-    def move_left_button(self, event):
-        self.draw_all()
 
-    def mousePressEvent(self, event):
-        self.draw_all()
 
     def mouseDoubleClickEvent(self, event):
         print("mause_double_click")
@@ -97,17 +94,22 @@ class ScreenWindow(QLabel):
     def mouseReleaseEvent(self, event):
         match event.button():
             case QtCore.Qt.MouseButton.LeftButton:
-                pass
-                #left_release(event=event, ctrl=self._ctrl)
+                left_release(x=event.x(), y=event.y())
             case QtCore.Qt.MouseButton.MiddleButton:
                 pass
                 #middle_release(event, right_button=self._right_button)
                 self._middle_button = False
             case QtCore.Qt.MouseButton.RightButton:
-                self._right_button = False
-        self.draw_all()
+                right_release(x=event.x(), y=event.y())
 
-
+    def mousePressEvent(self, event):
+        match event.buttons():
+            case QtCore.Qt.MouseButton.LeftButton:
+                start_shift(x=event.x(), y=event.y())
+            case QtCore.Qt.MouseButton.MiddleButton:
+                pass
+            case QtCore.Qt.MouseButton.RightButton:
+                start_to_rotate(x=event.x(), y=event.y())
 
     def keyPressEvent(self, event):
         match event.key():
@@ -133,13 +135,9 @@ class ScreenWindow(QLabel):
         canvas = QtGui.QPixmap(self.my_size)
         canvas.fill(QColor(*MyColors.general_screen))
         self.painter = QtGui.QPainter(canvas)
-        print(self.painter)
-        print(canvas)
-
         Menus.animation.draw_all()
         self.painter.end()
         self.setPixmap(canvas)
-
 
         print("i have drown it**************************************************************")
 

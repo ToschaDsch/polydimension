@@ -44,7 +44,8 @@ class DrawAll:
 
         self.init_points()      # set new center
 
-    def _take_all_the_points(self, list_of_draw_objects: list[NDimensionalObject]) -> list[Point]:
+    @staticmethod
+    def _take_all_the_points(list_of_draw_objects: list[NDimensionalObject]) -> list[Point]:
         list_of_points: list[Point] = []
         # add points of all objects
         for draw_object in list_of_draw_objects:
@@ -82,10 +83,7 @@ class DrawAll:
     def change_isometry(self, angles:np.ndarray=None, dxi:np.ndarray=None):
         if angles is None and dxi is None:
             return None
-        self._geometry.change_corners(angles=angles, dx=dxi)
-        # upgrade all points
-        for point_i in self._list_of_all_points:
-            self._geometry.rotate_and_shift_a_point(point=point_i)
+        self._geometry.calculate_new_coordinates_for_the_list_of_points(angles=angles,dx=dxi,points=self._list_of_all_points)
         return None
 
     def make_center(self):
