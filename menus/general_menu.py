@@ -1,3 +1,4 @@
+import math
 from functools import partial
 
 from PySide6 import QtGui
@@ -13,7 +14,7 @@ from menus.menu_lines import MenusLines
 from frontend_classes.class_ClickableWidget import ClickableWidget
 from objects.cube_3d import Cube3d
 from menus.single_functions import get_list_of_all_dimensions, correct_global_variables_by_change_dimensions, \
-    number_of_displacement_changed, current_displacement_changed, current_rotation_changed, number_of_rotation_changed
+    current_displacement_changed, current_rotation_changed
 from variables.graphics import GraphicRegimes, Transparency
 from variables.menus import Menus
 from variables.geometry_var import MyCoordinates
@@ -108,14 +109,14 @@ class GeneralWindow(QMainWindow):
             list_of_dimensions=list_of_displacements,
             combobox=self.combobox_displacement,
             slider=self.slider_displacement,
-            function_to_the_combobox=number_of_displacement_changed,
+            function_to_the_combobox=self.number_of_displacement_changed,
             function_to_the_slider=current_displacement_changed)
         layout_rotation = self.get_sub_layout_to_change_coordinate(
             name_of_the_layout=Menus.name_of_the_layout_rotation,
             list_of_dimensions=list_of_rotations,
             combobox=self.combobox_rotation,
             slider=self.slider_rotation,
-            function_to_the_combobox=number_of_rotation_changed,
+            function_to_the_combobox=self.number_of_rotation_changed,
             function_to_the_slider=current_rotation_changed)
         layout_menu_2.addLayout(layout_displacement)
         layout_menu_2.addLayout(layout_rotation)
@@ -132,6 +133,18 @@ class GeneralWindow(QMainWindow):
         widget_layout_2.setLayout(layout_menu_2)
 
         return widget_layout_2
+
+    def number_of_displacement_changed(self, number_of_displacement: int = 0) -> None:
+        MyCoordinates.current_displacement = number_of_displacement
+        current_displacement = MyCoordinates.displacement[number_of_displacement]
+        self.slider_displacement.setSliderPosition(int(current_displacement))
+
+
+    def number_of_rotation_changed(self, number_of_rotations: int = 0) -> None:
+        MyCoordinates.current_rotation = number_of_rotations
+        current_rotation = MyCoordinates.displacement[number_of_rotations]
+        self.slider_rotation.setSliderPosition(int(current_rotation*180/math.pi))
+
 
     def load_buttons_with_dimensions(self) -> QHBoxLayout:
         layout_dimensions = QHBoxLayout()
@@ -179,7 +192,11 @@ class GeneralWindow(QMainWindow):
                                                       list_of_displacements=list_of_displacements,
                                                       list_of_rotations=list_of_rotations)
 
+    def shift_the_slider_displacement(self, shift: int):
+        self.slider_displacement.setSliderPosition(shift)
 
+    def shift_the_slider_rotation(self, shift: int):
+        self.slider_rotation.setSliderPosition(shift)
 
     def load_menu_with_icons(self) -> QHBoxLayout:
         menu_with_icons = QHBoxLayout()
@@ -337,7 +354,6 @@ class GeneralWindow(QMainWindow):
         slider.setMinimum(-180)
         slider.setMaximum(180)
         slider.setSingleStep(1)
-        slider.setValue(0)
         slider.setSliderPosition(0)
         slider.valueChanged.connect(function_to_the_slider)
 

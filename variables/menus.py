@@ -7,11 +7,17 @@ class Menus:
     general_window = None
     screen_window = None
     animation = None
+    list_of_sliders_displacement = []
+    list_of_sliders_rotate = []
     name_of_the_program = 'polydimension'
+
+    #   sizes
     window_width: int = 100
     window_height: int = 100
+
     display_width: int = 100
     display_height: int = 100
+
     frame: int = 10
     font_height: int = 15
 

@@ -3,6 +3,7 @@ import math
 from geometry.class_point import Point
 from menus.single_functions import current_displacement_changed, current_rotation_changed
 from variables.geometry_var import MyCoordinates
+from variables.menus import Menus
 
 
 def get_scale(list_of_point: list[Point],
@@ -41,20 +42,31 @@ def shift(x: int, y: int):
 
 
 def rotate_the_object(x: int, y: int):
+    y = -y
     for ni, di in enumerate([x, y]):  # xy, xz angles
         MyCoordinates.current_rotation = ni
         rotation = di + MyCoordinates.angles[ni] - MyCoordinates.x0_y0[ni]*math.pi/180
         current_rotation_changed(rotations=rotation)
-
+    """
+    Geometry.df_dj = (Geometry.df_dj[0] + (x - Geometry.x0y0[0]) * 0.01,
+                      Geometry.df_dj[1] - (y - Geometry.x0y0[1]) * 0.01)
+    Geometry.x0y0 = x, y
+    """
     MyCoordinates.x0_y0 = x, y
 
 
 def shift_the_object(x: int, y: int):
+    old_number_of_displacement = MyCoordinates.current_displacement
     for ni, di in enumerate([x, y]):    # x, y coordinates
+
         MyCoordinates.current_displacement = ni
         displacement = di + MyCoordinates.displacement[ni] - MyCoordinates.x0_y0[ni]
-        current_displacement_changed(displacement=displacement)
 
+        if old_number_of_displacement == ni:    # if the slider is current - move the slider
+            Menus.general_window.shift_the_slider_displacement(shift=displacement)
+            continue
+        current_displacement_changed(displacement=displacement)
+    MyCoordinates.current_displacement = old_number_of_displacement
     MyCoordinates.x0_y0 = x, y
 
 

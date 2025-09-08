@@ -99,7 +99,6 @@ class DrawAll:
         # draw the model
         add_all_draw_objects_to_the_dict(list_of_all_objects=self._list_of_draw_objects,
                                          geometry=self._geometry)
-        print("dict length", len(self._list_of_draw_objects))
         draw_from_dict(dick_of_draw_objects=self._geometry.dict_of_objects_to_draw)
 
 

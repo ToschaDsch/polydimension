@@ -42,11 +42,8 @@ def correct_global_variables_by_change_dimensions(dimensions: int = 4,
         for i in range(-dn):
             np.delete(MyCoordinates.angles, -1)
 
-def number_of_displacement_changed(number_of_displacement: int = 0) -> None:
-    MyCoordinates.current_displacement = number_of_displacement
 
-def number_of_rotation_changed(number_of_rotations: int = 0) -> None:
-    MyCoordinates.current_rotation = number_of_rotations
+
 
 def current_displacement_changed(displacement: int = 0) -> None:
     MyCoordinates.displacement[MyCoordinates.current_displacement] = displacement

@@ -89,7 +89,6 @@ class ScreenWindow(QLabel):
 
     def mouseDoubleClickEvent(self, event):
         print("mause_double_click")
-        self.draw_all()
 
     def mouseReleaseEvent(self, event):
         match event.button():
@@ -138,8 +137,6 @@ class ScreenWindow(QLabel):
         Menus.animation.draw_all()
         self.painter.end()
         self.setPixmap(canvas)
-
-        print("i have drown it**************************************************************")
 
 
 
