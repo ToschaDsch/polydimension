@@ -196,6 +196,10 @@ class GeneralWindow(QMainWindow):
         self.slider_displacement.setSliderPosition(shift)
 
     def shift_the_slider_rotation(self, shift: int):
+        """
+        :param shift: ann angle in grad
+        :return None:
+        """
         self.slider_rotation.setSliderPosition(shift)
 
     def load_menu_with_icons(self) -> QHBoxLayout:

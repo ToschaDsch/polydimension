@@ -34,7 +34,6 @@ class ScreenWindow(QLabel):
 
     def resizeEvent(self, event):
         #Menus.screen_width, Menus.screen_height = self.geometry()
-        print("resize event")
         canvas = self.canvas.scaled(Menus.window_width, Menus.window_height)
         self.setPixmap(canvas)
         self.draw_all()
@@ -70,7 +69,6 @@ class ScreenWindow(QLabel):
         match event.buttons():
             case QtCore.Qt.MouseButton.NoButton:
                 #  the function checks collapse by mouse motion
-
                 pass
             case QtCore.Qt.MouseButton.RightButton|QtCore.Qt.MouseButton.MiddleButton:
                 rotate_the_object(x=event.x(), y=event.y())
@@ -82,10 +80,6 @@ class ScreenWindow(QLabel):
                 pass
             case QtCore.Qt.MouseButton.MiddleButton:
                 pass
-                #shift(x=event.x(), y=event.y())
-
-
-
 
     def mouseDoubleClickEvent(self, event):
         print("mause_double_click")

@@ -76,7 +76,6 @@ class DrawAll:
                           screen_height=Menus.window_height,
                           screen_width=Menus.window_width)
         MyCoordinates.scale = scale
-        print("scale", scale)
         return scale
 
 

@@ -51,6 +51,10 @@ def current_displacement_changed(displacement: int = 0) -> None:
     Menus.screen_window.draw_all()
 
 def current_rotation_changed(rotations: int = 0) -> None:
+    """
+    :param rotations: angle in grad -180 +180:
+    :return None:
+    """
     MyCoordinates.angles[MyCoordinates.current_rotation] = rotations*math.pi/180
     Menus.animation.draw_all(dxi=MyCoordinates.displacement, angles=MyCoordinates.angles)
     Menus.screen_window.draw_all()

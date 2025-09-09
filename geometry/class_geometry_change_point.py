@@ -14,7 +14,7 @@ class  GeometryChangePoint:
     """the class is a singleton
     it calculates new coordinate for the object and send it to a dict
     """
-    corner_init: float = math.pi * 0.0
+    corner_init: float = math.pi * 0.25
 
     def __init__(self):
         self.dimensional: int = 4
