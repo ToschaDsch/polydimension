@@ -18,7 +18,7 @@ class MyCoordinates:
     current_rotation: int = 0 # xy
     angles_0: np.ndarray = np.array([init_angle, init_angle, init_angle, 0.0, 0.0, 0.0])
     displacement_0 = np.array([init_x,init_y,0.0,0.0])
-    x0_y0: tuple = (0,0) # init position of the mouse
+    x0_y0: list[int] = [0,0] # init position of the mouse
 
 class CoordinatesScreen:
     dx_dy: tuple[int, int] = 0, 0

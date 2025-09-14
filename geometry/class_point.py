@@ -1,18 +1,40 @@
 import numpy as np
-from PySide6.QtGui import QColor
+from PySide6.QtGui import QColor, QPen, QBrush
 
 from variables.graphics import MyColors
 
 
 class Point:
-    def __init__(self, coordinates: np.ndarray = None):
+    def __init__(self, coordinates: np.ndarray = None, color:QColor=None, width: int=2):
         self._coordinates: np.ndarray = coordinates if coordinates is not None else np.array([0.0, 0.0, 0.0, 0.0])
         self.coord_n: np.ndarray = self._coordinates
         self._dimension: int = len(self._coordinates)
-        self.color = QColor(*MyColors.default_point_color)
+        self._color = color if color else QColor(*MyColors.default_point_color)
+        self._width = width
+        self.brush: QBrush = QBrush(self._color)
+        self.pen: QPen = QPen(self.brush, self._width)
 
     def get_center(self):
         return self
+
+    @property
+    def color(self):
+        return self._color
+
+    @color.setter
+    def color(self, value):
+        self._color = value
+        self.brush: QBrush = QBrush(self._color)
+        self.pen: QPen = QPen(self.brush, self.width)
+
+    @property
+    def width(self):
+        return self._width
+
+    @width.setter
+    def width(self, value):
+        self._width = value
+        self.pen: QPen = QPen(self.brush, self.width)
 
     @property
     def coord_0(self) -> np.ndarray:

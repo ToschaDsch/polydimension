@@ -43,18 +43,16 @@ def shift(x: int, y: int):
 
 def rotate_the_object(x: int, y: int):
     old_number_of_rotation = MyCoordinates.current_rotation
-    for ni, di in enumerate([-y, x]):  # xy, xz angles
+    dxy = [-y + MyCoordinates.x0_y0[1], x - MyCoordinates.x0_y0[0]]
+    for ni, di in enumerate(dxy):  # xy, xz angles
         MyCoordinates.current_rotation = ni
-        rotation = (di - - MyCoordinates.x0_y0[ni])*math.pi/180 + MyCoordinates.angles[ni]  #   in Rad
-
+        rotation = di + MyCoordinates.angles[ni]/math.pi*180  #   in grad
         if old_number_of_rotation == ni:    # if the slider is current - move the slider
-            Menus.general_window.shift_the_slider_rotation(shift=rotation*180/math.pi)
-            print("shift =", rotation*180/math.pi)
-            print("rotation =", rotation)
+            Menus.general_window.shift_the_slider_rotation(shift=rotation)
             continue
-        current_rotation_changed(rotations=rotation)
+        current_rotation_changed(rotations=rotation)    # in Rad
     MyCoordinates.current_rotation = old_number_of_rotation
-    MyCoordinates.x0_y0 = x, y
+    MyCoordinates.x0_y0 = [x, y]
 
 
 def shift_the_object(x: int, y: int):
@@ -68,7 +66,7 @@ def shift_the_object(x: int, y: int):
             continue
         current_displacement_changed(displacement=displacement)
     MyCoordinates.current_displacement = old_number_of_displacement
-    MyCoordinates.x0_y0 = x, y
+    MyCoordinates.x0_y0 = [x, y]
 
 
 def left_release(x: int, y: int):
@@ -79,8 +77,8 @@ def right_release(x: int, y: int):
 
 def start_shift(x: int, y: int):
     """first click of the left button"""
-    MyCoordinates.x0_y0 = (x, y)
+    MyCoordinates.x0_y0 = [x, y]
 
 def start_to_rotate(x: int, y: int):
     """first click of the right button"""
-    MyCoordinates.x0_y0 = (x, y)
+    MyCoordinates.x0_y0 = [x, y]

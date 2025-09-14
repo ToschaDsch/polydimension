@@ -2,6 +2,7 @@ import itertools
 import math
 
 import numpy as np
+from PySide6.QtWidgets import QComboBox, QSlider, QVBoxLayout, QLabel
 
 from variables.geometry_var import MyCoordinates
 from variables.menus import Menus
@@ -58,3 +59,32 @@ def current_rotation_changed(rotations: int = 0) -> None:
     MyCoordinates.angles[MyCoordinates.current_rotation] = rotations*math.pi/180
     Menus.animation.draw_all(dxi=MyCoordinates.displacement, angles=MyCoordinates.angles)
     Menus.screen_window.draw_all()
+
+
+def get_sub_layout_to_change_coordinate(name_of_the_layout: str,
+                                        combobox: QComboBox,
+                                        list_of_dimensions: list[str]=None,
+                                        slider: QSlider=None,
+                                        function_to_the_combobox=None,
+                                        function_to_the_slider=None,
+                                        init_position_of_the_slider: int=0) -> QVBoxLayout:
+    layout = QVBoxLayout()
+    layout.addWidget(QLabel(name_of_the_layout))
+    # dropbox
+    if list_of_dimensions is None:
+        list_of_dimensions: list[str] = ["x", "y", "z", "x1"]
+    combobox.clear()
+    for key in list_of_dimensions:
+        combobox.addItem(key)
+    combobox.setCurrentIndex(0)
+    combobox.currentIndexChanged.connect(function_to_the_combobox)
+    layout.addWidget(combobox)
+    # slider
+    slider.setMinimum(-180)
+    slider.setMaximum(180)
+    slider.setSingleStep(1)
+    slider.setSliderPosition(init_position_of_the_slider)
+    slider.valueChanged.connect(function_to_the_slider)
+    layout.addWidget(slider)
+
+    return layout

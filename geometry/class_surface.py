@@ -20,21 +20,23 @@ class Surface(GeometricObject):
     def get_color(self) -> QColor:
         return self.color
 
-    def __init__(self, list_of_points: list[Point] = None):
+    def __init__(self, list_of_points: list[Point] = None, color: QColor = None, width: int = None):
+        color = color if color else QColor(*MyColors.default_surface_color)
+        super().__init__(color=color, width=width)
         self._list_of_points: list[Point] = list_of_points if list_of_points is not None else []
         self.list_of_lines: list[Line] = []
         self.make_lines()
         self.dimension: int = list_of_points[0].dimension
         self.normal: np.ndarray[tuple[Any]] = self.get_normal()
         self.center = get_center_from_list_of_points(list_of_points=self._list_of_points)
-        self.color = QColor(*MyColors.default_surface_color)
+        print(color)
 
     def make_lines(self):
         for i in range(len(self._list_of_points)-1):
             self.list_of_lines.append(Line(point_0=self._list_of_points[i],
-                                           point_1=self._list_of_points[i+1]))
+                                           point_1=self._list_of_points[i+1], color=self._color))
         self.list_of_lines.append(Line(point_0=self._list_of_points[0],
-                                       point_1=self.list_of_points[-1])) # closing the path
+                                       point_1=self.list_of_points[-1], color=self.color)) # closing the path
 
     @property
     def list_of_points(self) -> list[Point]:

@@ -49,20 +49,15 @@ class ScreenWindow(QLabel):
         self.painter.drawText(x0_y0[0] + 8, x0_y0[1] + 8, text)
 
 
-    def draw_a_line(self, x1: int, y1: int, x2: int, y2: int, color=None):
-        """if color:
-            self.brush.setColor(color)
-            self.pen.setColor(color)
-            self.pen.setWidth(3)
-            self.pen.setBrush(self.brush)
-            self.painter.setPen(self.pen)
-            self.painter.setBrush(self.brush)"""
+    def draw_a_line(self, x1: int, y1: int, x2: int, y2: int, brush: QBrush, pen: QPen):
+        self.change_brush_and_pen(pen=pen, brush=brush)
         self.painter.drawLine(x1, y1, x2, y2)
 
     def draw_a_circle(self, x: int, y: int, r: int, type_of_line: str = None):
         self.painter.drawEllipse(int(x - r), int(y - r), 2 * r, 2 * r)
 
-    def draw_a_polygon(self, polygon: QPolygonF):
+    def draw_a_polygon(self, polygon: QPolygonF, brush: QBrush, pen: QPen):
+        self.change_brush_and_pen(pen=pen, brush=brush)
         self.painter.drawPolygon(polygon)
 
     def mouseMoveEvent(self, event):
@@ -83,6 +78,11 @@ class ScreenWindow(QLabel):
 
     def mouseDoubleClickEvent(self, event):
         print("mause_double_click")
+
+    def change_brush_and_pen(self, brush: QtGui.QBrush=None, pen: QtGui.QPen=None):
+        if brush and pen:
+            self.painter.setBrush(brush)
+            self.painter.setPen(pen)
 
     def mouseReleaseEvent(self, event):
         match event.button():

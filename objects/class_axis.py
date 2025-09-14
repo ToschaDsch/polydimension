@@ -11,10 +11,14 @@ class Axis(NDimensionalObject):
 
 
     def make_lines(self):
-        for i in range(0, len(self.my_points), 2):
+        colors = [QColor(255, 0,0),
+                  QColor(0,255,0),
+                  QColor(0,0,255)]
+        for i in range(0, len(self.my_points)-2, 2):
+            print(i, i/2)
             axes_i = Line(point_0=self.my_points[i],
-                            point_1=self.my_points[i+1])
-            axes_i.color = QColor(*default_palette[int(i/2)])
+                            point_1=self.my_points[i+1],
+                          color=colors[int(i/2)])
             self.my_lines.append(axes_i)
 
 

@@ -42,9 +42,9 @@ def get_rotate_matrix(sin: list[float], cos: list[float], dimensional: int = 3) 
                          ]))
 
         i =+ 1
-        r.append(np.array([[cos[i], 0, -sin[i], 0],
+        r.append(np.array([[cos[i], 0, sin[i], 0],
                          [0, 1, 0, 0],
-                         [sin[i], 0, cos[i], 0],
+                         [-sin[i], 0, cos[i], 0],
                          [0, 0, 0, 1],
                          ]))
         """

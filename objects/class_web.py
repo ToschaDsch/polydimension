@@ -30,9 +30,9 @@ class Line2dWeb(NDimensionalObject):
 
     def make_points(self):
         x0 = -self.a*self.n/2
-        for x in range(self.n):
+        for x in range(self.n+1):
             line_of_points: list[Point] = []
-            for y in range(self.n):
+            for y in range(self.n+1):
                 x_i = x0 + x*self.a
                 y_i = x0 + y*self.a
                 coordinate = [x_i, y_i]
@@ -44,19 +44,23 @@ class Line2dWeb(NDimensionalObject):
             self.my_points.extend(line_of_points)
 
     def make_lines(self):
-        for i in range(self.n-1):
-            for j in range(self.n-1):
+        for i in range(self.n):
+            for j in range(self.n):
                 line_i = Line(
                     point_0 = self._list_of_points[i][j],
                     point_1 = self._list_of_points[i+1][j],
                     color=self.color_of_lines
                 )
                 self.my_lines.append(line_i)
-                line_j = Line(
+
+        for i in range(self.n):
+            for j in range(self.n):
+                line_i = Line(
                     point_0=self._list_of_points[j][i],
-                    point_1=self._list_of_points[j+1][i],
-                    color=self.color_of_lines)
-                self.my_lines.append(line_j)
+                    point_1=self._list_of_points[j][i+1],
+                    color=self.color_of_lines
+                )
+                self.my_lines.append(line_i)
 
     def get_geometric_objects(self) -> list[Line]:
         return self.my_lines

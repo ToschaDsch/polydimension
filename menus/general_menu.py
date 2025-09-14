@@ -14,7 +14,7 @@ from menus.menu_lines import MenusLines
 from frontend_classes.class_ClickableWidget import ClickableWidget
 from objects.cube_3d import Cube3d
 from menus.single_functions import get_list_of_all_dimensions, correct_global_variables_by_change_dimensions, \
-    current_displacement_changed, current_rotation_changed
+    current_displacement_changed, current_rotation_changed, get_sub_layout_to_change_coordinate
 from variables.graphics import GraphicRegimes, Transparency
 from variables.menus import Menus
 from variables.geometry_var import MyCoordinates
@@ -92,35 +92,19 @@ class GeneralWindow(QMainWindow):
 
     def load_menu_3(self) -> QWidget:
         layout_menu_2 = QVBoxLayout()
-        layout_menu_2.addWidget(QLabel(Menus.name_ot_menu_3))
+        layout_menu_2.addWidget(QLabel(Menus.name_ot_menu_3))   # name of the menu
         widget_layout_2 = QWidget()
 
+        # menu with options (perspective at cetera)
         menu_with_icons = self.load_menu_with_icons()
         layout_menu_2.addLayout(menu_with_icons)
-        button_back = get_button(function_to_the_button=self.go_back_to_menu_1,
-                                 path="back.png", width=Menus.width_of_button_back,
-                                 height=Menus.height_of_button_back)
+        # dimensions
         menu_with_dimensions = self.load_buttons_with_dimensions()
         layout_menu_2.addLayout(menu_with_dimensions)
-
-        list_of_displacements, list_of_rotations = get_list_of_all_dimensions(number_of_dimensions=MyCoordinates.dimensions)
-        layout_displacement = self.get_sub_layout_to_change_coordinate(
-            name_of_the_layout=Menus.name_of_the_layout_displacement,
-            list_of_dimensions=list_of_displacements,
-            combobox=self.combobox_displacement,
-            slider=self.slider_displacement,
-            function_to_the_combobox=self.number_of_displacement_changed,
-            function_to_the_slider=current_displacement_changed)
-        layout_rotation = self.get_sub_layout_to_change_coordinate(
-            name_of_the_layout=Menus.name_of_the_layout_rotation,
-            list_of_dimensions=list_of_rotations,
-            combobox=self.combobox_rotation,
-            slider=self.slider_rotation,
-            function_to_the_combobox=self.number_of_rotation_changed,
-            function_to_the_slider=current_rotation_changed)
+        # sliders
+        layout_displacement, layout_rotation = self.get_layout_displacement_and_rotation()
         layout_menu_2.addLayout(layout_displacement)
         layout_menu_2.addLayout(layout_rotation)
-
 
         # separator
         separator = QLabel()
@@ -128,11 +112,35 @@ class GeneralWindow(QMainWindow):
         layout_menu_2.addWidget(separator)
 
         # button back
+        button_back = get_button(function_to_the_button=self.go_back_to_menu_1,
+                                 path="back.png", width=Menus.width_of_button_back,
+                                 height=Menus.height_of_button_back)
         layout_menu_2.addWidget(button_back)
 
         widget_layout_2.setLayout(layout_menu_2)
 
         return widget_layout_2
+
+    def get_layout_displacement_and_rotation(self) -> tuple[QVBoxLayout, QVBoxLayout]:
+        list_of_displacements, list_of_rotations = get_list_of_all_dimensions(
+            number_of_dimensions=MyCoordinates.dimensions)
+        layout_displacement = get_sub_layout_to_change_coordinate(
+            name_of_the_layout=Menus.name_of_the_layout_displacement,
+            list_of_dimensions=list_of_displacements,
+            combobox=self.combobox_displacement,
+            slider=self.slider_displacement,
+            function_to_the_combobox=self.number_of_displacement_changed,
+            function_to_the_slider=current_displacement_changed,
+            init_position_of_the_slider=int(MyCoordinates.displacement[0]))
+        layout_rotation = get_sub_layout_to_change_coordinate(
+            name_of_the_layout=Menus.name_of_the_layout_rotation,
+            list_of_dimensions=list_of_rotations,
+            combobox=self.combobox_rotation,
+            slider=self.slider_rotation,
+            function_to_the_combobox=self.number_of_rotation_changed,
+            function_to_the_slider=current_rotation_changed,
+            init_position_of_the_slider=int(MyCoordinates.angles[0] * 180 / math.pi))
+        return layout_displacement, layout_rotation
 
     def number_of_displacement_changed(self, number_of_displacement: int = 0) -> None:
         MyCoordinates.current_displacement = number_of_displacement
@@ -142,7 +150,7 @@ class GeneralWindow(QMainWindow):
 
     def number_of_rotation_changed(self, number_of_rotations: int = 0) -> None:
         MyCoordinates.current_rotation = number_of_rotations
-        current_rotation = MyCoordinates.displacement[number_of_rotations]
+        current_rotation = MyCoordinates.angles[number_of_rotations]
         self.slider_rotation.setSliderPosition(int(current_rotation*180/math.pi))
 
 
@@ -337,35 +345,6 @@ class GeneralWindow(QMainWindow):
     def click_on_the_list_of_the_objects(self, dimensions: str):
         self._layout_menu.setCurrentIndex(2)
 
-    def get_sub_layout_to_change_coordinate(self, name_of_the_layout: str,
-                                            combobox: QComboBox,
-                                            list_of_dimensions: list[str]=None,
-                                            slider: QSlider=None,
-                                            function_to_the_combobox=None,
-                                            function_to_the_slider=None) -> QVBoxLayout:
-        layout = QVBoxLayout()
-        layout.addWidget(QLabel(name_of_the_layout))
-        # dropbox
-        if list_of_dimensions is None:
-            list_of_dimensions: list[str] = ["x", "y", "z", "x1"]
-        combobox.clear()
-        for key in list_of_dimensions:
-            combobox.addItem(key)
-        combobox.setCurrentIndex(0)
-        combobox.currentIndexChanged.connect(function_to_the_combobox)
-        layout.addWidget(combobox)
-        # slider
-        slider.setMinimum(-180)
-        slider.setMaximum(180)
-        slider.setSingleStep(1)
-        slider.setSliderPosition(0)
-        slider.valueChanged.connect(function_to_the_slider)
-
-
-        layout.addWidget(slider)
-
-
-        return layout
 
 
 def get_button(function_to_the_button, path: str,

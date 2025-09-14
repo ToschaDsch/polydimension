@@ -27,7 +27,7 @@ class DrawAll:
         :param n_web: number of cells in the web
         """
         # general variables
-        self._length_axes = 1
+        self._length_axes = 4
         # a class to change coordinates of the objects
         self._geometry: GeometryChangePoint = GeometryChangePoint()
         web: NDimensionalObject = Line2dWeb(a=self._length_axes, n=n_web)

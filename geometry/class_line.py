@@ -12,15 +12,14 @@ class Line(GeometricObject):
     def get_center(self) -> Point:
         return self.center
 
-    def get_color(self) -> QColor:
-        return self.color
 
-    def __init__(self, point_0: Point, point_1: Point, color: QColor=None):
+    def __init__(self, point_0: Point, point_1: Point, color: QColor=None, width: int=1):
+        super().__init__(color=color, width=width)
         self.point_0 = point_0
         self.point_1 = point_1
         coord_center: np.ndarray = (point_0.coord_0 + point_1.coord_0)/2
         self.center = Point(coordinates=coord_center)
-        self.color: QColor = color if color else MyColors.default_point_color
+        self.color: QColor = color if color else QColor(*MyColors.default_point_color)
         self.dimension: int = point_0.dimension
 
     def __str__(self):
