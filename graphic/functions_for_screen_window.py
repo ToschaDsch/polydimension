@@ -40,7 +40,6 @@ def shift(x: int, y: int):
     MyCoordinates.displacement[1] = MyCoordinates.displacement[1] + y
 
 
-
 def rotate_the_object(x: int, y: int):
     old_number_of_rotation = MyCoordinates.current_rotation
     dxy = [-y + MyCoordinates.x0_y0[1], x - MyCoordinates.x0_y0[0]]
@@ -50,7 +49,7 @@ def rotate_the_object(x: int, y: int):
         if old_number_of_rotation == ni:    # if the slider is current - move the slider
             Menus.general_window.shift_the_slider_rotation(shift=rotation)
             continue
-        current_rotation_changed(rotations=rotation)    # in Rad
+        current_rotation_changed(rotations=int(rotation))    # in Rad
     MyCoordinates.current_rotation = old_number_of_rotation
     MyCoordinates.x0_y0 = [x, y]
 
@@ -64,7 +63,7 @@ def shift_the_object(x: int, y: int):
         if old_number_of_displacement == ni:    # if the slider is current - move the slider
             Menus.general_window.shift_the_slider_displacement(shift=displacement)
             continue
-        current_displacement_changed(displacement=displacement)
+        current_displacement_changed(displacement=int(displacement))
     MyCoordinates.current_displacement = old_number_of_displacement
     MyCoordinates.x0_y0 = [x, y]
 

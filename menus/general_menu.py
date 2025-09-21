@@ -82,7 +82,7 @@ class GeneralWindow(QMainWindow):
 
         # draw the object
         self.my_object = Cube3d()
-        Menus.animation = DrawAll(list_of_draw_objects=[self.my_object], initial_dimensions=4)
+        Menus.animation = DrawAll(draw_object=self.my_object, initial_dimensions=4)
         self.animation = Menus.animation
         self.setCentralWidget(widget)
 
@@ -242,6 +242,8 @@ class GeneralWindow(QMainWindow):
 
     def function_transparent(self, i: int):
         GraphicRegimes.transparent = list(Transparency)[i]
+        self.animation.transparency = GraphicRegimes.transparent
+        self.screen_window.draw_all()
         print("Transparent", i, GraphicRegimes.transparent)
 
     def function_color(self, i: int):

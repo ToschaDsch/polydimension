@@ -4,26 +4,9 @@ from PySide6.QtGui import QColor
 from geometry.class_line import Line
 from geometry.class_point import Point
 from objects.class_draw_interface import NDimensionalObject
-from variables.graphics import default_palette
 
 
 class Axis(NDimensionalObject):
-
-
-    def make_lines(self):
-        colors = [QColor(255, 0,0),
-                  QColor(0,255,0),
-                  QColor(0,0,255)]
-        for i in range(0, len(self.my_points)-2, 2):
-            print(i, i/2)
-            axes_i = Line(point_0=self.my_points[i],
-                            point_1=self.my_points[i+1],
-                          color=colors[int(i/2)])
-            self.my_lines.append(axes_i)
-
-
-    def make_surfaces(self):
-        pass
 
     def __init__(self, dimension: int):
         self.dimension = dimension
@@ -33,6 +16,19 @@ class Axis(NDimensionalObject):
         self._solid = False
         self.name_of_the_object = "Axis"
 
+    def make_lines(self):
+        colors = [QColor(255, 0,0),
+                  QColor(0,255,0),
+                  QColor(0,0,255)]
+        for i in range(0, len(self.my_points)-2, 2):
+            axes_i = Line(point_0=self.my_points[i],
+                            point_1=self.my_points[i+1],
+                          color=colors[int(i/2)])
+            self.my_lines.append(axes_i)
+
+
+    def make_surfaces(self):
+        pass
 
     def make_points(self):
         list_of_the_points: list[Point] = []

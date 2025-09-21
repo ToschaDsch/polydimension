@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from PySide6.QtGui import QColor, QBrush, QPen
 
 from geometry.class_point import Point
-from variables.graphics import MyColors
+from variables.graphics import MyColors, Transparency
 
 
 class GeometricObject(ABC):
@@ -12,6 +12,20 @@ class GeometricObject(ABC):
         self._width = width if width else 1
         self.brush: QBrush = QBrush(self._color)
         self.pen: QPen = QPen(self.brush, self._width)
+        self._transparent: bool = True
+
+    @property
+    def transparent(self) -> bool:
+        return self._transparent
+
+    @transparent.setter
+    def transparent(self, value: bool):
+        self._transparent = value
+        alpha: int = MyColors.transparency if value==Transparency.transparent else 256
+        self._color.setAlpha(alpha)
+        self.brush: QBrush = QBrush(self._color)
+        self.pen: QPen = QPen(self.brush, self.width)
+
 
     @abstractmethod
     def get_all_points(self) -> list[Point]:

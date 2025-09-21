@@ -1,3 +1,4 @@
+import functools
 import itertools
 import math
 
@@ -31,6 +32,7 @@ class Cube3d(NDimensionalObject):
                     self.my_lines.append(Line(point_0=self.my_points[i], point_1=self.my_points[j]))
 
     def make_surfaces(self):
+        print(*[str(n) + " " + str(point) + "\n" for n, point in enumerate(self.my_points)])
         points_for_surface_0 = [self.my_points[0],
                                self.my_points[1],
                                self.my_points[5],
@@ -39,7 +41,7 @@ class Cube3d(NDimensionalObject):
         points_for_surface_1 = [self.my_points[0],
                                  self.my_points[2],
                                  self.my_points[6],
-                                 self.my_points[4]]
+                                 self.my_points[7]]
         self.my_surfaces.append(Surface(list_of_points=points_for_surface_1))
         points_for_surface_2 = [self.my_points[0],
                                  self.my_points[1],
@@ -61,6 +63,13 @@ class Cube3d(NDimensionalObject):
                                  self.my_points[7],
                                  self.my_points[6]]
         self.my_surfaces.append(Surface(list_of_points=points_for_surface_5))
+        for surface in self.my_surfaces:
+            is_it_a_surface(surface)
 
     def make_volumes(self):
         pass
+
+def is_it_a_surface(surface: Surface) -> bool:
+    res = functools.reduce(lambda x, y: x.coord_0 if isinstance(x, Point) else x + y.coord_0[2], surface.list_of_points, 0)
+    print(res)
+    return res

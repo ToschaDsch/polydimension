@@ -1,3 +1,5 @@
+import functools
+import itertools
 from abc import ABC, abstractmethod
 
 from PySide6.QtGui import QColor
@@ -7,6 +9,7 @@ from geometry.class_point import Point
 from geometry.class_surface import Surface
 from geometry.class_volume import Volume
 from variables.geometry_var import CoordinatesScreen
+from variables.graphics import Transparency
 
 
 class NDimensionalObject(ABC):
@@ -17,11 +20,25 @@ class NDimensionalObject(ABC):
         self.my_surfaces: list[Surface] = []
         self.my_volumes: list[Volume] = []
         self._solid: bool = True
-        self.transparent: bool = True
+        self._transparent: bool = True
         self.color_of_lines: QColor = color if color else QColor(*[255,0,0])
         self.size: int = size
         self.name_of_the_object: str = "Noname"
         self.make_geometry()
+        self.z_min = self.get_z_min()
+
+    def get_z_min(self):
+        return functools.reduce(lambda x, y: min(x.coord_0[2] if isinstance(x, Point) else x, y.coord_0[2]), self.my_points, 0)
+
+    @property
+    def transparent(self):
+        return self._transparent
+
+    @transparent.setter
+    def transparent(self, value: bool):
+        self._transparent = value
+        for surface in self.my_surfaces:
+            surface.transparent = value
 
     def make_geometry(self):
         self.make_points()
@@ -44,12 +61,6 @@ class NDimensionalObject(ABC):
     def make_volumes(self):
         pass
 
-    def get_the_objects(self):
-        if self.solid:
-            return self.my_volumes
-        else:
-            return self.my_lines
-
     def init_geometry(self) -> None:
         pass
 
@@ -61,11 +72,20 @@ class NDimensionalObject(ABC):
     def solid(self, solid: bool):
         self._solid = solid
 
-    def get_geometric_objects(self) -> list[Line] | list[Surface]:
-        if self.solid:
-            return self.my_surfaces
-        else:
+    def get_geometric_objects(self, transparency: int = Transparency.transparent) -> list[Line] | list[Surface] | None:
+        if not self._solid:
             return self.my_lines
+        match transparency:
+            case Transparency.full:
+                return self.my_surfaces
+            case Transparency.sceleton:
+                return self.my_lines
+            case Transparency.transparent:
+                return self.my_surfaces + self.my_lines
+            case _:
+                print("there is no case for transparency")
+                return None
+
 
     def __str__(self):
         list_of_points: list[str] = [str(x) for x in self.my_points]

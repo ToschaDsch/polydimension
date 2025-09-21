@@ -29,7 +29,6 @@ class Surface(GeometricObject):
         self.dimension: int = list_of_points[0].dimension
         self.normal: np.ndarray[tuple[Any]] = self.get_normal()
         self.center = get_center_from_list_of_points(list_of_points=self._list_of_points)
-        print(color)
 
     def make_lines(self):
         for i in range(len(self._list_of_points)-1):

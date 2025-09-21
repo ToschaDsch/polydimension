@@ -15,13 +15,15 @@ class Line2dWeb(NDimensionalObject):
     def make_volumes(self):
         pass
 
-    def __init__(self, a: int, n: int):
+    def __init__(self, a: int, n: int, z: float=0):
         self.a = a/n  # size of a cell
         self.n = n  # numbers of the cells
+        self.z = z
         self._list_of_points: list[list[Point]] = []    # 2d array to make lines
         default_color = QColor(*MyColors.web)
         super().__init__(color=default_color)
         print(self)
+        self._solid = False
 
     def __str__(self):
         return (f"I am Line2dWeb \n"
@@ -35,8 +37,9 @@ class Line2dWeb(NDimensionalObject):
             for y in range(self.n+1):
                 x_i = x0 + x*self.a
                 y_i = x0 + y*self.a
-                coordinate = [x_i, y_i]
-                coordinate.extend([0 for _ in range(self.dimensions-2)])
+                coordinate = [x_i, y_i, self.z]
+                coordinate.extend([0 for _ in range(self.dimensions-len(coordinate))])
+
                 coordinate = np.array(coordinate)
                 point_i = Point(coordinates=coordinate)
                 line_of_points.append(point_i)
@@ -62,8 +65,6 @@ class Line2dWeb(NDimensionalObject):
                 )
                 self.my_lines.append(line_i)
 
-    def get_geometric_objects(self) -> list[Line]:
-        return self.my_lines
 
     @property
     def solid(self):

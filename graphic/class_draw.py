@@ -6,7 +6,8 @@ from graphic.functions_for_screen_window import get_scale
 from objects.class_axis import Axis
 from objects.class_draw_interface import NDimensionalObject
 from objects.class_web import Line2dWeb
-from variables.geometry_var import CoordinatesScreen, MyCoordinates
+from variables.geometry_var import MyCoordinates
+from variables.graphics import Transparency
 from variables.menus import Menus
 import numpy as np
 
@@ -17,7 +18,7 @@ class DrawAll:
     sends all object to dict for draw (objects there are sorted by z coordinate) - modul send_to_draw_doct
     draws all object from the dict - modul draw_from_draw_dict"""
 
-    def __init__(self, list_of_draw_objects: list[NDimensionalObject],
+    def __init__(self, draw_object: NDimensionalObject,
                  initial_dimensions: int = 3,  #2d
                  n_web: int=10):
         """
@@ -30,10 +31,10 @@ class DrawAll:
         self._length_axes = 4
         # a class to change coordinates of the objects
         self._geometry: GeometryChangePoint = GeometryChangePoint()
-        web: NDimensionalObject = Line2dWeb(a=self._length_axes, n=n_web)
+        z = draw_object.z_min
+        web: NDimensionalObject = Line2dWeb(a=self._length_axes, n=n_web, z=z)
         axis: Axis = Axis(dimension=initial_dimensions)
-        self._list_of_draw_objects: list[NDimensionalObject] = [web, axis]
-        self._list_of_draw_objects.extend(list_of_draw_objects) # there are the web and the object(s) to draw
+        self._list_of_draw_objects: list[NDimensionalObject] = [web, axis, draw_object]
         self._list_of_all_points: list[Point] = self._take_all_the_points(
             list_of_draw_objects=self._list_of_draw_objects) # take all the points of the objects
         self._dimensions: int = initial_dimensions
@@ -42,7 +43,22 @@ class DrawAll:
         self._y_c: int = 0
         self._z_c: int = 0
 
+        # draw options
+        self._transparency: int = Transparency.transparent
+
         self.init_points()      # set new center
+
+    @property
+    def transparency(self) -> int:
+        return self._transparency
+
+    @transparency.setter
+    def transparency(self, transparency: int):
+        self._transparency = transparency
+        for draw_object in self._list_of_draw_objects:
+            draw_object.transparent = transparency
+        self.draw_all()
+
 
     @staticmethod
     def _take_all_the_points(list_of_draw_objects: list[NDimensionalObject]) -> list[Point]:
@@ -97,8 +113,9 @@ class DrawAll:
 
         # draw the model
         add_all_draw_objects_to_the_dict(list_of_all_objects=self._list_of_draw_objects,
-                                         geometry=self._geometry)
+                                         geometry=self._geometry, transparency=self._transparency)
         draw_from_dict(dick_of_draw_objects=self._geometry.dict_of_objects_to_draw)
+
 
 
 

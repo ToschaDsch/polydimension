@@ -15,7 +15,7 @@ class Transparency(Enum):
 class GraphicRegimes:
     perspective: bool = True
     web: bool = True
-    transparency: str = Transparency.transparent
+    transparency: int = Transparency.transparent
     color: bool = False
 
 
@@ -24,41 +24,17 @@ class PenThicknessToDraw:
     boards = 2
 
 
-@dataclass
-class TypeOfTheObjects:
-    dotted = 'dotted'
-    axes = 'axes'
-    normal = 'normal'
-    selected = 'selected'
-    line = 'Line'
-    light_line = 'LightLine'
-    surface = 'Surface'
-    temporary_surface = 'temporary_surface'
-    light_surface = 'LightSurface'
-    light_surface_of_a_combine_beam = "light_surface_of_a_combine_beam"
-    text = 'text'
-    color = 'color'
-    point = 'point'
-
-
-class ObjectToDraw:
-    def __init__(self, self_object: Any, type_of: str = 'normal', color: QColor = QColor(50, 50, 50), text: str = '',
-                 type_of_the_objects: str = TypeOfTheObjects.line):
-        self.self_object = self_object
-        self.type_of: str = type_of
-        self.color: QColor = color
-        self.text: str = text
-        self.type_of_the_objects = type_of_the_objects
 
 
 @dataclass
 class MyColors:
+    transparency: int = 100
     color: tuple = (50, 50, 50)
     web: tuple = (40, 0, 255)
     general_screen: tuple[int] = (100, 100, 255)
     default_point_color: tuple = (0, 130, 130)
     default_line_color: tuple = (100, 100, 100)
-    default_surface_color: tuple = (100, 100, 100, 100)
+    default_surface_color: tuple = (200, 100, 100, 100)
     default_volume_color: tuple = (100, 100, 100)
 
 

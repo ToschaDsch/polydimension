@@ -41,7 +41,7 @@ class Menus:
     frame_menu_3: int = 10
     separators_height: int = 300
 
-
+    # button back
     width_of_button_back: int = b_menu-2*frame
     height_of_button_back: int = 35
     content_margin: int = 1
