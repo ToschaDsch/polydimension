@@ -13,8 +13,15 @@ from objects.class_draw_interface import NDimensionalObject
 class Cube3d(NDimensionalObject):
 
     def __init__(self):
+        self.list_of_point = [[0, 1, 5, 4],
+                              [0, 2, 6, 4],
+                              [0, 1, 3, 2],
+                              [2, 6, 7, 3],
+                              [4, 6, 7, 5],
+                              [1, 3, 7, 5]]
         super().__init__()
         self.name_of_the_object = "Cube 3d"
+
 
     def make_points(self):
         a = self.size
@@ -26,50 +33,32 @@ class Cube3d(NDimensionalObject):
 
 
     def make_lines(self):
-        for i in range(len(self.my_points)):
-            for j in range(i+1,len(self.my_points)):
-                if numpy.sum(self.my_points[i].coord_0 - self.my_points[j].coord_0) == 2:
-                    self.my_lines.append(Line(point_0=self.my_points[i], point_1=self.my_points[j]))
+        set_for_lines = set()   #TODO lines!!!
+        for numbers_of_points in self.list_of_point:
+            set_for_lines.add(set(numbers_of_points[0:1]))
+            set_for_lines.add(set(numbers_of_points[1:2]))
+            set_for_lines.add(set(numbers_of_points[2:3]))
+            set_for_lines.add({numbers_of_points[0], numbers_of_points[3]})
+
+        print(set_for_lines)
+        for set_i in set_for_lines:
+            self.my_lines.append(Line(point_0=self.my_points[set_i[0]],
+                                      point_1=self.my_points[set_i[1]]))
 
     def make_surfaces(self):
         print(*[str(n) + " " + str(point) + "\n" for n, point in enumerate(self.my_points)])
-        points_for_surface_0 = [self.my_points[0],
-                               self.my_points[1],
-                               self.my_points[5],
-                               self.my_points[4]]
-        self.my_surfaces.append(Surface(list_of_points=points_for_surface_0))
-        points_for_surface_1 = [self.my_points[0],
-                                 self.my_points[2],
-                                 self.my_points[6],
-                                 self.my_points[7]]
-        self.my_surfaces.append(Surface(list_of_points=points_for_surface_1))
-        points_for_surface_2 = [self.my_points[0],
-                                 self.my_points[1],
-                                 self.my_points[3],
-                                 self.my_points[2]]
-        self.my_surfaces.append(Surface(list_of_points=points_for_surface_2))
-        points_for_surface_3 = [self.my_points[2],
-                                 self.my_points[6],
-                                 self.my_points[7],
-                                 self.my_points[3]]
-        self.my_surfaces.append(Surface(list_of_points=points_for_surface_3))
-        points_for_surface_4 = [self.my_points[4],
-                                 self.my_points[6],
-                                 self.my_points[7],
-                                 self.my_points[5]]
-        self.my_surfaces.append(Surface(list_of_points=points_for_surface_4))
-        points_for_surface_5 = [self.my_points[1],
-                                 self.my_points[3],
-                                 self.my_points[7],
-                                 self.my_points[6]]
-        self.my_surfaces.append(Surface(list_of_points=points_for_surface_5))
-        for surface in self.my_surfaces:
+
+        for numbers_of_points in self.list_of_point:
+            points_for_surface_i = [self.my_points[i] for i in numbers_of_points]
+            self.my_surfaces.append(Surface(list_of_points=points_for_surface_i))
+
+        for surface in self.my_surfaces: #check it
             is_it_a_surface(surface)
 
     def make_volumes(self):
         pass
 
 def is_it_a_surface(surface: Surface) -> bool:
-    res = functools.reduce(lambda x, y: x.coord_0 if isinstance(x, Point) else x + y.coord_0[2], surface.list_of_points, 0)
+    res = functools.reduce(lambda x, y: x.coord_0 if isinstance(x, Point) else x + y.coord_0, surface.list_of_points, 0)
     print(res)
     return res
