@@ -34,46 +34,26 @@ def get_rotate_matrix(sin: list[float], cos: list[float], dimensional: int = 3) 
                          ]))
     elif dimensional == 4:
         print("4d matrix")
-        i = 0
-        r.append(np.array([[cos[i], -sin[i], 0, 0],
-                         [sin[i], cos[i], 0, 0],
-                         [0, 0, 1, 0],
-                         [0, 0, 0, 1]
-                         ]))
-
-        i =+ 1
-        r.append(np.array([[cos[i], 0, sin[i], 0],
-                         [0, 1, 0, 0],
-                         [-sin[i], 0, cos[i], 0],
-                         [0, 0, 0, 1],
-                         ]))
-        """
-        i =+1
-        r.append(np.array([[cos[i], 0, 0, -sin[i]],
-                         [0, 1, 0, 0],
-                         [0, 0, 1, 0],
-                         [sin[i], 0, 0, cos[i]]
-                         ]))
-        i = +1
-        r.append(np.array([[1, 0, 0, 0],
-                         [0, cos[i], -sin[i], 0],
-                         [0, sin[i], cos[i], 0],
-                         [0, 0, 0, 1],
-                         ]))
-        i = +1
-        r.append(np.array([[1, 0, 0, 0],
-                         [0, cos[i], 0, -sin[i]],
-                         [0, 0, 1, 0],
-                         [0, sin[i], 0, cos[i]],
-                         ]))
-        i = +1
-        r.append(np.array([[1, 0, 0, 0],
-                         [0, 1, 0, 0],
-                         [0, 0, cos[i], -sin[i]],
-                         [0, 0, sin[i], cos[i]],
-                         ]))"""
+        n = 0
+        for i in range(dimensional-1):
+            for j in range(i+1, dimensional):
+                r.append(rotation_matrix_4d(axis_1=i, axis_2=j, sin_i=sin[n], cos_i=cos[n]))
+                n += 1
     result_matrix = np.identity(dimensional, dtype=np.float64)
 
     for r_i in r:
         result_matrix = np.dot(r_i, result_matrix)
     return result_matrix
+
+def rotation_matrix_4d(axis_1: int, axis_2: int, cos_i: float, sin_i: float) -> np.ndarray:
+    """
+    Create a 4x4 rotation matrix in 4D space for rotation in the plane (axis1, axis2).
+    axis1, axis2 ∈ {0, 1, 2, 3} correspond to x, y, z, w.
+    cos_i, sin_i - in plane axis_1, axis_2
+    """
+    r = np.eye(4)
+    r[axis_1, axis_1] = cos_i
+    r[axis_1, axis_2] = -sin_i
+    r[axis_2, axis_1] = sin_i
+    r[axis_2, axis_2] = cos_i
+    return r

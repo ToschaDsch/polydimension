@@ -7,7 +7,7 @@ from geometry.class_point import Point
 
 class MyCoordinates:
     dimensions: int = 4
-    init_angle: float = math.pi / 4
+    init_angle: float = math.pi / 3
     init_x: float = 0.0
     init_y: float = 0.0
     angles: np.ndarray = np.array([init_angle,init_angle,init_angle,0.0,0.0,0.0])

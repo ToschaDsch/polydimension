@@ -33,17 +33,17 @@ class Cube3d(NDimensionalObject):
 
 
     def make_lines(self):
-        set_for_lines = set()   #TODO lines!!!
-        for numbers_of_points in self.list_of_point:
-            set_for_lines.add(set(numbers_of_points[0:1]))
-            set_for_lines.add(set(numbers_of_points[1:2]))
-            set_for_lines.add(set(numbers_of_points[2:3]))
-            set_for_lines.add({numbers_of_points[0], numbers_of_points[3]})
+        for i in range(len(self.my_points)):
+            for j in range(i+1,len(self.my_points)):
+                point_i = self.my_points[i]
+                point_j = self.my_points[j]
+                delta_point = point_i.coord_0 - point_j.coord_0
+                if sum(delta_point) == 2*self.size:
+                    set_delta = set(delta_point)
+                    if set_delta in ({0, 2*self.size}, {0, -2*self.size}):
+                        self.my_lines.append(Line(point_i, point_j))
 
-        print(set_for_lines)
-        for set_i in set_for_lines:
-            self.my_lines.append(Line(point_0=self.my_points[set_i[0]],
-                                      point_1=self.my_points[set_i[1]]))
+        print(self.my_lines)
 
     def make_surfaces(self):
         print(*[str(n) + " " + str(point) + "\n" for n, point in enumerate(self.my_points)])
