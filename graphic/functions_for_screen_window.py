@@ -42,10 +42,11 @@ def shift(x: int, y: int):
 
 def rotate_the_object(x: int, y: int):
     old_number_of_rotation = MyCoordinates.current_rotation
-    dxy = [-y + MyCoordinates.x0_y0[1], x - MyCoordinates.x0_y0[0]]
-    for ni, di in enumerate(dxy):  # xy, xz angles
+    dxy = [x - MyCoordinates.x0_y0[0],y - MyCoordinates.x0_y0[1]]
+    order = {0:dxy[0], 2:dxy[1]}
+    for ni, di in order.items():  # xy, xz angles
         MyCoordinates.current_rotation = ni
-        rotation = di + MyCoordinates.angles[ni]/math.pi*180  #   in grad
+        rotation = -di + MyCoordinates.angles[ni]/math.pi*180  #   in grad
         if old_number_of_rotation == ni:    # if the slider is current - move the slider
             Menus.general_window.shift_the_slider_rotation(shift=rotation)
             continue

@@ -33,12 +33,29 @@ def get_rotate_matrix(sin: list[float], cos: list[float], dimensional: int = 3) 
                          [0, sin[2], cos[2]]
                          ]))
     elif dimensional == 4:
-        print("4d matrix")
+        """
+        r.append(np.array([[cos[0], -sin[0], 0, 0],
+                           [sin[0], cos[0], 0, 0],
+                           [0, 0, 1, 0],
+                           [0, 0, 0, 1]
+                           ]))
+        r.append(np.array([[cos[1], 0, sin[1], 0],
+                           [0, 1, 0, 0],
+                           [-sin[1], 0, cos[1], 0],
+                           [0,0,0,1]
+                           ]))
+        r.append(np.array([[1, 0, 0, 0],
+                           [0, cos[2], -sin[2], 0],
+                           [0, sin[2], cos[2], 0],
+                           [0, 0, 0, 1]
+                           ]))
+        """
         n = 0
-        for i in range(dimensional-1):
-            for j in range(i+1, dimensional):
-                r.append(rotation_matrix_4d(axis_1=i, axis_2=j, sin_i=sin[n], cos_i=cos[n]))
-                n += 1
+        order = [(0,1), (0, 2), (1,2), (1,3), (2,3), (0, 3)]
+        for i, j in order:
+            r.append(rotation_matrix_4d(axis_1=i, axis_2=j, sin_i=sin[n], cos_i=cos[n]))
+            n+=1
+
     result_matrix = np.identity(dimensional, dtype=np.float64)
 
     for r_i in r:

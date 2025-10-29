@@ -6,7 +6,7 @@ from sortedcontainers import SortedDict
 from geometry.class_geometric_object import GeometricObject
 from geometry.class_point import Point
 from geometry.geometry_functions import get_rotate_matrix
-from variables.geometry_var import MyCoordinates, CoordinatesScreen
+from variables.geometry_var import CoordinatesScreen
 from variables.menus import Menus
 
 
