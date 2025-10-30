@@ -45,10 +45,12 @@ class  GeometryChangePoint:
 
 
     def calculate_new_coordinates_for_the_list_of_points(self, angles: np.ndarray=None, dx: np.ndarray=None,
-                                                         points: list[Point]=None):
+                                                         points: list[Point]=None, scale: float=None):
         if angles is not None and dx is not None:
             self.angles = angles
             self.dxi = dx
+        if scale is not None:
+            self.scale = scale
         self._change_corners()
         self.dict_of_objects_to_draw = SortedDict() #clear the dict
         for point in points:

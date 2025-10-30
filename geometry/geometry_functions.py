@@ -33,23 +33,6 @@ def get_rotate_matrix(sin: list[float], cos: list[float], dimensional: int = 3) 
                          [0, sin[2], cos[2]]
                          ]))
     elif dimensional == 4:
-        """
-        r.append(np.array([[cos[0], -sin[0], 0, 0],
-                           [sin[0], cos[0], 0, 0],
-                           [0, 0, 1, 0],
-                           [0, 0, 0, 1]
-                           ]))
-        r.append(np.array([[cos[1], 0, sin[1], 0],
-                           [0, 1, 0, 0],
-                           [-sin[1], 0, cos[1], 0],
-                           [0,0,0,1]
-                           ]))
-        r.append(np.array([[1, 0, 0, 0],
-                           [0, cos[2], -sin[2], 0],
-                           [0, sin[2], cos[2], 0],
-                           [0, 0, 0, 1]
-                           ]))
-        """
         n = 0
         order = [(0,1), (0, 2), (1,2), (1,3), (2,3), (0, 3)]
         for i, j in order:

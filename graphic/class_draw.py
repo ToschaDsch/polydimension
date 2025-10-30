@@ -6,7 +6,7 @@ from graphic.functions_for_screen_window import get_scale
 from objects.class_axis import Axis
 from objects.class_draw_interface import NDimensionalObject
 from objects.class_web import Line2dWeb
-from variables.geometry_var import MyCoordinates
+from variables.geometry_var import MyCoordinates, CoordinatesScreen
 from variables.graphics import Transparency
 from variables.menus import Menus
 import numpy as np
@@ -82,8 +82,8 @@ class DrawAll:
             self.change_isometry()  # with new scale
             self.draw_all()
 
-    def draw_all(self, angles: np.ndarray=None, dxi: np.ndarray=None):
-        self.change_isometry(angles, dxi)
+    def draw_all(self, angles: np.ndarray=None, dxi: np.ndarray=None, scale:float=None):
+        self.change_isometry(angles=angles, dxi=dxi, scale=scale)
         self._draw_on_the_canvas()
 
 
@@ -91,14 +91,17 @@ class DrawAll:
         scale = get_scale(list_of_point=self._list_of_all_points,
                           screen_height=Menus.window_height,
                           screen_width=Menus.window_width)
-        MyCoordinates.scale = scale
+        CoordinatesScreen.scale = scale
+
         return scale
 
 
-    def change_isometry(self, angles:np.ndarray=None, dxi:np.ndarray=None):
-        if angles is None and dxi is None:
+    def change_isometry(self, angles:np.ndarray=None, dxi:np.ndarray=None, scale: float=None):
+        if angles is None and dxi is None and scale is None:
             return None
-        self._geometry.calculate_new_coordinates_for_the_list_of_points(angles=angles,dx=dxi,points=self._list_of_all_points)
+        self._geometry.calculate_new_coordinates_for_the_list_of_points(angles=angles,dx=dxi,
+                                                                        points=self._list_of_all_points,
+                                                                        scale=scale)
         return None
 
     def make_center(self):
