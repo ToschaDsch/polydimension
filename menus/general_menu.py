@@ -235,6 +235,7 @@ class GeneralWindow(QMainWindow):
     def function_perspective(self, i: int):
         GraphicRegimes.perspective = bool(i)
         print("Perspective", i, GraphicRegimes.perspective)
+        self.animation.perspective = i
 
     def function_web(self, i: int):
         GraphicRegimes.web = bool(i)

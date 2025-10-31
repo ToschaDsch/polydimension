@@ -1,3 +1,5 @@
+from typing import Literal
+
 from graphic.functions_for_class_draw.draw_from_draw_dict import draw_from_dict
 from geometry.class_point import Point
 from  geometry.class_geometry_change_point import GeometryChangePoint
@@ -6,7 +8,7 @@ from graphic.functions_for_screen_window import get_scale
 from objects.class_axis import Axis
 from objects.class_draw_interface import NDimensionalObject
 from objects.class_web import Line2dWeb
-from variables.geometry_var import MyCoordinates, CoordinatesScreen
+from variables.geometry_var import CoordinatesScreen
 from variables.graphics import Transparency
 from variables.menus import Menus
 import numpy as np
@@ -44,12 +46,23 @@ class DrawAll:
         self._z_c: int = 0
 
         # draw options
-        self._transparency: int = Transparency.transparent
+        self._transparency: Literal[Transparency.transparent] = Transparency.transparent
+        self._perspective: bool = False
 
         self.init_points()      # set new center
 
     @property
-    def transparency(self) -> int:
+    def perspective(self):
+        return self._perspective
+
+    @perspective.setter
+    def perspective(self, value: bool):
+        self._perspective = value
+        self._geometry.draw_with_perspective = value
+        self.draw_all()
+
+    @property
+    def transparency(self) -> Literal[Transparency.transparent]:
         return self._transparency
 
     @transparency.setter

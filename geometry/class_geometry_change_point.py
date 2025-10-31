@@ -5,7 +5,7 @@ from sortedcontainers import SortedDict
 
 from geometry.class_geometric_object import GeometricObject
 from geometry.class_point import Point
-from geometry.geometry_functions import get_rotate_matrix
+from geometry.geometry_functions import get_rotate_matrix, get_2d_coordinate_with_perspective
 from variables.geometry_var import CoordinatesScreen
 from variables.menus import Menus
 
@@ -34,6 +34,7 @@ class  GeometryChangePoint:
                                             int(Menus.display_height / 2),
                                             0)
         self.dict_of_objects_to_draw: SortedDict = SortedDict()
+        self.draw_with_perspective: bool = False
 
     def _change_corners(self):
         self.sin: list[float] = [math.sin(x) for x in self.angles]
@@ -64,6 +65,8 @@ class  GeometryChangePoint:
             point.coord_n[0] * self.scale + self.dxi[0] + self.x0y0[0],
             point.coord_n[1] * self.scale + self.dxi[1] + self.x0y0[1],
             point.coord_n[2] * self.scale + self.dxi[2] + self.x0y0[2])
+        if self.draw_with_perspective:
+            x0_y0 = get_2d_coordinate_with_perspective(x=x0_y0[0], y=x0_y0[1], z=x0_y0[2])
         point.coord_n = np.array(x0_y0)
 
     def clean_dict_of_draw_objects(self):
