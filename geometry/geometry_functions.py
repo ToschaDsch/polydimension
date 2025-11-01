@@ -62,13 +62,14 @@ def rotation_matrix_4d(axis_1: int, axis_2: int, cos_i: float, sin_i: float) -> 
 
 
 
-def get_2d_coordinate_with_perspective(x: float, y: float, z: float, diameter: float=300) -> list[float]:
+def get_2d_coordinate_with_perspective(x: float, y: float, z: float, diameter: float=400) -> list[float]:
     """
     Projects a 3D point (x, y, z) into 2D space,
     with perspective
     """
     max_l = diameter * 10000.0
     z+=3*diameter
+    # y *=-1    back perspective
 
     try:
         # Perspective projection
@@ -88,15 +89,17 @@ def get_2d_coordinate_with_perspective(x: float, y: float, z: float, diameter: f
             else:
                 return [-max_l, -max_l]
         else:
+            k = 4
+            x0, y0 = 0, 0 #-300, 550
             if y >= 0:
                 return [
-                    diameter * 0.5 + l * math.sin(alpha),
-                    diameter * 0.5 + l * math.cos(alpha)
+                    x0 + diameter * 0.5 + k*l * math.sin(alpha),
+                    y0 + diameter * 0.5 - k*l * math.cos(alpha)
                 ]
             else:
                 return [
-                    diameter * 0.5 - l * math.sin(alpha),
-                    diameter * 0.5 - l * math.cos(alpha)
+                    x0 + diameter * 0.5 - k*l * math.sin(alpha),
+                    y0 + diameter * 0.5 + k*l * math.cos(alpha)
                 ]
     except Exception as err:
         raise("TransformTo2D, Arithmetic exception", err)
