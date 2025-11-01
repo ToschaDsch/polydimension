@@ -62,14 +62,47 @@ def rotation_matrix_4d(axis_1: int, axis_2: int, cos_i: float, sin_i: float) -> 
 
 
 
-def get_2d_coordinate_with_perspective(x: float, y: float, z: float, diameter: float=400) -> list[float]:
+def get_2d_coordinate_with_perspective(x: float, y: float, z: float, diameter: float=300) -> list[float]:
     """
     Projects a 3D point (x, y, z) into 2D space,
     with perspective
     """
-    max_l = diameter * 1000.0
+    max_l = diameter * 10000.0
+    z+=3*diameter
 
     try:
+        # Perspective projection
+        if z <= 0.0001:
+            l = diameter * math.atan(math.sqrt(y * y + x * x) * 100000.0)
+        else:
+            l = diameter * math.atan(math.sqrt(y * y + x * x) / z)
+
+        if -0.0001 < y < 0.0001:
+            alpha = math.atan(x * 10000.0) % (2.0 * math.pi)
+        else:
+            alpha = math.atan(x / y) % (2.0 * math.pi)
+
+        if l > max_l:
+            if y >= 0:
+                return [max_l, max_l]
+            else:
+                return [-max_l, -max_l]
+        else:
+            if y >= 0:
+                return [
+                    diameter * 0.5 + l * math.sin(alpha),
+                    diameter * 0.5 + l * math.cos(alpha)
+                ]
+            else:
+                return [
+                    diameter * 0.5 - l * math.sin(alpha),
+                    diameter * 0.5 - l * math.cos(alpha)
+                ]
+    except Exception as err:
+        raise("TransformTo2D, Arithmetic exception", err)
+
+
+    """    try:
         # Perspective projection
         if y <= 0.0001:
             l = diameter * math.atan(math.sqrt(z * z + x * x) * 100000.0)
@@ -99,3 +132,11 @@ def get_2d_coordinate_with_perspective(x: float, y: float, z: float, diameter: f
                 ]
     except ArithmeticError as err:
         raise("TransformTo2D, Arithmetic exception", err)
+        
+        
+        diameter * 0.5f + l * sin(alpha),
+        diameter * 0.5f + l * cos(alpha)
+        
+        diameter * 0.5f - l * sin(alpha),
+        diameter * 0.5f - l * cos(alpha)
+"""
