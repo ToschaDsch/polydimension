@@ -33,6 +33,7 @@ class DrawAll:
         self._length_axes = 4
         # a class to change coordinates of the objects
         self._geometry: GeometryChangePoint = GeometryChangePoint()
+        self._draw_object: NDimensionalObject = draw_object
         z = draw_object.z_min
         web: NDimensionalObject = Line2dWeb(a=self._length_axes, n=n_web, z=z)
         axis: Axis = Axis(dimension=initial_dimensions)
@@ -50,6 +51,9 @@ class DrawAll:
         self._perspective: bool = False
 
         self.init_points()      # set new center
+
+    def change_color(self, color_is_out: bool = True):
+        self._draw_object.change_color(color_is_out=color_is_out)
 
     @property
     def perspective(self):

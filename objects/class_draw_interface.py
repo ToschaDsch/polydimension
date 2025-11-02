@@ -9,11 +9,11 @@ from geometry.class_point import Point
 from geometry.class_surface import Surface
 from geometry.class_volume import Volume
 from variables.geometry_var import CoordinatesScreen
-from variables.graphics import Transparency
+from variables.graphics import Transparency, MyColors
 
 
 class NDimensionalObject(ABC):
-    def __init__(self, size: int = CoordinatesScreen.init_size_of_the_object, color: QColor=None):
+    def __init__(self, size: int = CoordinatesScreen.init_size_of_the_object, line_color: QColor=None, surface_color: QColor=None):
         self.dimensions = 4
         self.my_points: list[Point] = []
         self.my_lines: list[Line] = []
@@ -21,7 +21,8 @@ class NDimensionalObject(ABC):
         self.my_volumes: list[Volume] = []
         self._solid: bool = True
         self._transparent: bool = True
-        self.color_of_lines: QColor = color if color else QColor(*[255,0,0])
+        self.line_color: QColor = line_color if line_color else QColor(*MyColors.default_line_color)
+        self.surface_color: QColor = surface_color if surface_color else QColor(*MyColors.default_surface_color)
         self.size: int = size
         self.name_of_the_object: str = "Noname"
         self.make_geometry()
@@ -60,6 +61,11 @@ class NDimensionalObject(ABC):
     @abstractmethod
     def make_volumes(self):
         pass
+
+    @abstractmethod
+    def change_color(self, color_is_out: bool=True):
+        pass
+
 
     def init_geometry(self) -> None:
         pass

@@ -3,11 +3,14 @@ import itertools
 import math
 
 import numpy
+from PySide6.QtGui import QColor
 
 from geometry.class_line import Line
 from geometry.class_point import Point
 from geometry.class_surface import Surface
 from objects.class_draw_interface import NDimensionalObject
+from variables import graphics
+from variables.graphics import MyColors
 
 
 class Cube3d(NDimensionalObject):
@@ -50,13 +53,22 @@ class Cube3d(NDimensionalObject):
 
         for numbers_of_points in self.list_of_point:
             points_for_surface_i = [self.my_points[i] for i in numbers_of_points]
-            self.my_surfaces.append(Surface(list_of_points=points_for_surface_i))
+            self.my_surfaces.append(Surface(list_of_points=points_for_surface_i, color=self.surface_color))
 
         for surface in self.my_surfaces: #check it
             is_it_a_surface(surface)
 
     def make_volumes(self):
         pass
+
+    def change_color(self, color_is_out: bool=True):
+        if color_is_out:
+            color =  [self.surface_color]*len(self.my_points)
+        else:
+            color = [QColor(*x) for x in graphics.default_palette]
+        for surface, color in zip(self.my_surfaces, color):
+            surface.color = color
+
 
 def is_it_a_surface(surface: Surface) -> bool:
     res = functools.reduce(lambda x, y: x.coord_0 if isinstance(x, Point) else x + y.coord_0, surface.list_of_points, 0)

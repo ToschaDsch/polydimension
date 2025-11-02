@@ -90,7 +90,7 @@ def get_2d_coordinate_with_perspective(x: float, y: float, z: float, diameter: f
                 return [-max_l, -max_l]
         else:
             k = 4
-            x0, y0 = 0, 0 #-300, 550
+            x0, y0 = -300, 550
             if y >= 0:
                 return [
                     x0 + diameter * 0.5 + k*l * math.sin(alpha),

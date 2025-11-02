@@ -9,6 +9,9 @@ from variables.graphics import MyColors
 
 
 class Line2dWeb(NDimensionalObject):
+    def change_color(self, color_is_out: bool = True):
+        pass
+
     def make_surfaces(self):
         pass
 
@@ -21,7 +24,7 @@ class Line2dWeb(NDimensionalObject):
         self.z = z
         self._list_of_points: list[list[Point]] = []    # 2d array to make lines
         default_color = QColor(*MyColors.web)
-        super().__init__(color=default_color)
+        super().__init__(line_color=default_color)
         print(self)
         self._solid = False
 
@@ -48,20 +51,20 @@ class Line2dWeb(NDimensionalObject):
 
     def make_lines(self):
         for i in range(self.n):
-            for j in range(self.n):
+            for j in range(self.n+1):
                 line_i = Line(
                     point_0 = self._list_of_points[i][j],
                     point_1 = self._list_of_points[i+1][j],
-                    color=self.color_of_lines
+                    color=self.line_color
                 )
                 self.my_lines.append(line_i)
 
         for i in range(self.n):
-            for j in range(self.n):
+            for j in range(self.n+1):
                 line_i = Line(
                     point_0=self._list_of_points[j][i],
                     point_1=self._list_of_points[j][i+1],
-                    color=self.color_of_lines
+                    color=self.line_color
                 )
                 self.my_lines.append(line_i)
 
