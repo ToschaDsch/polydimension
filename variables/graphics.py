@@ -2,7 +2,10 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Any
 
+import numpy as np
 from PySide6.QtGui import QColor
+
+from geometry.class_point import Point
 
 
 class Transparency(Enum):
@@ -54,3 +57,9 @@ default_palette = [(0, 0, 0, 100),
                    (128, 0, 128, 100),
                    (0, 128, 128, 100),
                    (0, 0, 128, 100)]
+
+@dataclass
+class InitLight:
+    coordinate: Point = Point(coordinates=np.array([0, 0, -10]))
+    intensity: float = 1
+    color: QColor = QColor.yellow
