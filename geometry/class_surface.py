@@ -3,6 +3,7 @@ from typing import Any
 
 import numpy as np
 from PySide6.QtGui import QColor
+from numpy import ndarray
 
 from geometry.class_geometric_object import GeometricObject
 from geometry.class_line import Line
@@ -23,7 +24,7 @@ class Surface(GeometricObject):
         return self.color
 
     def __init__(self, list_of_points: list[Point] = None, color: QColor = None, width: int = None,
-                 source_of_light: SourceOfLight = None):
+                 source_of_light: SourceOfLight = None, init_center_of_the_volume: Point = None):
         color = color if color else QColor(*MyColors.default_surface_color)
         super().__init__(color=color, width=width)
         self._list_of_points: list[Point] = list_of_points if list_of_points is not None else []
@@ -34,6 +35,13 @@ class Surface(GeometricObject):
         self.center = get_center_from_list_of_points(list_of_points=self._list_of_points)
         self._init_color = color
         self._source_of_light: SourceOfLight = source_of_light if source_of_light else SourceOfLight()
+        init_center_of_the_volume = init_center_of_the_volume if init_center_of_the_volume else Point()
+        return_color = self.give_me_return_color(points=self._list_of_points, center_of_the_volume=init_center_of_the_volume,
+                                                 color=self._init_color,
+                                                 lamp=self._source_of_light)
+        self.color = return_color.color
+        self.visible = return_color.i_see_it
+        
 
     def change_coordinate(self):
         pass
@@ -54,7 +62,7 @@ class Surface(GeometricObject):
         self._list_of_points = list_of_points
         self.normal = self.get_normal()
 
-    def get_normal(self) -> np.ndarray | None:
+    def get_normal(self) -> ndarray | None:
         if len(self.list_of_lines) < 2:
             print("too few lines")
             return None
@@ -65,18 +73,18 @@ class Surface(GeometricObject):
         normal = np.cross(a, b)
         return normal/np.linalg.norm(normal)
 
-    def give_me_the_color(self, points: list[Point],
-                                center: np.ndarray,
-                                color: "QColor",
-                                lamp: SourceOfLight = None,
-                                draw_with_perspective: bool = False) -> "ReturnColor":
+    def give_me_return_color(self, points: list[Point],
+                             center_of_the_volume: Point,
+                             color: "QColor",
+                             lamp: SourceOfLight = None,
+                             draw_with_perspective: bool = False) -> "ReturnColor":
         if color is None:
             color = self.color
 
         vector_of_distance, square_of_distance = calculate_vector_and_square_of_distance(points=points)
         distance3d: float = 0.0
 
-        vector_center = vector_of_distance - center
+        vector_center = vector_of_distance - center_of_the_volume.coord_0
 
         normal = calculate_normal(points=points, vector_center=vector_center)
 
@@ -108,15 +116,19 @@ def vector_product_with_center(v1: np.ndarray, v2: np.ndarray, vector_center: np
     """
     the function checks where is the center and returns normal of the surface
     """
-    vector_product = v1.dot(v2)
+    v1_=np.resize(v1, 3,)
+    v2_=np.resize(v2, 3,)
+    vector_center=np.resize(vector_center,3,)
+    vector_product = np.cross(v1_, v2_)
     if vector_product.dot(vector_center) > 0.0:
         return vector_product
     else:
-        return v2.dot(v1)
+        return np.cross(v2_, v1_)
 
 def calculate_vector_and_square_of_distance(points: list[Point]) -> tuple[np.ndarray, float]:
     """
     the function calculates a vector to the center of the surface and average square of distance to the surface
+    from center of coordinate
     """
     h = len(points[0].coord_n)
     vector_distance: np.ndarray = np.empty((h,))
