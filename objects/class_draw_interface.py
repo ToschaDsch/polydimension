@@ -15,6 +15,7 @@ from variables.graphics import Transparency, MyColors
 class NDimensionalObject(ABC):
     def __init__(self, size: int = CoordinatesScreen.init_size_of_the_object, line_color: QColor=None, surface_color: QColor=None):
         self.dimensions = 4
+        self.draw_with_normal = True
         self.my_points: list[Point] = []
         self.my_lines: list[Line] = []
         self.my_surfaces: list[Surface] = []
@@ -27,6 +28,8 @@ class NDimensionalObject(ABC):
         self.name_of_the_object: str = "Noname"
         self.make_geometry()
         self.z_min = self.get_z_min()
+
+
 
     def get_z_min(self):
         return functools.reduce(lambda x, y: min(x.coord_0[2] if isinstance(x, Point) else x, y.coord_0[2]), self.my_points, 0)

@@ -3,6 +3,7 @@ import itertools
 import math
 
 import numpy
+import numpy as np
 from PySide6.QtGui import QColor
 
 from geometry.class_line import Line
@@ -24,6 +25,8 @@ class Cube3d(NDimensionalObject):
                               [1, 3, 7, 5]]
         super().__init__()
         self.name_of_the_object = "Cube 3d"
+        print("my lines 3:")
+        print(len(self.my_lines))
 
 
     def make_points(self):
@@ -44,21 +47,25 @@ class Cube3d(NDimensionalObject):
                 if sum(delta_point) == 2*self.size:
                     set_delta = set(delta_point)
                     if set_delta in ({0, 2*self.size}, {0, -2*self.size}):
-                        self.my_lines.append(Line(point_i, point_j))
-
-        print(self.my_lines)
+                        self.my_lines.append(Line(point_i, point_j, width=2))
+        print("my lines 1:")
+        print(len(self.my_lines))
 
     def make_surfaces(self):
         print(*[str(n) + " " + str(point) + "\n" for n, point in enumerate(self.my_points)])
-
+        center = Point(coordinates=np.array([0,0,0,0]))
         for numbers_of_points in self.list_of_point:
             points_for_surface_i = [self.my_points[i] for i in numbers_of_points]
-            self.my_surfaces.append(Surface(list_of_points=points_for_surface_i, color=self.surface_color))
+            self.my_surfaces.append(Surface(list_of_points=points_for_surface_i,
+                                            color=self.surface_color,
+                                            init_center_of_the_volume=center))
 
         for surface in self.my_surfaces: #check it add normal to the lines
             is_it_a_surface(surface)
-            if surface.draw_with_normal:
+            if self.draw_with_normal:
                 self.my_lines.append(surface.normal_line)
+        print("my lines 2:")
+        print(len(self.my_lines))
 
     def make_volumes(self):
         pass

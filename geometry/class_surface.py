@@ -1,9 +1,7 @@
 from dataclasses import dataclass
-from typing import Any
 
 import numpy as np
 from PySide6.QtGui import QColor
-from numpy import ndarray
 
 from geometry.class_geometric_object import GeometricObject
 from geometry.class_line import Line
@@ -18,7 +16,7 @@ class Surface(GeometricObject):
         return self.center
 
     def get_all_points(self) -> list[Point]:
-        return self._list_of_points
+        return self.list_of_points_change_coordinate
 
     def get_color(self) -> QColor:
         return self.color
@@ -33,24 +31,20 @@ class Surface(GeometricObject):
         self.dimension: int = list_of_points[0].dimension
         self.center = get_center_from_list_of_points(list_of_points=self._list_of_points)
         init_center_of_the_volume = init_center_of_the_volume if init_center_of_the_volume else Point()
-        self.normal: Point = self.get_coordinate_of_the_normal(init_center_of_the_volume = init_center_of_the_volume)
+        self.normal: np.ndarray = calculate_normal(points=self._list_of_points,
+                                                   vector_center=init_center_of_the_volume.coord_0)
         self._init_color = color
         self._source_of_light: SourceOfLight = source_of_light if source_of_light else SourceOfLight()
 
-        return_color = self.give_me_return_color(points=self._list_of_points, center_of_the_volume=init_center_of_the_volume,
-                                                 color=self._init_color,
-                                                 lamp=self._source_of_light)
+        return_color = self.give_me_return_color(points=self._list_of_points,
+                                                 center_of_the_volume=init_center_of_the_volume,
+                                                 color=self._init_color, lamp=self._source_of_light)
         self.color = return_color.color
         self.visible = return_color.i_see_it
-        self.draw_with_normal = True
-        self.normal.coord_0 = np.resize(self.normal.coord_0, (len(self.center.coord_0)))
-        self.normal_line = Line(point_0=self.center, point_1=self.normal)
-        
-    def get_coordinate_of_the_normal(self, init_center_of_the_volume: Point) -> Point:
-        coordinates = calculate_normal(points=self._list_of_points, vector_center=init_center_of_the_volume.coord_0)
-        return Point(coordinates=coordinates)
-
-
+        self.normal = np.resize(self.normal, (len(self.center.coord_0),))
+        point_1 = Point(coordinates=self.center.coord_0+self.normal)
+        self.normal_line = Line(point_0=self.center, point_1=point_1, name="normal", width=4)
+        self.list_of_points_change_coordinate = self._list_of_points + [self.center, point_1]
 
     def change_coordinate(self):
         pass
@@ -95,11 +89,11 @@ class Surface(GeometricObject):
         else:
             vector_of_distance = [0.0, 1.0, 0.0]
 
-        i_see_it = cos_between_two_vectors(self.normal.coord_0, vector_of_distance) < 0.0
+        i_see_it = cos_between_two_vectors(self.normal, vector_of_distance) < 0.0
 
         vector_from_lamp = normalize_me_in_3d(vector_from_lamp)
 
-        angle = cos_between_two_vectors(self.normal.coord_0, vector_from_lamp)
+        angle = cos_between_two_vectors(self.normal, vector_from_lamp)
         new_color = make_color(angle0=angle, distance=distance3d, color=color)
         return ReturnColor(color=new_color, i_see_it=i_see_it, distance=square_of_distance)
 
