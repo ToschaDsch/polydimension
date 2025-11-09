@@ -55,8 +55,10 @@ class Cube3d(NDimensionalObject):
             points_for_surface_i = [self.my_points[i] for i in numbers_of_points]
             self.my_surfaces.append(Surface(list_of_points=points_for_surface_i, color=self.surface_color))
 
-        for surface in self.my_surfaces: #check it
+        for surface in self.my_surfaces: #check it add normal to the lines
             is_it_a_surface(surface)
+            if surface.draw_with_normal:
+                self.my_lines.append(surface.normal_line)
 
     def make_volumes(self):
         pass

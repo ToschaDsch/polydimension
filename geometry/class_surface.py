@@ -31,17 +31,26 @@ class Surface(GeometricObject):
         self.list_of_lines: list[Line] = []
         self.make_lines()
         self.dimension: int = list_of_points[0].dimension
-        self.normal: np.ndarray[tuple[Any]] = self.get_normal()
         self.center = get_center_from_list_of_points(list_of_points=self._list_of_points)
+        init_center_of_the_volume = init_center_of_the_volume if init_center_of_the_volume else Point()
+        self.normal: Point = self.get_coordinate_of_the_normal(init_center_of_the_volume = init_center_of_the_volume)
         self._init_color = color
         self._source_of_light: SourceOfLight = source_of_light if source_of_light else SourceOfLight()
-        init_center_of_the_volume = init_center_of_the_volume if init_center_of_the_volume else Point()
+
         return_color = self.give_me_return_color(points=self._list_of_points, center_of_the_volume=init_center_of_the_volume,
                                                  color=self._init_color,
                                                  lamp=self._source_of_light)
         self.color = return_color.color
         self.visible = return_color.i_see_it
+        self.draw_with_normal = True
+        self.normal.coord_0 = np.resize(self.normal.coord_0, (len(self.center.coord_0)))
+        self.normal_line = Line(point_0=self.center, point_1=self.normal)
         
+    def get_coordinate_of_the_normal(self, init_center_of_the_volume: Point) -> Point:
+        coordinates = calculate_normal(points=self._list_of_points, vector_center=init_center_of_the_volume.coord_0)
+        return Point(coordinates=coordinates)
+
+
 
     def change_coordinate(self):
         pass
@@ -60,18 +69,7 @@ class Surface(GeometricObject):
     @list_of_points.setter
     def list_of_points(self, list_of_points: list[Point]):
         self._list_of_points = list_of_points
-        self.normal = self.get_normal()
 
-    def get_normal(self) -> ndarray | None:
-        if len(self.list_of_lines) < 2:
-            print("too few lines")
-            return None
-        a = self.list_of_lines[0].point_0.coord_0 - self.list_of_lines[0].point_1.coord_0
-        b = self.list_of_lines[1].point_0.coord_0 - self.list_of_lines[1].point_1.coord_0
-        a = np.resize(a, (3,))
-        b = np.resize(b, (3,))
-        normal = np.cross(a, b)
-        return normal/np.linalg.norm(normal)
 
     def give_me_return_color(self, points: list[Point],
                              center_of_the_volume: Point,
@@ -86,7 +84,6 @@ class Surface(GeometricObject):
 
         vector_center = vector_of_distance - center_of_the_volume.coord_0
 
-        normal = calculate_normal(points=points, vector_center=vector_center)
 
         vector_from_lamp, distance_from_lamp = calculate_lamp(vector_of_distance=vector_of_distance,
                                                               lamp_coord=lamp.coordinate.coord_n)
@@ -98,11 +95,11 @@ class Surface(GeometricObject):
         else:
             vector_of_distance = [0.0, 1.0, 0.0]
 
-        i_see_it = cos_between_two_vectors(normal, vector_of_distance) < 0.0
+        i_see_it = cos_between_two_vectors(self.normal.coord_0, vector_of_distance) < 0.0
 
         vector_from_lamp = normalize_me_in_3d(vector_from_lamp)
 
-        angle = cos_between_two_vectors(normal, vector_from_lamp)
+        angle = cos_between_two_vectors(self.normal.coord_0, vector_from_lamp)
         new_color = make_color(angle0=angle, distance=distance3d, color=color)
         return ReturnColor(color=new_color, i_see_it=i_see_it, distance=square_of_distance)
 
@@ -161,7 +158,7 @@ def calculate_lamp(vector_of_distance: np.ndarray, lamp_coord: np.ndarray) -> tu
     the function returns not normalized vector of lamp - the point
     and the distance between
     """
-    vector_from_lamp = lamp_coord - vector_of_distance
+    vector_from_lamp = lamp_coord - np.resize(vector_of_distance, (3,),)
     # Kotlin had sqrt(...) commented out and set distanceFromLamp = 1f
     distance_from_lamp = 1.0
     return vector_from_lamp, distance_from_lamp
@@ -178,7 +175,7 @@ def normalize_me_in_3d(vector: np.ndarray, distance0: float = 0.0) -> np.ndarray
 
     a = 1.0 if distance == 0.0 else 1.0 / distance
 
-    return distance * a
+    return vector * a
 
 def cos_between_two_vectors(normal: np.ndarray, vector_of_distance: np.ndarray) -> float:
     """the function returns 3d scalar product"""
