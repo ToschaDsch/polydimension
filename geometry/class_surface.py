@@ -25,6 +25,7 @@ class Surface(GeometricObject):
                  source_of_light: SourceOfLight = None, init_center_of_the_volume: Point = None):
         color = color if color else QColor(*MyColors.default_surface_color)
         super().__init__(color=color, width=width)
+        self._draw_with_normal = True
         self._list_of_points: list[Point] = list_of_points if list_of_points is not None else []
         self.list_of_lines: list[Line] = []
         self.make_lines()
@@ -44,7 +45,9 @@ class Surface(GeometricObject):
         self.normal = np.resize(self.normal, (len(self.center.coord_0),))
         point_1 = Point(coordinates=self.center.coord_0+self.normal)
         self.normal_line = Line(point_0=self.center, point_1=point_1, name="normal", width=4)
-        self.list_of_points_change_coordinate = self._list_of_points + [self.center, point_1]
+        self.list_of_points_change_coordinate = self._list_of_points + [self.center, point_1, Point(self.normal)]
+        if self._draw_with_normal:
+            self.list_of_lines.append(self.normal_line)
 
     def change_coordinate(self):
         pass
@@ -55,6 +58,7 @@ class Surface(GeometricObject):
                                            point_1=self._list_of_points[i+1], color=self._color))
         self.list_of_lines.append(Line(point_0=self._list_of_points[0],
                                        point_1=self.list_of_points[-1], color=self.color)) # closing the path
+
 
     @property
     def list_of_points(self) -> list[Point]:
@@ -76,7 +80,7 @@ class Surface(GeometricObject):
         vector_of_distance, square_of_distance = calculate_vector_and_square_of_distance(points=points)
         distance3d: float = 0.0
 
-        vector_center = vector_of_distance - center_of_the_volume.coord_0
+        vector_center = vector_of_distance - np.resize(center_of_the_volume.coord_0, 3)
 
 
         vector_from_lamp, distance_from_lamp = calculate_lamp(vector_of_distance=vector_of_distance,
@@ -121,14 +125,13 @@ def calculate_vector_and_square_of_distance(points: list[Point]) -> tuple[np.nda
     the function calculates a vector to the center of the surface and average square of distance to the surface
     from center of coordinate
     """
-    h = len(points[0].coord_n)
-    vector_distance: np.ndarray = np.empty((h,))
+    new_size = 3
+    vector_distance: np.ndarray = np.empty((new_size,))
     square_of_length = 0.0
-    a = 1.0 / len(points)
-
-    for i in range(h):
-        for point in points:
-            vector_distance[i] += point.coord_n[i] * a  # x
+    for point in points:
+        vector_distance += np.resize(point.coord_n, new_size)  # x
+    vector_distance = vector_distance / len(points)
+    for i in range(new_size):
         square_of_length += vector_distance[i] * vector_distance[i]
     return vector_distance, square_of_length
 

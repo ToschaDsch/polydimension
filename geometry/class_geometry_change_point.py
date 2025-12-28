@@ -24,15 +24,16 @@ class  GeometryChangePoint:
                                     0.0, 0.0, 0.0]) # xy, xz, xd1, yz, yd1, zd1
         self.sin: list[float] = [math.sin(x) for x in self.angles]
         self.cos: list[float] = [math.cos(x) for x in self.angles]
-        self.dxi: np.ndarray = np.array([0,0,0,0])
+        self.dxi: np.ndarray = np.array([0,0])
         self.rotation_matrix: np.ndarray = get_rotate_matrix(sin=self.sin,
                                                              cos=self.cos,
-
                                                              dimensional=self.dimensional)
+
+        self.x0y0: np.ndarray= np.array([int(Menus.display_width / 2),
+                                        int(Menus.display_height / 2)])
+
         self.scale: float = CoordinatesScreen.scale
-        self.x0y0: tuple[int, int, int] = ( int(Menus.display_width / 2),
-                                            int(Menus.display_height / 2),
-                                            0)
+
         self.dict_of_objects_to_draw: SortedDict = SortedDict()
         self.draw_with_perspective: bool = False
 
@@ -59,15 +60,10 @@ class  GeometryChangePoint:
 
     def _rotate_and_shift_a_point(self, point: Point):
         coord_0 = np.vstack(point.coord_0)
-        result: np.ndarray = np.matmul(self.rotation_matrix, coord_0)
-        point.coord_n = np.array([result[0][0], result[1][0], result[2][0]])    #z coordinate to sort the object in the dict
-        x0_y0 = (
-            point.coord_n[0] * self.scale + self.dxi[0] + self.x0y0[0],
-            point.coord_n[1] * self.scale + self.dxi[1] + self.x0y0[1],
-            point.coord_n[2] * self.scale + self.dxi[2] + self.x0y0[2])
+        x0_y0: np.ndarray = np.matmul(self.rotation_matrix, coord_0)
         if self.draw_with_perspective:
             x0_y0 = get_2d_coordinate_with_perspective(x=x0_y0[0], y=x0_y0[1], z=x0_y0[2])
-        point.coord_n = np.array(x0_y0)
+        point.coord_n = np.resize(x0_y0, 2) * self.scale + self.x0y0  + np.resize(self.dxi, 2)
 
     def clean_dict_of_draw_objects(self):
         self.dict_of_objects_to_draw.clear()

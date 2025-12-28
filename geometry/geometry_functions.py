@@ -62,18 +62,30 @@ def rotation_matrix_4d(axis_1: int, axis_2: int, cos_i: float, sin_i: float) -> 
 
 
 
-def get_2d_coordinate_with_perspective(x: float, y: float, z: float, diameter: float=400) -> list[float]:
+def get_2d_coordinate_with_perspective(x: float, y: float, z: float, diameter: float=400) -> np.ndarray:
     """
     Projects a 3D point (x, y, z) into 2D space,
     with perspective
     """
+    return flat_perspective(x, y, z)
+    return sphere_perspective(x=x, y=y, z=z)
+
+def flat_perspective(x: float, y: float, z: float) -> np.ndarray:
+    a = -5
+    z += a
+    if z == 0:
+        return np.array([400, 400])
+    return np.array([a*x/z,
+                     a*y/z])
+
+def sphere_perspective(x: float, y: float, z: float, diameter: float=400) -> np.ndarray:
     max_l = diameter * 10000.0
-    z+=3*diameter
     # y *=-1    back perspective
+    z-=25
 
     try:
         # Perspective projection
-        if z <= 0.0001:
+        if math.fabs(z) <= 0.0001:
             l = diameter * math.atan(math.sqrt(y * y + x * x) * 100000.0)
         else:
             l = diameter * math.atan(math.sqrt(y * y + x * x) / z)
@@ -85,61 +97,20 @@ def get_2d_coordinate_with_perspective(x: float, y: float, z: float, diameter: f
 
         if l > max_l:
             if y >= 0:
-                return [max_l, max_l]
+                return np.array([max_l, max_l])
             else:
-                return [-max_l, -max_l]
+                return np.array([-max_l, -max_l])
         else:
-            k = 4
-            x0, y0 = -300, 550
+            k = 1
             if y >= 0:
-                return [
-                    x0 + diameter * 0.5 + k*l * math.sin(alpha),
-                    y0 + diameter * 0.5 - k*l * math.cos(alpha)
-                ]
+                return np.array([
+                    + k*l * math.sin(alpha),
+                    - k*l * math.cos(alpha)
+                ])
             else:
-                return [
-                    x0 + diameter * 0.5 - k*l * math.sin(alpha),
-                    y0 + diameter * 0.5 + k*l * math.cos(alpha)
-                ]
+                return np.array([
+                    - k*l * math.sin(alpha),
+                    + k*l * math.cos(alpha)
+                ])
     except Exception as err:
         raise("TransformTo2D, Arithmetic exception", err)
-
-
-    """    try:
-        # Perspective projection
-        if y <= 0.0001:
-            l = diameter * math.atan(math.sqrt(z * z + x * x) * 100000.0)
-        else:
-            l = diameter * math.atan(math.sqrt(z * z + x * x) / y)
-
-        if -0.0001 < z < 0.0001:
-            alpha = math.atan(x * 10000.0) % (2.0 * math.pi)
-        else:
-            alpha = math.atan(x / z) % (2.0 * math.pi)
-
-        if l > max_l:
-            if z >= 0:
-                return [max_l, max_l]
-            else:
-                return [-max_l, -max_l]
-        else:
-            if z >= 0:
-                return [
-                    diameter * 0.5 + l * math.sin(alpha),
-                    diameter * 0.5 - l * math.cos(alpha)
-                ]
-            else:
-                return [
-                    diameter * 0.5 - l * math.sin(alpha),
-                    diameter * 0.5 + l * math.cos(alpha)
-                ]
-    except ArithmeticError as err:
-        raise("TransformTo2D, Arithmetic exception", err)
-        
-        
-        diameter * 0.5f + l * sin(alpha),
-        diameter * 0.5f + l * cos(alpha)
-        
-        diameter * 0.5f - l * sin(alpha),
-        diameter * 0.5f - l * cos(alpha)
-"""

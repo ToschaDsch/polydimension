@@ -8,8 +8,8 @@ from graphic.functions_for_screen_window import get_scale
 from objects.class_axis import Axis
 from objects.class_draw_interface import NDimensionalObject
 from objects.class_web import Line2dWeb
-from variables.geometry_var import CoordinatesScreen
-from variables.graphics import Transparency
+from variables.geometry_var import CoordinatesScreen, MyCoordinates
+from variables.graphics import Transparency, GraphicRegimes
 from variables.menus import Menus
 import numpy as np
 
@@ -48,7 +48,8 @@ class DrawAll:
 
         # draw options
         self._transparency: Literal[Transparency.transparent] = Transparency.transparent
-        self._perspective: bool = False
+        self._perspective: bool = GraphicRegimes.perspective
+        self._geometry.draw_with_perspective = self._perspective
 
         self.init_points()      # set new center
 
@@ -96,8 +97,9 @@ class DrawAll:
             self.change_isometry()
             new_scale = self.first_scale()
             self._geometry.scale=new_scale
-            self.change_isometry()  # with new scale
-            self.draw_all()
+            angle_0: np.ndarray = MyCoordinates.angles_0
+            dx_dy: np.ndarray = MyCoordinates.displacement_0
+            self.draw_all(angles=angle_0, dxi=dx_dy)
 
     def draw_all(self, angles: np.ndarray=None, dxi: np.ndarray=None, scale:float=None):
         self.change_isometry(angles=angles, dxi=dxi, scale=scale)
