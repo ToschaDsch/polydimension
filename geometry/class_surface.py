@@ -31,10 +31,10 @@ class Surface(GeometricObject):
         self.list_of_lines: list[Line] = []
         self.make_lines()
         self.dimension: int = list_of_points[0].dimension
-        self.center = get_center_from_list_of_points(list_of_points=self._list_of_points)
+        self.center: Point = get_center_from_list_of_points(list_of_points=self._list_of_points)
         self.init_center_of_the_volume = init_center_of_the_volume if init_center_of_the_volume else Point()
         normal: np.ndarray = calculate_normal(points=self._list_of_points,
-                                                   vector_center=self.init_center_of_the_volume.coord_0)
+                                            vector_center=self.center.coord_0 - self.init_center_of_the_volume.coord_0)
         self._init_color = color
         self._source_of_light: SourceOfLight = source_of_light if source_of_light else SourceOfLight()
         self.normal: Point = Point(

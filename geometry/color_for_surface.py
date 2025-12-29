@@ -49,15 +49,15 @@ def give_me_return_color(points: list[Point],
 def vector_product_with_center(v1: np.ndarray, v2: np.ndarray, vector_center: np.ndarray) -> np.ndarray:
     """
     the function checks where is the center and returns normal of the surface
+    only for 3d space
+    vector_center - the vector between center of the surface and center of the volume
     """
-    v1_=np.resize(v1, 3,)
-    v2_=np.resize(v2, 3,)
     vector_center=np.resize(vector_center,3,)
-    vector_product = np.cross(v1_, v2_)
+    vector_product = np.cross(v1, v2)
     if vector_product.dot(vector_center) > 0.0:
         return vector_product
     else:
-        return np.cross(v2_, v1_)
+        return np.cross(v2, v1)
 
 def calculate_vector_and_square_of_distance(points: list[Point]) -> tuple[np.ndarray, float]:
     """
@@ -78,11 +78,15 @@ def calculate_normal(points: list[Point], vector_center: np.ndarray) -> np.ndarr
     """
     the function takes coordinate of surfaces edge and calculate normal to the surface
     """
-    v1: np.ndarray = points[1].coord_n - points[0].coord_n  # dx //vector v1 (point 1 - point 0)
-    v2: np.ndarray = points[2].coord_n - points[1].coord_n  # dx //vector v2 (point 2 - point 1)
-    np.resize(v1, (3,))
-    np.resize(v2, (3,))
-    normal = vector_product_with_center(v1=v1, v2=v2, vector_center=vector_center)
+    v1: np.ndarray = np.resize(
+        points[1].coord_n - points[0].coord_n,
+        (3,))  # dx //vector v1 (point 1 - point 0)
+    v2: np.ndarray = np.resize(
+        points[2].coord_n - points[1].coord_n,
+        (3,))  # dx //vector v2 (point 2 - point 1)
+    normal = vector_product_with_center(v1=v1, v2=v2,
+                                        vector_center=np.resize(vector_center, (3,))
+                                        )
 
     length = np.sqrt(normal.dot(normal))
 
