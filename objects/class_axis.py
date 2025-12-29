@@ -27,7 +27,7 @@ class Axis(NDimensionalObject):
             axes_i = Line(point_0=self.my_points[i],
                             point_1=self.my_points[i+1],
                           color=colors[int(i/2)])
-            self.my_lines.append(axes_i)
+            self._my_lines.append(axes_i)
 
 
     def make_surfaces(self):

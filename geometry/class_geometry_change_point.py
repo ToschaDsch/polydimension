@@ -69,7 +69,7 @@ class  GeometryChangePoint:
         self.dict_of_objects_to_draw.clear()
 
     def add_the_draw_element_to_sorted_dict(self, draw_object: GeometricObject|Point):
-        z = draw_object.get_center().coord_n[2]
+        z = draw_object.get_center().coord_n[2] if len(draw_object.get_center().coord_n) > 2 else 0
         self._add_an_object_to_the_dict(draw_object=draw_object, z=z)
 
 

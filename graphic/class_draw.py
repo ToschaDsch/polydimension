@@ -83,7 +83,7 @@ class DrawAll:
         list_of_points: list[Point] = []
         # add points of all objects
         for draw_object in list_of_draw_objects:
-            list_of_points.extend(draw_object.my_points)
+            list_of_points.extend(draw_object._my_points)
 
         return list_of_points
 

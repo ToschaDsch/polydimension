@@ -47,7 +47,7 @@ class Line2dWeb(NDimensionalObject):
                 point_i = Point(coordinates=coordinate)
                 line_of_points.append(point_i)
             self._list_of_points.append(line_of_points)
-            self.my_points.extend(line_of_points)
+            self._my_points.extend(line_of_points)
 
     def make_lines(self):
         for i in range(self.n):
@@ -57,7 +57,7 @@ class Line2dWeb(NDimensionalObject):
                     point_1 = self._list_of_points[i+1][j],
                     color=self.line_color
                 )
-                self.my_lines.append(line_i)
+                self._my_lines.append(line_i)
 
         for i in range(self.n):
             for j in range(self.n+1):
@@ -66,7 +66,7 @@ class Line2dWeb(NDimensionalObject):
                     point_1=self._list_of_points[j][i+1],
                     color=self.line_color
                 )
-                self.my_lines.append(line_i)
+                self._my_lines.append(line_i)
 
 
     @property

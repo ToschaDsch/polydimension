@@ -16,10 +16,10 @@ class NDimensionalObject(ABC):
     def __init__(self, size: int = CoordinatesScreen.init_size_of_the_object, line_color: QColor=None, surface_color: QColor=None):
         self.dimensions = 4
         self.draw_with_normal = True
-        self.my_points: list[Point] = []
-        self.my_lines: list[Line] = []
-        self.my_surfaces: list[Surface] = []
-        self.my_volumes: list[Volume] = []
+        self._my_points: list[Point] = []
+        self._my_lines: list[Line] = []
+        self._my_surfaces: list[Surface] = []
+        self._my_volumes: list[Volume] = []
         self._solid: bool = True
         self._transparent: bool = True
         self.line_color: QColor = line_color if line_color else QColor(*MyColors.default_line_color)
@@ -28,11 +28,12 @@ class NDimensionalObject(ABC):
         self.name_of_the_object: str = "Noname"
         self.make_geometry()
         self.z_min = self.get_z_min()
+        self.send_normals_from_surfaces()
 
 
 
     def get_z_min(self):
-        return functools.reduce(lambda x, y: min(x.coord_0[2] if isinstance(x, Point) else x, y.coord_0[2]), self.my_points, 0)
+        return functools.reduce(lambda x, y: min(x.coord_0[2] if isinstance(x, Point) else x, y.coord_0[2]), self._my_points, 0)
 
     @property
     def transparent(self):
@@ -41,7 +42,7 @@ class NDimensionalObject(ABC):
     @transparent.setter
     def transparent(self, value: bool):
         self._transparent = value
-        for surface in self.my_surfaces:
+        for surface in self._my_surfaces:
             surface.transparent = value
 
     def make_geometry(self):
@@ -49,6 +50,15 @@ class NDimensionalObject(ABC):
         self.make_lines()
         self.make_surfaces()
         self.make_volumes()
+
+    def send_normals_from_surfaces(self):
+        for surface in self._my_surfaces: #check it add normal to the lines
+            is_it_a_surface(surface)
+            if self.draw_with_normal:
+                self._my_lines.append(surface.normal_line)
+                self._my_points.append(surface.normal_line.point_0)
+                self._my_points.append(surface.normal_line.point_1)
+            self._my_points.append(surface.normal)
 
     @abstractmethod
     def make_points(self):
@@ -83,26 +93,32 @@ class NDimensionalObject(ABC):
 
     def get_geometric_objects(self, transparency: int = Transparency.transparent) -> list[Line] | list[Surface] | None:
         if not self._solid:
-            return self.my_lines
+            return self._my_lines
         match transparency:
             case Transparency.full:
-                return self.my_surfaces
+                return self._my_surfaces
             case Transparency.sceleton:
-                return self.my_lines
+                return self._my_lines
             case Transparency.transparent:
-                return self.my_surfaces + self.my_lines
+                return self._my_surfaces + self._my_lines
             case _:
                 print("there is no case for transparency")
                 return None
 
 
     def __str__(self):
-        list_of_points: list[str] = [str(x) for x in self.my_points]
-        list_of_lines: list[str] = [str(x) for x in self.my_lines]
-        list_of_surfaces: list[str] = [str(x) for x in self.my_surfaces]
+        list_of_points: list[str] = [str(x) for x in self._my_points]
+        list_of_lines: list[str] = [str(x) for x in self._my_lines]
+        list_of_surfaces: list[str] = [str(x) for x in self._my_surfaces]
         return (f"i'm {self.name_of_the_object}, \n"
                 f"I have {self.dimensions} dimensions\n"
                 f"my points: {len(list_of_points)} {list_of_points}\n"
                 f"my lines: {len(list_of_lines)} {list_of_lines}\n"
                 f"my surfaces: {list_of_surfaces}\n"
-                f"my volumes: {self.my_volumes}\n")
+                f"my volumes: {self._my_volumes}\n")
+
+
+def is_it_a_surface(surface: Surface) -> bool:
+    res = functools.reduce(lambda x, y: x.coord_0 if isinstance(x, Point) else x + y.coord_0, surface.list_of_points, 0)
+    print(res)
+    return res

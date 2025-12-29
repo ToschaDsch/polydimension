@@ -53,6 +53,9 @@ def draw_a_text(x0_y0, text: str):
 
 
 def draw_a_line(line: Line):
+    if line.name == "normal":
+        print('normal')
+        print(line)
     x1 = line.point_0.coord_n[0]
     y1 = line.point_0.coord_n[1]
     x2 = line.point_1.coord_n[0]
