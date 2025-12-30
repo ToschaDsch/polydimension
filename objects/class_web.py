@@ -30,7 +30,7 @@ class Line2dWeb(NDimensionalObject):
 
     def __str__(self):
         return (f"I am Line2dWeb \n"
-                f"{self._list_of_points}")
+                f"my_lines{len(self._my_lines)}\n")
 
 
     def make_points(self):

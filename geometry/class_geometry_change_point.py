@@ -3,6 +3,7 @@ import math
 import numpy as np
 from sortedcontainers import SortedDict
 
+import geometry.class_line
 from geometry.class_geometric_object import GeometricObject
 from geometry.class_point import Point
 from geometry.geometry_functions import get_rotate_matrix, get_2d_coordinate_with_perspective
@@ -30,7 +31,8 @@ class  GeometryChangePoint:
                                                              dimensional=self.dimensional)
 
         self.x0y0: np.ndarray= np.array([int(Menus.display_width / 2),
-                                        int(Menus.display_height / 2)])
+                                        int(Menus.display_height / 2),
+                                         0])
 
         self.scale: float = CoordinatesScreen.scale
 
@@ -64,13 +66,20 @@ class  GeometryChangePoint:
         point.coord_only_rotate = np.resize(x0_y0, len(point.coord_0))
         if self.draw_with_perspective:
             x0_y0 = get_2d_coordinate_with_perspective(x=x0_y0[0], y=x0_y0[1], z=x0_y0[2])
-        point.coord_n = np.resize(x0_y0, 2) * self.scale + self.x0y0  + np.resize(self.dxi, 2)
+        point.coord_n = np.resize(x0_y0, 3) * self.scale + self.x0y0  + np.resize(self.dxi, 3)
 
     def clean_dict_of_draw_objects(self):
         self.dict_of_objects_to_draw.clear()
 
     def add_the_draw_element_to_sorted_dict(self, draw_object: GeometricObject|Point):
-        z = draw_object.get_center().coord_n[2] if len(draw_object.get_center().coord_n) > 2 else 0
+        match type(draw_object):
+            case geometry.class_line.Line:
+                z = 0.5*(draw_object.point_0.coord_n[2] + draw_object.point_1.coord_n[2])
+            case geometry.class_surface.Surface:
+                z = draw_object.get_center().coord_n[2]
+            case _other:
+                z = 0
+
         self._add_an_object_to_the_dict(draw_object=draw_object, z=z)
 
 

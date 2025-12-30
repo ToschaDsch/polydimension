@@ -16,7 +16,7 @@ class ReturnColor:
 def give_me_return_color(points: list[Point],
                          color: "QColor",
                          normal: np.ndarray,
-                         lamp: SourceOfLight = None) -> ReturnColor:
+                         lamp: SourceOfLight) -> ReturnColor:
     """it works only in 3d
     the function send the surface in 3d and find the light end can it be seen"""
     vector_of_distance, square_of_distance = calculate_vector_and_square_of_distance(points=points)
@@ -28,7 +28,8 @@ def give_me_return_color(points: list[Point],
     # if (distanceFromLamp > lamp.intensity) { // in dark } -- original commented out
 
     vector_of_distance = np.resize(normalize_me_in_3d(vector_of_distance), (len(normal), ))
-    i_see_it = cos_between_two_vectors(normal, vector_of_distance) > 0.0
+    vector_from_observer = np.resize(np.array([0, 0, 10]), len(normal))
+    i_see_it = cos_between_two_vectors(normal, vector_from_observer) < 0.0
 
     vector_from_lamp = np.resize(normalize_me_in_3d(vector_from_lamp), (len(normal),))
     angle = cos_between_two_vectors(normal, vector_from_lamp)

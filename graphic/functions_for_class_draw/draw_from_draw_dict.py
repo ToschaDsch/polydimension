@@ -8,10 +8,11 @@ from geometry.class_point import Point
 from geometry.class_text import TextDraw
 from geometry.class_surface import Surface
 from geometry.class_volume import Volume
+from variables.graphics import Transparency
 from variables.menus import Menus
 
 
-def draw_from_dict(dick_of_draw_objects: SortedDict):
+def draw_from_dict(dick_of_draw_objects: SortedDict, transparency: int = Transparency.transparent):
     """it is general function of the module.
     the function becomes objects from dict show.
     in the dict all objects are sorted in z direction.
@@ -28,6 +29,9 @@ def draw_from_dict(dick_of_draw_objects: SortedDict):
             case geometry.class_line.Line:
                 draw_a_line(line=draw_object)
             case geometry.class_surface.Surface:
+                if transparency == Transparency.full and draw_object.visible is False:
+                    print("I dont see that")
+                    continue
                 draw_a_surface(surface=draw_object)
             case geometry.class_volume.Volume:
                 draw_a_volume(volume=draw_object)

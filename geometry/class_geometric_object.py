@@ -13,6 +13,7 @@ class GeometricObject(ABC):
         self.brush: QBrush = QBrush(self._color)
         self.pen: QPen = QPen(self.brush, self._width)
         self._transparent: bool = True
+        self.visible = True
         self.name: str = ""
 
     @property

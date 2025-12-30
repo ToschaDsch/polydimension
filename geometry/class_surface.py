@@ -49,7 +49,7 @@ class Surface(GeometricObject):
             self.list_of_points_change_coordinate = self._list_of_points + [self.center, point_1, self.normal]
             self.list_of_lines.append(self.normal_line)
         else:
-            self.list_of_points_change_coordinate = self._list_of_points + [self.normal]
+            self.list_of_points_change_coordinate = self._list_of_points + [self.normal, self.center]
 
     def _update_color(self):
         return_color = give_me_return_color(points=self._list_of_points,
@@ -77,4 +77,9 @@ class Surface(GeometricObject):
     def list_of_points(self, list_of_points: list[Point]):
         self._list_of_points = list_of_points
 
-
+    def __str__(self):
+        if self.name:
+            name = f"name - {self.name}"
+        else:
+            name = ""
+        return f"surface ({str(self._list_of_points[0])}-{str(self._list_of_points[1])}-{str(self._list_of_points[2])} {name})"

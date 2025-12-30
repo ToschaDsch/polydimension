@@ -74,9 +74,10 @@ def flat_perspective(x: float, y: float, z: float) -> np.ndarray:
     a = -5
     z += a
     if z == 0:
-        return np.array([400, 400])
+        return np.array([400, 400, 0])
     return np.array([a*x/z,
-                     a*y/z])
+                     a*y/z,
+                     z-a])
 
 def sphere_perspective(x: float, y: float, z: float, diameter: float=400) -> np.ndarray:
     max_l = diameter * 10000.0
