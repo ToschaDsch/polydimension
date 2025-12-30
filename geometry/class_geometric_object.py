@@ -8,7 +8,7 @@ from variables.graphics import MyColors, Transparency
 
 class GeometricObject(ABC):
     def __init__(self, color: QColor=None, width: int=None):
-        self._color = color if color else QColor(*MyColors.default_point_color)
+        self._color =color if color else QColor(*MyColors.default_point_color)
         self._width = width if width else 3
         self.brush: QBrush = QBrush(self._color)
         self.pen: QPen = QPen(self.brush, self._width)

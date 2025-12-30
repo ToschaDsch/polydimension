@@ -59,7 +59,7 @@ def calculate_vector_and_square_of_distance(points: list[Point]) -> tuple[np.nda
     vector_distance: np.ndarray = np.empty((new_size,))
     square_of_length = 0.0
     for point in points:
-        vector_distance += np.resize(point.coord_only_rotate, new_size)  # x
+        vector_distance += np.resize(point.coord_only_rotate, (new_size,))  # x
     vector_distance = vector_distance / len(points)
     for i in range(new_size):
         square_of_length += vector_distance[i] * vector_distance[i]
@@ -117,7 +117,6 @@ def make_color(angle0: float, distance: float, color: QColor) -> QColor:
     add = (1.0 - dispersion_of_light) + abs(angle0) * dispersion_of_light
 
     if (add > 0.0) and (add < 1.0):
-        # return Color(color.red * add, color.green * add, color.blue * add)
         return QColor(*[int(color.red()* add),
                         int(color.green() * add),
                         int(color.blue() * add),

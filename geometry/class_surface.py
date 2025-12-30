@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 import numpy as np
-from PySide6.QtGui import QColor
+from PySide6.QtGui import QColor, QBrush, QPen
 
 from geometry.class_geometric_object import GeometricObject
 from geometry.class_line import Line
@@ -9,7 +9,7 @@ from geometry.class_point import Point
 from geometry.class_source_of_light import SourceOfLight
 from geometry.color_for_surface import give_me_return_color, calculate_normal
 from geometry.geometry_functions import get_center_from_list_of_points
-from variables.graphics import MyColors
+from variables.graphics import MyColors, Transparency
 
 
 class Surface(GeometricObject):
@@ -55,8 +55,19 @@ class Surface(GeometricObject):
         return_color = give_me_return_color(points=self._list_of_points,
                                             color=self._init_color, lamp=self._source_of_light,
                                             normal=self.normal.coord_only_rotate)
-        self.color = return_color.color
+        self._color = return_color.color
         self.visible = return_color.i_see_it
+        self.brush: QBrush = QBrush(self._color)
+        self.pen: QPen = QPen(self.brush, self.width)
+
+    @property
+    def color(self) -> QColor:
+        return self._color
+
+    @color.setter
+    def color(self, value: QColor):
+        self._init_color = value
+        self._update_color()
 
     def change_coordinate(self):
         self._update_color()
@@ -83,3 +94,16 @@ class Surface(GeometricObject):
         else:
             name = ""
         return f"surface ({str(self._list_of_points[0])}-{str(self._list_of_points[1])}-{str(self._list_of_points[2])} {name})"
+
+    @property
+    def transparent(self) -> bool:
+        return self._transparent
+
+    @transparent.setter
+    def transparent(self, value: bool):
+        self._transparent = value
+        alpha: int = MyColors.transparency if value == Transparency.transparent else 256
+        self._init_color.setAlpha(alpha)
+        self._color.setAlpha(alpha)
+        self.brush: QBrush = QBrush(self._color)
+        self.pen: QPen = QPen(self.brush, self.width)
