@@ -109,7 +109,7 @@ def cos_between_two_vectors(normal: np.ndarray, vector_of_distance: np.ndarray) 
     """the function returns 3d scalar product"""
     return np.dot(normal, vector_of_distance)
 
-def make_color(angle0: float, distance: float, color: "QColor" = None) -> QColor:
+def make_color(angle0: float, distance: float, color: QColor) -> QColor:
     if color is None:
         return QColor(100,100,0)
     dispersion_of_light = 0.5
@@ -118,6 +118,9 @@ def make_color(angle0: float, distance: float, color: "QColor" = None) -> QColor
 
     if (add > 0.0) and (add < 1.0):
         # return Color(color.red * add, color.green * add, color.blue * add)
-        return QColor(*[color.redF()* add, color.green() * add, color.blue() * add])
+        return QColor(*[int(color.red()* add),
+                        int(color.green() * add),
+                        int(color.blue() * add),
+                        color.alpha()])
     else:
         return color
