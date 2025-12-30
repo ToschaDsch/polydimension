@@ -117,6 +117,9 @@ class NDimensionalObject(ABC):
                 f"my surfaces: {list_of_surfaces}\n"
                 f"my volumes: {self._my_volumes}\n")
 
+    def update_lighting_for_all_surfaces(self):
+        for surface in self._my_surfaces:
+            surface.change_coordinate()
 
 def is_it_a_surface(surface: Surface) -> bool:
     res = functools.reduce(lambda x, y: x.coord_0 if isinstance(x, Point) else x + y.coord_0, surface.list_of_points, 0)

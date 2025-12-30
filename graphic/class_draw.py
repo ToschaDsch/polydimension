@@ -118,9 +118,14 @@ class DrawAll:
     def change_isometry(self, angles:np.ndarray=None, dxi:np.ndarray=None, scale: float=None):
         if angles is None and dxi is None and scale is None:
             return None
+        #   calculate new coordinates
         self._geometry.calculate_new_coordinates_for_the_list_of_points(angles=angles,dx=dxi,
                                                                         points=self._list_of_all_points,
                                                                         scale=scale)
+        #   update lighting for all surfaces
+        for draw_object in self._list_of_draw_objects:
+            draw_object.update_lighting_for_all_surfaces()
+
         return None
 
     def make_center(self):

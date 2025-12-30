@@ -53,9 +53,8 @@ class Surface(GeometricObject):
 
     def _update_color(self):
         return_color = give_me_return_color(points=self._list_of_points,
-                                            center_of_the_volume=self.init_center_of_the_volume,
                                             color=self._init_color, lamp=self._source_of_light,
-                                            normal=self.normal.coord_n)
+                                            normal=self.normal.coord_only_rotate)
         self.color = return_color.color
         self.visible = return_color.i_see_it
 

@@ -14,36 +14,26 @@ class ReturnColor:
     distance: float
 
 def give_me_return_color(points: list[Point],
-                         center_of_the_volume: Point,
                          color: "QColor",
                          normal: np.ndarray,
-                         lamp: SourceOfLight = None,
-                         draw_with_perspective: bool = False) -> ReturnColor:
+                         lamp: SourceOfLight = None) -> ReturnColor:
     """it works only in 3d
     the function send the surface in 3d and find the light end can it be seen"""
     vector_of_distance, square_of_distance = calculate_vector_and_square_of_distance(points=points)
     distance3d: float = 0.0
-
-    vector_center = vector_of_distance - np.resize(center_of_the_volume.coord_0, 3)
-
 
     vector_from_lamp, distance_from_lamp = calculate_lamp(vector_of_distance=vector_of_distance,
                                                           lamp_coord=lamp.coordinate.coord_n)
 
     # if (distanceFromLamp > lamp.intensity) { // in dark } -- original commented out
 
-    if draw_with_perspective:
-        vector_of_distance = normalize_me_in_3d(vector_of_distance)
-    else:
-        vector_of_distance = [0.0, 1.0, 0.0]
-    vector_of_distance = np.resize(vector_of_distance, (len(normal), ))
-    i_see_it = cos_between_two_vectors(normal, vector_of_distance) < 0.0
+    vector_of_distance = np.resize(normalize_me_in_3d(vector_of_distance), (len(normal), ))
+    i_see_it = cos_between_two_vectors(normal, vector_of_distance) > 0.0
 
     vector_from_lamp = np.resize(normalize_me_in_3d(vector_from_lamp), (len(normal),))
     angle = cos_between_two_vectors(normal, vector_from_lamp)
     new_color = make_color(angle0=angle, distance=distance3d, color=color)
     return ReturnColor(color=new_color, i_see_it=i_see_it, distance=square_of_distance)
-
 
 
 def vector_product_with_center(v1: np.ndarray, v2: np.ndarray, vector_center: np.ndarray) -> np.ndarray:
@@ -68,7 +58,7 @@ def calculate_vector_and_square_of_distance(points: list[Point]) -> tuple[np.nda
     vector_distance: np.ndarray = np.empty((new_size,))
     square_of_length = 0.0
     for point in points:
-        vector_distance += np.resize(point.coord_n, new_size)  # x
+        vector_distance += np.resize(point.coord_only_rotate, new_size)  # x
     vector_distance = vector_distance / len(points)
     for i in range(new_size):
         square_of_length += vector_distance[i] * vector_distance[i]
@@ -103,15 +93,12 @@ def calculate_lamp(vector_of_distance: np.ndarray, lamp_coord: np.ndarray) -> tu
     distance_from_lamp = 1.0
     return vector_from_lamp, distance_from_lamp
 
-def normalize_me_in_3d(vector: np.ndarray, distance0: float = 0.0) -> np.ndarray:
+def normalize_me_in_3d(vector: np.ndarray) -> np.ndarray:
     """
     the function normalizes a vector in 3d dimension
     """
-    if distance0 == 0.0:
-        vector_3d = np.resize(vector, (3,))
-        distance = np.sqrt(vector_3d.dot(vector_3d))
-    else:
-        distance = distance0
+    vector_3d = np.resize(vector, (3,))
+    distance = np.sqrt(vector_3d.dot(vector_3d))
 
     a = 1.0 if distance == 0.0 else 1.0 / distance
 

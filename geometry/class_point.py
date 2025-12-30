@@ -8,6 +8,7 @@ class Point:
     def __init__(self, coordinates: np.ndarray = None, color:QColor=None, width: int=2):
         self._coordinates: np.ndarray = coordinates if coordinates is not None else np.array([0.0, 0.0, 0.0, 0.0])
         self.coord_n: np.ndarray = self._coordinates
+        self.coord_only_rotate: np.ndarray = self._coordinates
         self._dimension: int = len(self._coordinates)
         self._color = color if color else QColor(*MyColors.default_point_color)
         self._width = width
