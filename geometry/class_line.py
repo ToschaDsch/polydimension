@@ -19,7 +19,7 @@ class Line(GeometricObject):
         self.point_1 = point_1
         coord_center: np.ndarray = (point_0.coord_0 + point_1.coord_0)/2
         self.center = Point(coordinates=coord_center)
-        self.color: QColor = color if color else QColor(*MyColors.default_point_color)
+        self.color: QColor = color if color else QColor(*MyColors.default_line_color)
         self.dimension: int = point_0.dimension
         self.name = name if name else ""
         self.list_of_points_change_coordinate = [point_0, point_1]

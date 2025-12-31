@@ -24,16 +24,14 @@ class PenThicknessToDraw:
     boards = 2
 
 
-
-
 @dataclass
 class MyColors:
     transparency: int = 100
     color: tuple = (50, 50, 50)
     web: tuple = (40, 0, 255)
     general_screen: tuple[int] = (100, 100, 255)
-    default_point_color: tuple = (0, 130, 130)
-    default_line_color: tuple = (100, 100, 100)
+    default_point_color: tuple = (158, 235, 52)
+    default_line_color: tuple = (50, 50, 100)
     default_surface_color: tuple = (200, 100, 100, 100)
     default_volume_color: tuple = (100, 100, 100)
 

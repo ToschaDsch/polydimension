@@ -74,7 +74,7 @@ class  GeometryChangePoint:
     def add_the_draw_element_to_sorted_dict(self, draw_object: GeometricObject|Point):
         match type(draw_object):
             case geometry.class_point.Point:
-                pass        #TODO
+                z = draw_object.coord_n[2]
             case geometry.class_line.Line:
                 z = 0.5*(draw_object.point_0.coord_n[2] + draw_object.point_1.coord_n[2])
             case geometry.class_surface.Surface:

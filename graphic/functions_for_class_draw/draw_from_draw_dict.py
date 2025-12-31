@@ -20,7 +20,7 @@ def draw_from_dict(dick_of_draw_objects: SortedDict, transparency: int = Transpa
     for key, draw_object in dick_of_draw_objects.items():
         match type(draw_object):
             case geometry.class_point.Point:
-                draw_a_point(point=draw_object)
+                draw_a_point(point=draw_object, radius=draw_object.radius)
             case geometry.class_text.TextDraw:
                 coord_n = draw_object.self_object[0].coord_n
                 x_y = (-coord_n[0],
@@ -60,12 +60,14 @@ def draw_a_line(line: Line):
     y1 = line.point_0.coord_n[1]
     x2 = line.point_1.coord_n[0]
     y2 = line.point_1.coord_n[1]
-    Menus.screen_window.draw_a_line(x1=x1, y1=y1, x2=x2, y2=y2, brush=line.brush, pen=line.pen)
+    Menus.screen_window.draw_a_line(x1=x1, y1=y1, x2=x2, y2=y2,
+                                    brush=line.brush, pen=line.pen)
 
 
 def draw_a_point(point: Point, radius: int=2):
     x0_y0 = point.coord_n
-    Menus.screen_window.draw_a_point(x=x0_y0[0], y=x0_y0[1], radius=radius)
+    Menus.screen_window.draw_a_point(x=x0_y0[0], y=x0_y0[1], radius=radius,
+                                     brush=point.brush, pen=point.pen)
 
 
 

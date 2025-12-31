@@ -38,7 +38,9 @@ class ScreenWindow(QLabel):
         self.setPixmap(canvas)
         self.draw_all()
 
-    def draw_a_point(self, x: int = 0, y: int = 0, radius: int=2):
+    def draw_a_point(self, brush: QBrush, pen: QPen,
+                     x: int = 0, y: int = 0, radius: int=2,):
+        self.change_brush_and_pen(pen=pen, brush=brush)
         if radius == 0:
             self.painter.drawEllipse((x, y))
         else:
