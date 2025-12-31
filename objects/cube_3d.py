@@ -34,6 +34,7 @@ class Cube3d(NDimensionalObject):
         for coordinate in init_list_of_coordinates:
             new_coordinate = numpy.append(coordinate, numpy.array([0]))
             self._my_points.append(Point(coordinates=new_coordinate))
+        self.points_to_show = self._my_points
 
 
     def make_lines(self):

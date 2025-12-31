@@ -25,8 +25,6 @@ class Menus:
 
     b_menu: int = 300
     table_1_width: int = b_menu - 2*frame
-    table_1_height: int = 100
-    table_2_width: int = 100
     # menu 1
     size_of_pictures_in_the_list: int = 40
     width_of_buttons_menu_1: int = table_1_width - size_of_pictures_in_the_list - 20
@@ -39,7 +37,7 @@ class Menus:
     name_ot_menu_3 = "displace and rotate the object"
     size_of_buttons_menu_3: int = int(b_menu / 4 - frame) - 10    # menu 2 tools
     frame_menu_3: int = 10
-    separators_height: int = 300
+    separators_height: int = 100
 
     # button back
     width_of_button_back: int = b_menu-2*frame

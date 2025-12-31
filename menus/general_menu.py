@@ -64,7 +64,7 @@ class GeneralWindow(QMainWindow):
 
         # menu 2 (info)
         self._label_info = QLabel()
-        self._label_info.setFixedWidth(Menus.info_height)
+        self._label_info.setFixedHeight(Menus.info_height)
         self._label_info.setFixedWidth(Menus.info_width)
         widget_layout_2 = self.load_menu_2()
         self._layout_menu.addWidget(widget_layout_2)
@@ -210,8 +210,9 @@ class GeneralWindow(QMainWindow):
         """
         self.slider_rotation.setSliderPosition(shift)
 
-    def load_menu_with_icons(self) -> QHBoxLayout:
-        menu_with_icons = QHBoxLayout()
+    def load_menu_with_icons(self) -> QVBoxLayout:
+        menu_with_icons = QVBoxLayout()
+        menu_with_icons_0 = QHBoxLayout()
         button_perspective = ToggleButton(function=self.function_perspective,
                                           list_of_paths_for_images=["without_perspective.png",
                                                                     "with_perspective.png"])
@@ -226,11 +227,24 @@ class GeneralWindow(QMainWindow):
         button_color = ToggleButton(function=self.function_color,
                                     list_of_paths_for_images=["cube_color.png",
                                                                 "with_lines.png"])
-        menu_with_icons.addWidget(button_web)
-        menu_with_icons.addWidget(button_perspective)
-        menu_with_icons.addWidget(button_transparent)
-        menu_with_icons.addWidget(button_color)
+
+        menu_with_icons_0.addWidget(button_web)
+        menu_with_icons_0.addWidget(button_perspective)
+        menu_with_icons_0.addWidget(button_transparent)
+        menu_with_icons_0.addWidget(button_color)
+        menu_with_icons_1 = QHBoxLayout()
+        button_with_points = ToggleButton(function=self.function_show_with_points,
+                                          list_of_paths_for_images=["with_points.png",
+                                                                    "with_perspective.png"])
+        menu_with_icons_1.addWidget(button_with_points)
+        menu_with_icons.addLayout(menu_with_icons_0)
+        menu_with_icons.addLayout(menu_with_icons_1)
         return menu_with_icons
+
+    def function_show_with_points(self, i: int):
+        GraphicRegimes.show_with_points = bool(i)
+        self.animation.show_with_points = bool(i)
+        self.screen_window.draw_all()
 
     def function_perspective(self, i: int):
         GraphicRegimes.perspective = bool(not i)

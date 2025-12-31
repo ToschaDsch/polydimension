@@ -16,6 +16,7 @@ class GraphicRegimes:
     web: bool = True
     transparency: int = Transparency.transparent
     color: bool = False
+    show_with_points: bool = False
 
 
 @dataclass

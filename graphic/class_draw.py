@@ -49,6 +49,7 @@ class DrawAll:
         self._z_c: int = 0
 
         self._colorful = False
+        self._show_with_points: bool = False
 
         # draw options
         self._transparency: Literal[Transparency.transparent] = Transparency.transparent
@@ -62,6 +63,15 @@ class DrawAll:
             return [self._web_object, self._axis_object, self._draw_object]
         else:
             return [self._axis_object, self._draw_object]
+
+    @property
+    def show_with_points(self) -> bool:
+        return self._show_with_points
+
+    @show_with_points.setter
+    def show_with_points(self, show_with_points: bool) -> None:
+        self._show_with_points = show_with_points
+
 
     @property
     def colorful(self) -> bool:
@@ -167,7 +177,9 @@ class DrawAll:
 
         # draw the model
         add_all_draw_objects_to_the_dict(list_of_all_objects=self._list_of_draw_objects,
-                                         geometry=self._geometry, transparency=self._transparency)
+                                         geometry=self._geometry,
+                                         transparency=self._transparency,
+                                         show_the_points=self.show_with_points)
         draw_from_dict(dick_of_draw_objects=self._geometry.dict_of_objects_to_draw, transparency=self._transparency)
 
 
