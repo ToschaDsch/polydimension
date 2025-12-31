@@ -35,9 +35,11 @@ class DrawAll:
         self._geometry: GeometryChangePoint = GeometryChangePoint()
         self._draw_object: NDimensionalObject = draw_object
         z = draw_object.z_min
-        web: NDimensionalObject = Line2dWeb(a=self._length_axes, n=n_web, z=z)
-        axis: Axis = Axis(dimension=initial_dimensions)
-        self._list_of_draw_objects: list[NDimensionalObject] = [web, axis, draw_object]
+
+        self._web_object: NDimensionalObject = Line2dWeb(a=self._length_axes, n=n_web, z=z)
+        self._axis_object: Axis = Axis(dimension=initial_dimensions)
+        self._web = True
+        self._list_of_draw_objects: list[NDimensionalObject] = self._get_object_to_draw()
         self._list_of_all_points: list[Point] = self._take_all_the_points(
             list_of_draw_objects=self._list_of_draw_objects) # take all the points of the objects
         self._dimensions: int = initial_dimensions
@@ -53,6 +55,13 @@ class DrawAll:
 
         self.init_points()      # set new center
 
+    def _get_object_to_draw(self) -> list[NDimensionalObject]:
+        if self._web:
+            return [self._web_object, self._axis_object, self._draw_object]
+        else:
+            return [self._axis_object, self._draw_object]
+
+
     def change_color(self, color_is_out: bool = True):
         self._draw_object.change_color(color_is_out=color_is_out)
 
@@ -67,6 +76,16 @@ class DrawAll:
         self._geometry.calculate_new_coordinates_for_the_list_of_points(points=self._list_of_all_points)
         self.draw_all()
 
+    @property
+    def web(self):
+        return self._web
+
+    @web.setter
+    def web(self, value: bool):
+        self._web = value
+        self._list_of_draw_objects = self._get_object_to_draw()
+        self._geometry.calculate_new_coordinates_for_the_list_of_points(points=self._list_of_all_points)
+        self.draw_all()
     @property
     def transparency(self) -> Literal[Transparency.transparent]:
         return self._transparency

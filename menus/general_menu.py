@@ -234,19 +234,18 @@ class GeneralWindow(QMainWindow):
 
     def function_perspective(self, i: int):
         GraphicRegimes.perspective = bool(not i)
-        print("Perspective", not i, GraphicRegimes.perspective)
-        self.animation.perspective = not i
+        self.animation.perspective = bool(not i)
         self.screen_window.draw_all()
 
     def function_web(self, i: int):
-        GraphicRegimes.web = bool(i)
-        print("Web", i, GraphicRegimes.web)
+        GraphicRegimes.web = bool(not i)
+        self.animation.web = bool(not i)
+        self.screen_window.draw_all()
 
     def function_transparent(self, i: int):
         GraphicRegimes.transparent = list(Transparency)[i]
         self.animation.transparency = GraphicRegimes.transparent
         self.screen_window.draw_all()
-        print("Transparent", i, GraphicRegimes.transparent)
 
     def function_color(self, i: int):
         GraphicRegimes.color = bool(i)
