@@ -249,9 +249,8 @@ class GeneralWindow(QMainWindow):
 
     def function_color(self, i: int):
         GraphicRegimes.color = bool(i)
-        self.animation.change_color(color_is_out=bool(i))
-        print("Color", i, GraphicRegimes.color)
-        self.animation.draw_all()
+        self.animation.colorful=bool(i)
+        self.screen_window.draw_all()
 
     def load_menu_2(self) -> QWidget:
         layout_menu_2 = QVBoxLayout()

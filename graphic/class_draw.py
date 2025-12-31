@@ -48,6 +48,8 @@ class DrawAll:
         self._y_c: int = 0
         self._z_c: int = 0
 
+        self._colorful = False
+
         # draw options
         self._transparency: Literal[Transparency.transparent] = Transparency.transparent
         self._perspective: bool = GraphicRegimes.perspective
@@ -61,9 +63,13 @@ class DrawAll:
         else:
             return [self._axis_object, self._draw_object]
 
+    @property
+    def colorful(self) -> bool:
+        return self._colorful
 
-    def change_color(self, color_is_out: bool = True):
-        self._draw_object.change_color(color_is_out=color_is_out)
+    @colorful.setter
+    def colorful(self, colorful: bool = True):
+        self._draw_object.change_color(colorful=colorful)
 
     @property
     def perspective(self):
@@ -86,6 +92,7 @@ class DrawAll:
         self._list_of_draw_objects = self._get_object_to_draw()
         self._geometry.calculate_new_coordinates_for_the_list_of_points(points=self._list_of_all_points)
         self.draw_all()
+
     @property
     def transparency(self) -> Literal[Transparency.transparent]:
         return self._transparency

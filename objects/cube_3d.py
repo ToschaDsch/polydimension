@@ -59,12 +59,5 @@ class Cube3d(NDimensionalObject):
     def make_volumes(self):
         pass
 
-    def change_color(self, color_is_out: bool=True):
-        if color_is_out:
-            color =  [self.surface_color]*len(self._my_points)
-        else:
-            color = [QColor(*x) for x in graphics.default_palette]
-        for surface, color in zip(self._my_surfaces, color):
-            surface.color = color
 
 

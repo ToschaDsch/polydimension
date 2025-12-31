@@ -25,3 +25,12 @@ class Volume(GeometricObject):
         self.list_of_surfaces: list[Surface] = []
         self.color = QColor(*MyColors.default_volume_color)
         self.center: Point = get_center_from_list_of_points(list_of_points=self.list_of_points)
+
+    @property
+    def color(self) -> QColor:
+        return self.color
+
+    @color.setter
+    def color(self, color: QColor):
+        for surface in self.list_of_surfaces:
+            surface.color = color

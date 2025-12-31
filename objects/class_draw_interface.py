@@ -9,7 +9,7 @@ from geometry.class_point import Point
 from geometry.class_surface import Surface
 from geometry.class_volume import Volume
 from variables.geometry_var import CoordinatesScreen
-from variables.graphics import Transparency, MyColors
+from variables.graphics import Transparency, MyColors, default_palette
 
 
 class NDimensionalObject(ABC):
@@ -76,10 +76,21 @@ class NDimensionalObject(ABC):
     def make_volumes(self):
         pass
 
-    @abstractmethod
-    def change_color(self, color_is_out: bool=True):
-        pass
+    def change_color(self, colorful: bool=True):
+        if colorful:
+            list_of_colors = default_palette
+        else:
+            list_of_colors = 50*[MyColors.default_surface_color]
 
+        if len(self._my_volumes):
+            color_elements = self._my_volumes
+        elif len(self._my_surfaces):
+            color_elements = self._my_surfaces
+        else:
+            color_elements = []
+
+        for i, color_element in enumerate(color_elements):
+            color_element.color = QColor(*list_of_colors[i])
 
     def init_geometry(self) -> None:
         pass
