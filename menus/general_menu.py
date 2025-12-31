@@ -233,10 +233,10 @@ class GeneralWindow(QMainWindow):
         return menu_with_icons
 
     def function_perspective(self, i: int):
-        GraphicRegimes.perspective = bool(i)
-        print("Perspective", i, GraphicRegimes.perspective)
-        self.animation.perspective = i
-        self.animation.draw_all()
+        GraphicRegimes.perspective = bool(not i)
+        print("Perspective", not i, GraphicRegimes.perspective)
+        self.animation.perspective = not i
+        self.screen_window.draw_all()
 
     def function_web(self, i: int):
         GraphicRegimes.web = bool(i)

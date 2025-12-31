@@ -64,6 +64,7 @@ class DrawAll:
     def perspective(self, value: bool):
         self._perspective = value
         self._geometry.draw_with_perspective = value
+        self._geometry.calculate_new_coordinates_for_the_list_of_points(points=self._list_of_all_points)
         self.draw_all()
 
     @property

@@ -15,7 +15,7 @@ from variables.graphics import Transparency, MyColors
 class NDimensionalObject(ABC):
     def __init__(self, size: int = CoordinatesScreen.init_size_of_the_object, line_color: QColor=None, surface_color: QColor=None):
         self.dimensions = 4
-        self.draw_with_normal = True
+        self.draw_with_normal = False
         self._my_points: list[Point] = []
         self._my_lines: list[Line] = []
         self._my_surfaces: list[Surface] = []
@@ -59,6 +59,7 @@ class NDimensionalObject(ABC):
                 self._my_points.append(surface.normal_line.point_0)
                 self._my_points.append(surface.normal_line.point_1)
             self._my_points.append(surface.normal)
+            self._my_points.append(surface.center)
 
     @abstractmethod
     def make_points(self):

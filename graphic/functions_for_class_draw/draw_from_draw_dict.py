@@ -30,7 +30,6 @@ def draw_from_dict(dick_of_draw_objects: SortedDict, transparency: int = Transpa
                 draw_a_line(line=draw_object)
             case geometry.class_surface.Surface:
                 if transparency == Transparency.full and draw_object.visible is False:
-                    print("I dont see that")
                     continue
                 draw_a_surface(surface=draw_object)
             case geometry.class_volume.Volume:
