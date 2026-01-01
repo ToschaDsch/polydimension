@@ -1,5 +1,4 @@
 import functools
-import itertools
 from abc import ABC, abstractmethod
 
 from PySide6.QtGui import QColor
@@ -13,8 +12,11 @@ from variables.graphics import Transparency, MyColors, default_palette
 
 
 class NDimensionalObject(ABC):
-    def __init__(self, size: int = CoordinatesScreen.init_size_of_the_object, line_color: QColor=None, surface_color: QColor=None):
-        self.dimensions = 4
+    def __init__(self, dimensions: int = 4,
+                 size: int = CoordinatesScreen.init_size_of_the_object,
+                 line_color: QColor=None,
+                 surface_color: QColor=None):
+        self.dimensions = dimensions
         self.draw_with_normal = False
         self.points_to_show: list[Point] = []
         self._my_points: list[Point] = []

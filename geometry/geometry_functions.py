@@ -6,7 +6,7 @@ from geometry.class_point import Point
 
 
 def get_center_from_list_of_points(list_of_points: list[Point]) -> Point:
-    dimension = list_of_points[0].dimension
+    dimension: int = len(list_of_points[0].coord_n)
     summ_vector = np.zeros((dimension,), float)
     for point in list_of_points:
         summ_vector += point.coord_0
@@ -115,3 +115,4 @@ def sphere_perspective(x: float, y: float, z: float, diameter: float=400) -> np.
                 ])
     except Exception as err:
         raise("TransformTo2D, Arithmetic exception", err)
+

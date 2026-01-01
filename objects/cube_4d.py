@@ -7,9 +7,9 @@ from geometry.class_surface import Surface
 from objects.class_draw_interface import NDimensionalObject
 
 
-class Cube3d(NDimensionalObject):
+class Cube4d(NDimensionalObject):
 
-    def __init__(self, dimensions: int=4):
+    def __init__(self, dimensions: int = 4):
         self.list_of_point = [[0, 1, 5, 4],
                               [0, 2, 6, 4],
                               [0, 1, 3, 2],
@@ -17,13 +17,14 @@ class Cube3d(NDimensionalObject):
                               [4, 6, 7, 5],
                               [1, 3, 7, 5]]
         super().__init__(dimensions=dimensions)
-        self.name_of_the_object = "Cube 3d"
+        self.name_of_the_object = "Cube 4d"
+
 
 
     def make_points(self):
         a = self.size
         initial_set = [a, -a]
-        init_list_of_coordinates = np.array([np.array(x) for x in itertools.product(initial_set,repeat=3)])
+        init_list_of_coordinates = np.array([np.array(x) for x in itertools.product(initial_set,repeat=4)])
         for coordinate in init_list_of_coordinates:
             new_coordinate = np.resize(coordinate, self.dimensions)
             self._my_points.append(Point(coordinates=new_coordinate))
@@ -54,4 +55,29 @@ class Cube3d(NDimensionalObject):
         pass
 
 
+def plus_a_dimension(list_0: list[float], a: float) -> list:
+    """
+     the function take n-dimensional cube and return (n+1) dimensional cube
+    :param a: size of cube
+    :param list_0: list n dimension ([-a, a])
+    :return: list n+1 dimensional ([[-a, -a],[a, -a], [a,a], [a, -a]])
+    """
+    print("******* n-dimensional *******")
+    list_n = []
+    print("list 0", *list_0)
+    for i in list_0:
+        for ai in (a, -a):
+            temp_list = add_an_element(point=i, a=ai)
+            list_n.append(temp_list)
+    print("list n", *list_n)
+    return list_n
 
+def add_an_element(point: float|list, a: float) -> list[float] | None:
+    if isinstance(point, float|int):
+        return [point, a]
+    elif isinstance(point, list):
+        list_i = point.copy() + [a]
+        return list_i
+    else:
+        print("error", point)
+        return None

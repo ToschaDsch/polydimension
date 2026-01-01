@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import Literal, Callable
 
 from graphic.functions_for_class_draw.draw_from_draw_dict import draw_from_dict
 from geometry.class_point import Point
@@ -57,6 +57,10 @@ class DrawAll:
         self._geometry.draw_with_perspective = self._perspective
 
         self.init_points()      # set new center
+
+    def new_object(self, obj: Callable, dimensions: int=4) -> None:
+        new_object = obj(dimensions=dimensions)
+        print("new object", new_object)
 
     def _get_object_to_draw(self) -> list[NDimensionalObject]:
         if self._web:

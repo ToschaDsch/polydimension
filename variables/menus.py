@@ -25,21 +25,21 @@ class Menus:
 
     b_menu: int = 300
     table_1_width: int = b_menu - 2*frame
-    # menu 1
+    #   menu 1
     size_of_pictures_in_the_list: int = 40
     width_of_buttons_menu_1: int = table_1_width - size_of_pictures_in_the_list - 20
 
-    # menu 2 info
+    #   menu 2 info
     info_height: int = 800
     info_width: int = b_menu - 2 * frame
 
-    # menu 3
+    #   menu 3
     name_ot_menu_3 = "displace and rotate the object"
     size_of_buttons_menu_3: int = int(b_menu / 4 - frame) - 10    # menu 2 tools
     frame_menu_3: int = 10
     separators_height: int = 100
 
-    # button back
+    #   button back
     width_of_button_back: int = b_menu-2*frame
     height_of_button_back: int = 35
     content_margin: int = 1
@@ -49,7 +49,7 @@ class Menus:
     name_of_the_layout_displacement = "displacement"
     name_of_the_layout_rotation = "rotation"
 
-    #paths to resources
+    #   paths to resources
     resource_path = "my_resources"
     pictures_path = resource_path + "//" + "pictures"
     pictures_preview = pictures_path + "//preview//"
