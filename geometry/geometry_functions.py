@@ -6,7 +6,7 @@ from geometry.class_point import Point
 
 
 def get_center_from_list_of_points(list_of_points: list[Point]) -> Point:
-    dimension: int = len(list_of_points[0].coord_n)
+    dimension: int = len(list_of_points[0].coord_0)
     summ_vector = np.zeros((dimension,), float)
     for point in list_of_points:
         summ_vector += point.coord_0

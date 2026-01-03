@@ -33,13 +33,17 @@ def draw_from_dict(dick_of_draw_objects: SortedDict, transparency: int = Transpa
                     continue
                 draw_a_surface(surface=draw_object)
             case geometry.class_volume.Volume:
+                print("send a volume to dict")
                 draw_a_volume(volume=draw_object)
             case _:
                 print('object is not found')
 
 
 def draw_a_volume(volume: Volume):
-    pass
+
+    for surface in volume.list_of_surfaces:
+        print('drawing surface {}'.format(surface))
+        draw_a_surface(surface=surface)
 
 
 def draw_a_surface(surface: Surface):

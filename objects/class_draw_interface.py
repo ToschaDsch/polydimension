@@ -33,7 +33,8 @@ class NDimensionalObject(ABC):
         self.z_min = self.get_z_min()
         self.send_normals_from_surfaces()
 
-
+    def get_surfaces(self) -> list[Surface]:
+        return self._my_surfaces
 
     def get_z_min(self):
         return functools.reduce(lambda x, y: min(x.coord_0[2] if isinstance(x, Point) else x, y.coord_0[2]), self._my_points, 0)
@@ -106,16 +107,20 @@ class NDimensionalObject(ABC):
     def solid(self, solid: bool):
         self._solid = solid
 
-    def get_geometric_objects(self, transparency: int = Transparency.transparent) -> list[Line] | list[Surface] | None:
+    def get_geometric_objects(self, transparency: int = Transparency.transparent) \
+            -> list[Line] | list[Surface] | list[Volume] | None:
         if not self._solid:
             return self._my_lines
+
+        objects_with_area = self._my_volumes if len(self._my_volumes) else self._my_surfaces
+
         match transparency:
             case Transparency.full:
-                return self._my_surfaces
+                return objects_with_area
             case Transparency.sceleton:
                 return self._my_lines
             case Transparency.transparent:
-                return self._my_surfaces + self._my_lines
+                return objects_with_area + self._my_lines
             case _:
                 print("there is no case for transparency")
                 return None

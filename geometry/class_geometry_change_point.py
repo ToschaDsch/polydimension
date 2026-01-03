@@ -79,9 +79,10 @@ class  GeometryChangePoint:
                 z = 0.5*(draw_object.point_0.coord_n[2] + draw_object.point_1.coord_n[2])
             case geometry.class_surface.Surface:
                 z = draw_object.get_center().coord_n[2]
+            case geometry.class_volume.Volume:
+                z = draw_object.get_center().coord_n[2]
             case _other:
                 z = 0
-
         self._add_an_object_to_the_dict(draw_object=draw_object, z=z)
 
 

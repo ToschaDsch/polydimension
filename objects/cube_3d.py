@@ -9,15 +9,20 @@ from objects.class_draw_interface import NDimensionalObject
 
 class Cube3d(NDimensionalObject):
 
-    def __init__(self, dimensions: int=4):
+    def __init__(self, dimensions: int=4,
+                 dimension_shift_number: int=0,
+                 dimension_shift_length: int=0):
         self.list_of_point = [[0, 1, 5, 4],
                               [0, 2, 6, 4],
                               [0, 1, 3, 2],
                               [2, 6, 7, 3],
                               [4, 6, 7, 5],
                               [1, 3, 7, 5]]
+        self._dimension_shift_number = dimension_shift_number
+        self._dimension_shift_length = dimension_shift_length
         super().__init__(dimensions=dimensions)
         self.name_of_the_object = "Cube 3d"
+
 
 
     def make_points(self):
@@ -27,6 +32,11 @@ class Cube3d(NDimensionalObject):
         for coordinate in init_list_of_coordinates:
             new_coordinate = np.resize(coordinate, self.dimensions)
             self._my_points.append(Point(coordinates=new_coordinate))
+
+        if self._dimension_shift_length:    # shift all the points for a cube in 4d
+            self.dimensions+=1
+            for point in self._my_points:
+                point.coord_0 = np.insert(point.coord_0, self._dimension_shift_number, self._dimension_shift_length)
         self.points_to_show = self._my_points.copy()
 
 

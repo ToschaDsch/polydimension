@@ -4,18 +4,14 @@ import numpy as np
 from geometry.class_line import Line
 from geometry.class_point import Point
 from geometry.class_surface import Surface
+from geometry.class_volume import Volume
 from objects.class_draw_interface import NDimensionalObject
+from objects.cube_3d import Cube3d
 
 
 class Cube4d(NDimensionalObject):
 
     def __init__(self, dimensions: int = 4):
-        self.list_of_point = [[0, 1, 5, 4],
-                              [0, 2, 6, 4],
-                              [0, 1, 3, 2],
-                              [2, 6, 7, 3],
-                              [4, 6, 7, 5],
-                              [1, 3, 7, 5]]
         super().__init__(dimensions=dimensions)
         self.name_of_the_object = "Cube 4d"
 
@@ -44,40 +40,22 @@ class Cube4d(NDimensionalObject):
 
 
     def make_surfaces(self):
-        center = Point(coordinates=np.array([0,0,0,0]))
-        for numbers_of_points in self.list_of_point:
-            points_for_surface_i = [self._my_points[i] for i in numbers_of_points]
-            self._my_surfaces.append(Surface(list_of_points=points_for_surface_i,
-                                             color=self.surface_color,
-                                             init_center_of_the_volume=center))
+        pass    # the object take all the surfaces from 3d cubs in 4d (see volumes)
 
     def make_volumes(self):
-        pass
-
-
-def plus_a_dimension(list_0: list[float], a: float) -> list:
-    """
-     the function take n-dimensional cube and return (n+1) dimensional cube
-    :param a: size of cube
-    :param list_0: list n dimension ([-a, a])
-    :return: list n+1 dimensional ([[-a, -a],[a, -a], [a,a], [a, -a]])
-    """
-    print("******* n-dimensional *******")
-    list_n = []
-    print("list 0", *list_0)
-    for i in list_0:
-        for ai in (a, -a):
-            temp_list = add_an_element(point=i, a=ai)
-            list_n.append(temp_list)
-    print("list n", *list_n)
-    return list_n
-
-def add_an_element(point: float|list, a: float) -> list[float] | None:
-    if isinstance(point, float|int):
-        return [point, a]
-    elif isinstance(point, list):
-        list_i = point.copy() + [a]
-        return list_i
-    else:
-        print("error", point)
-        return None
+        """the function make a cube in 3d, shifts it in one of dimension in 4d and get the surfaces of it"""
+        for i in range(4):
+            for j in (1, -1):
+                cube_i = Cube3d(dimensions=3, dimension_shift_number=i, dimension_shift_length=j)
+                list_of_surfaces = cube_i.get_surfaces()
+                # change points for my_points
+                for surface in list_of_surfaces:
+                    for point_i in surface.list_of_points:
+                        if point_i in self._my_points:
+                            continue
+                        for point_j in self._my_points:
+                            if np.array_equal(point_i.coord_0, point_j.coord_0):
+                                point_i = point_j
+                                continue
+                volume_i = Volume(list_of_points=None, list_of_lines=None, list_of_surfaces=list_of_surfaces)
+                self._my_volumes.append(volume_i)

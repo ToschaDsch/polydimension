@@ -59,8 +59,14 @@ class DrawAll:
         self.init_points()      # set new center
 
     def new_object(self, obj: Callable, dimensions: int=4) -> None:
-        new_object = obj(dimensions=dimensions)
-        print("new object", new_object)
+        """remove the old draw object, add the new one"""
+        self._draw_object = obj(dimensions=dimensions)
+        self._list_of_draw_objects: list[NDimensionalObject] = self._get_object_to_draw()
+        self._list_of_all_points: list[Point] = self._take_all_the_points(
+            list_of_draw_objects=self._list_of_draw_objects)  # take all the points of the objects
+        # and draw it
+        self._geometry.calculate_new_coordinates_for_the_list_of_points(points=self._list_of_all_points)
+        self.draw_all()
 
     def _get_object_to_draw(self) -> list[NDimensionalObject]:
         if self._web:

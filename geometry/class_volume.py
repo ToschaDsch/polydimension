@@ -18,13 +18,25 @@ class Volume(GeometricObject):
     def get_color(self) -> QColor:
         return self.color
 
-    def __init__(self, list_of_points: list[Point] = None):
+    def __init__(self, list_of_points: list[Point] = None,
+                 list_of_lines: list[Line] = None,
+                 list_of_surfaces: list[Surface] = None,
+                 color: QColor = None):
         super().__init__()
         self.list_of_points: list[Point] = list_of_points if list_of_points is not None else []
-        self.list_of_lines: list[Line] = []
-        self.list_of_surfaces: list[Surface] = []
-        self.color = QColor(*MyColors.default_volume_color)
-        self.center: Point = get_center_from_list_of_points(list_of_points=self.list_of_points)
+        self.list_of_lines: list[Line] = list_of_lines if list_of_lines is not None else []
+        self.list_of_surfaces: list[Surface] = list_of_surfaces if list_of_surfaces is not None else []
+        self.color = QColor(*MyColors.default_volume_color) if color is None else color
+        points_for_center = self._get_list_of_points_for_center()
+        self.center: Point = get_center_from_list_of_points(list_of_points=points_for_center)
+
+    def _get_list_of_points_for_center(self) -> list[Point]:
+        if self.list_of_points:
+            return self.list_of_points.copy()
+        list_of_points = []
+        for surface in self.list_of_surfaces:
+            list_of_points.extend(surface.list_of_points)
+        return list_of_points
 
     @property
     def color(self) -> QColor:
