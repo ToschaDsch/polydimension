@@ -9,8 +9,6 @@ from variables.graphics import MyColors
 
 
 class Line2dWeb(NDimensionalObject):
-    def change_color(self, color_is_out: bool = True):
-        pass
 
     def make_surfaces(self):
         pass

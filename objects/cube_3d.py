@@ -9,7 +9,7 @@ from objects.class_draw_interface import NDimensionalObject
 
 class Cube3d(NDimensionalObject):
 
-    def __init__(self, dimensions: int=4,
+    def __init__(self, dimensions: int=4, colorful: bool = False,
                  dimension_shift_number: int=0,
                  dimension_shift_length: int=0):
         self.list_of_point = [[0, 1, 5, 4],
@@ -20,7 +20,7 @@ class Cube3d(NDimensionalObject):
                               [1, 3, 7, 5]]
         self._dimension_shift_number = dimension_shift_number
         self._dimension_shift_length = dimension_shift_length
-        super().__init__(dimensions=dimensions)
+        super().__init__(dimensions=dimensions, colorful=colorful)
         self.name_of_the_object = "Cube 3d"
 
 
@@ -57,7 +57,6 @@ class Cube3d(NDimensionalObject):
         for numbers_of_points in self.list_of_point:
             points_for_surface_i = [self._my_points[i] for i in numbers_of_points]
             self._my_surfaces.append(Surface(list_of_points=points_for_surface_i,
-                                             color=self.surface_color,
                                              init_center_of_the_volume=center))
 
     def make_volumes(self):

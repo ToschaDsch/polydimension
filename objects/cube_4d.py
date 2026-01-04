@@ -3,7 +3,6 @@ import numpy as np
 
 from geometry.class_line import Line
 from geometry.class_point import Point
-from geometry.class_surface import Surface
 from geometry.class_volume import Volume
 from objects.class_draw_interface import NDimensionalObject
 from objects.cube_3d import Cube3d
@@ -11,8 +10,8 @@ from objects.cube_3d import Cube3d
 
 class Cube4d(NDimensionalObject):
 
-    def __init__(self, dimensions: int = 4):
-        super().__init__(dimensions=dimensions)
+    def __init__(self, dimensions: int = 4, colorful: bool = False):
+        super().__init__(dimensions=dimensions, colorful=colorful)
         self.name_of_the_object = "Cube 4d"
 
 
@@ -55,7 +54,8 @@ class Cube4d(NDimensionalObject):
                             continue
                         for point_j in self._my_points:
                             if np.array_equal(point_i.coord_0, point_j.coord_0):
-                                point_i = point_j
+                                index = surface.list_of_points.index(point_i)
+                                surface.list_of_points[index] = point_j
                                 continue
                 volume_i = Volume(list_of_points=None, list_of_lines=None, list_of_surfaces=list_of_surfaces)
                 self._my_volumes.append(volume_i)

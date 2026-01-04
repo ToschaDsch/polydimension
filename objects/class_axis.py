@@ -7,10 +7,6 @@ from objects.class_draw_interface import NDimensionalObject
 
 
 class Axis(NDimensionalObject):
-
-    def change_color(self, color_is_out: bool = True):
-        pass
-
     def __init__(self, dimension: int):
         self.dimension = dimension
         self.k1: float = 1.2

@@ -14,8 +14,7 @@ from variables.graphics import Transparency, MyColors, default_palette
 class NDimensionalObject(ABC):
     def __init__(self, dimensions: int = 4,
                  size: int = CoordinatesScreen.init_size_of_the_object,
-                 line_color: QColor=None,
-                 surface_color: QColor=None):
+                 line_color: QColor=None, colorful: bool = False):
         self.dimensions = dimensions
         self.draw_with_normal = False
         self.points_to_show: list[Point] = []
@@ -26,10 +25,10 @@ class NDimensionalObject(ABC):
         self._solid: bool = True
         self._transparent: bool = True
         self.line_color: QColor = line_color if line_color else QColor(*MyColors.default_line_color)
-        self.surface_color: QColor = surface_color if surface_color else QColor(*MyColors.default_surface_color)
         self.size: int = size
         self.name_of_the_object: str = "Noname"
         self.make_geometry()
+        self.change_color(colorful=colorful)
         self.z_min = self.get_z_min()
         self.send_normals_from_surfaces()
 
