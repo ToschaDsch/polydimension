@@ -1,4 +1,6 @@
 import itertools
+import math
+
 import numpy as np
 
 from geometry.class_line import Line
@@ -28,11 +30,11 @@ class Cube3d(NDimensionalObject):
     def make_points(self):
         a = self.size
         initial_set = [a, -a]
-        init_list_of_coordinates = np.array([np.array(x) for x in itertools.product(initial_set,repeat=3)])
+        init_list_of_coordinates = [np.array(x) for x in itertools.product(initial_set,repeat=3)]
         for coordinate in init_list_of_coordinates:
-            new_coordinate = np.resize(coordinate, self.dimensions)
+            new_coordinate = coordinate.copy()
+            new_coordinate.resize( (self.dimensions, ))
             self._my_points.append(Point(coordinates=new_coordinate))
-
         if self._dimension_shift_length:    # shift all the points for a cube in 4d
             self.dimensions+=1
             for point in self._my_points:
@@ -40,20 +42,22 @@ class Cube3d(NDimensionalObject):
         self.points_to_show = self._my_points.copy()
 
 
+
     def make_lines(self):
         for i in range(len(self._my_points)):
             for j in range(i+1, len(self._my_points)):
                 point_i = self._my_points[i]
                 point_j = self._my_points[j]
-                delta_point = point_i.coord_0 - point_j.coord_0
-                if sum(delta_point) == 2*self.size:
+                delta_point = np.subtract(point_i.coord_0, point_j.coord_0)
+                if 1.99*self.size < abs(sum(delta_point)) < 2.01*self.size:
+
                     set_delta = set(delta_point)
                     if set_delta in ({0, 2*self.size}, {0, -2*self.size}):
                         self._my_lines.append(Line(point_i, point_j, width=2))
 
 
     def make_surfaces(self):
-        center = Point(coordinates=np.array([0,0,0,0]))
+        center = Point(coordinates=np.array([0]*self.dimensions))
         for numbers_of_points in self.list_of_point:
             points_for_surface_i = [self._my_points[i] for i in numbers_of_points]
             self._my_surfaces.append(Surface(list_of_points=points_for_surface_i,

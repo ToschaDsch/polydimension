@@ -6,11 +6,8 @@ from geometry.class_point import Point
 
 
 def get_center_from_list_of_points(list_of_points: list[Point]) -> Point:
-    dimension: int = len(list_of_points[0].coord_0)
-    summ_vector = np.zeros((dimension,), float)
-    for point in list_of_points:
-        summ_vector += point.coord_0
-    coordinate_of_the_center = summ_vector / len(list_of_points)
+    array_1 = np.array([x.coord_0 for x in list_of_points])
+    coordinate_of_the_center = np.median(array_1, axis=0)
     return Point(coordinates=coordinate_of_the_center)
 
 def get_rotate_matrix(sin: list[float], cos: list[float], dimensional: int = 3) -> np.ndarray:
@@ -116,3 +113,7 @@ def sphere_perspective(x: float, y: float, z: float, diameter: float=400) -> np.
     except Exception as err:
         raise("TransformTo2D, Arithmetic exception", err)
 
+
+def space_between_two_points(point_0: Point, point_1: Point) -> float:
+        coord: np.ndarray = np.subtract(point_1.coord_0, point_0.coord_0)
+        return np.sqrt(np.dot(coord, coord))

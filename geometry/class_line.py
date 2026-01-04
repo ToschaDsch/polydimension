@@ -17,7 +17,9 @@ class Line(GeometricObject):
         super().__init__(color=color, width=width)
         self.point_0 = point_0
         self.point_1 = point_1
-        coord_center: np.ndarray = (point_0.coord_0 + point_1.coord_0)/2
+        coord_0 = self.point_0.coord_0
+        coord_1 = self.point_1.coord_0
+        coord_center: np.ndarray = np.median([coord_0, coord_1], axis=0)
         self.center = Point(coordinates=coord_center)
         self.color: QColor = color if color else QColor(*MyColors.default_line_color)
         self.dimension: int = point_0.dimension
