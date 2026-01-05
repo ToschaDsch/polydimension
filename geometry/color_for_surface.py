@@ -70,10 +70,10 @@ def calculate_normal(points: list[Point], vector_center: np.ndarray) -> np.ndarr
     the function takes coordinate of surfaces edge and calculate normal to the surface
     """
     v1: np.ndarray = np.resize(
-        points[1].coord_n - points[0].coord_n,
+        np.subtract(points[1].coord_n,points[0].coord_n),
         (3,))  # dx //vector v1 (point 1 - point 0)
     v2: np.ndarray = np.resize(
-        points[2].coord_n - points[1].coord_n,
+        np.subtract(points[2].coord_n, points[1].coord_n),
         (3,))  # dx //vector v2 (point 2 - point 1)
     normal = vector_product_with_center(v1=v1, v2=v2,
                                         vector_center=np.resize(vector_center, (3,))

@@ -16,7 +16,7 @@ class NDimensionalObject(ABC):
                  size: int = CoordinatesScreen.init_size_of_the_object,
                  line_color: QColor=None, colorful: bool = False):
         self.dimensions = dimensions
-        self.draw_with_normal = False
+        self.draw_with_normal = True            # normal on/ off
         self.points_to_show: list[Point] = []
         self._my_points: list[Point] = []
         self._my_lines: list[Line] = []
@@ -141,6 +141,6 @@ class NDimensionalObject(ABC):
             surface.change_coordinate()
 
 def is_it_a_surface(surface: Surface) -> bool:
-    res = functools.reduce(lambda x, y: x.coord_0 if isinstance(x, Point) else x + y.coord_0, surface.list_of_points, 0)
+    res = functools.reduce(lambda x, y: x.coord_0 if isinstance(x, Point) else y.coord_0, surface.list_of_points, 0)
     print(res)
     return res

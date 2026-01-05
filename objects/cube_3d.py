@@ -50,7 +50,6 @@ class Cube3d(NDimensionalObject):
                 point_j = self._my_points[j]
                 delta_point = np.subtract(point_i.coord_0, point_j.coord_0)
                 if 1.99*self.size < abs(sum(delta_point)) < 2.01*self.size:
-
                     set_delta = set(delta_point)
                     if set_delta in ({0, 2*self.size}, {0, -2*self.size}):
                         self._my_lines.append(Line(point_i, point_j, width=2))

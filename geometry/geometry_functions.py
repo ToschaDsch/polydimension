@@ -7,7 +7,7 @@ from geometry.class_point import Point
 
 def get_center_from_list_of_points(list_of_points: list[Point]) -> Point:
     array_1 = np.array([x.coord_0 for x in list_of_points])
-    coordinate_of_the_center = np.median(array_1, axis=0)
+    coordinate_of_the_center = np.sum(array_1, axis=0)/len(list_of_points)
     return Point(coordinates=coordinate_of_the_center)
 
 def get_rotate_matrix(sin: list[float], cos: list[float], dimensional: int = 3) -> np.ndarray:
