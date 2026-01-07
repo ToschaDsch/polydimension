@@ -46,16 +46,5 @@ class Cube4d(NDimensionalObject):
         for i in range(4):
             for j in (1, -1):
                 cube_i = Cube3d(dimensions=3, dimension_shift_number=i, dimension_shift_length=j)
-                list_of_surfaces = cube_i.get_surfaces()
-                # change points for my_points
-                for surface in list_of_surfaces:
-                    for point_i in surface.list_of_points:
-                        if point_i in self._my_points:
-                            continue
-                        for point_j in self._my_points:
-                            if np.array_equal(point_i.coord_0, point_j.coord_0):
-                                index = surface.list_of_points.index(point_i)
-                                surface.list_of_points[index] = point_j
-                                continue
-                volume_i = Volume(list_of_points=None, list_of_lines=None, list_of_surfaces=list_of_surfaces)
+                volume_i = self._get_a_volume_surfaces_and_points_form_another_object(obj=cube_i)
                 self._my_volumes.append(volume_i)

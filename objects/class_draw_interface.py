@@ -1,6 +1,7 @@
 import functools
 from abc import ABC, abstractmethod
 
+import numpy as np
 from PySide6.QtGui import QColor
 
 from geometry.class_line import Line
@@ -16,7 +17,7 @@ class NDimensionalObject(ABC):
                  size: int = CoordinatesScreen.init_size_of_the_object,
                  line_color: QColor=None, colorful: bool = False):
         self.dimensions = dimensions
-        self.draw_with_normal = True            # normal on/ off
+        self.draw_with_normal = False            # normal on/ off
         self.points_to_show: list[Point] = []
         self._my_points: list[Point] = []
         self._my_lines: list[Line] = []
@@ -30,7 +31,7 @@ class NDimensionalObject(ABC):
         self.make_geometry()
         self.change_color(colorful=colorful)
         self.z_min = self.get_z_min()
-        self.send_normals_from_surfaces()
+        self._send_normals_from_surfaces()
 
     def get_surfaces(self) -> list[Surface]:
         return self._my_surfaces
@@ -54,9 +55,8 @@ class NDimensionalObject(ABC):
         self.make_surfaces()
         self.make_volumes()
 
-    def send_normals_from_surfaces(self):
-        for surface in self._my_surfaces: #check it add normal to the lines
-            is_it_a_surface(surface)
+    def _send_normals_from_surfaces(self):
+        for surface in self._my_surfaces:
             if self.draw_with_normal:
                 self._my_lines.append(surface.normal_line)
                 self._my_points.append(surface.normal_line.point_0)
@@ -140,7 +140,17 @@ class NDimensionalObject(ABC):
         for surface in self._my_surfaces:
             surface.change_coordinate()
 
-def is_it_a_surface(surface: Surface) -> bool:
-    res = functools.reduce(lambda x, y: x.coord_0 if isinstance(x, Point) else y.coord_0, surface.list_of_points, 0)
-    print(res)
-    return res
+    def _get_a_volume_surfaces_and_points_form_another_object(self, obj) -> Volume:
+        """the function get an NDimensionalObject object,
+        take all surfaces of it, send all important points to self._my_points"""
+        list_of_surfaces = obj.get_surfaces()
+        for surface in list_of_surfaces:
+            for point_i in surface.list_of_points:
+                if point_i in self._my_points:
+                    continue
+                for point_j in self._my_points:
+                    if np.array_equal(point_i.coord_0, point_j.coord_0):
+                        index = surface.list_of_points.index(point_i)
+                        surface.list_of_points[index] = point_j
+                        continue
+        return Volume(list_of_points=None, list_of_lines=None, list_of_surfaces=list_of_surfaces)
