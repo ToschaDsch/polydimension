@@ -6,6 +6,7 @@ import numpy as np
 from geometry.class_line import Line
 from geometry.class_point import Point
 from geometry.class_surface import Surface
+from geometry.geometry_functions import get_center_from_list_of_points
 from objects.class_draw_interface import NDimensionalObject
 
 
@@ -56,7 +57,7 @@ class Cube3d(NDimensionalObject):
 
 
     def make_surfaces(self):
-        center = Point(coordinates=np.array([0]*self.dimensions))
+        center = get_center_from_list_of_points(self._my_points)
         for numbers_of_points in self.list_of_point:
             points_for_surface_i = [self._my_points[i] for i in numbers_of_points]
             self._my_surfaces.append(Surface(list_of_points=points_for_surface_i,

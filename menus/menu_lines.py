@@ -5,6 +5,7 @@ from objects.cube_3d import Cube3d
 from objects.cube_4d import Cube4d
 from objects.octahedron_3d import Octahedron3d
 from objects.octahedron_4d import Cell164d
+from objects.tetrahedron_3d import Tetrahedron3d
 
 
 class MenuLine:
@@ -24,3 +25,6 @@ class MenusLines(Enum):
     cube_4d = MenuLine(name="cube 4d", pict="cube_4d.png", info="info_cube_4d.png", dimensions=4, obj=Cube4d)
     octahedron_3d = MenuLine(name="octahedron 3d", pict="octahedron_3d.png", info="info_octahedron.png", dimensions=4, obj=Octahedron3d)
     e16cell_4d = MenuLine(name="16-cell 4d", pict="ico16cell.png", info="info_16cell.png", dimensions=4, obj=Cell164d)
+    tetrahedron_3d = MenuLine(name="tetrahedron 3d", pict="ico16cell.png", info="info_tetrahedron.png", dimensions=4, obj=Tetrahedron3d)
+    tetrahedron_4d = MenuLine(name="tetrahedron 4d", pict="ico16cell.png", info="info_tetrahedron_4d.png", dimensions=4,
+                               obj=Cell164d)

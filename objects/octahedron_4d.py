@@ -1,7 +1,6 @@
 from geometry import geometry_functions
 from geometry.class_line import Line
 from geometry.class_point import Point
-from geometry.class_surface import Surface
 from objects.class_draw_interface import NDimensionalObject
 from objects.octahedron_3d import Octahedron3d
 
@@ -28,7 +27,6 @@ class Cell164d(NDimensionalObject):
         for coord_i in init_coordinate:
             self._my_points.append(Point(coordinates=coord_i))
         self.points_to_show = self._my_points.copy()
-        print("my points", *self._my_points)
 
 
     def make_lines(self):

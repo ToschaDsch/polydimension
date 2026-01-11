@@ -3,7 +3,6 @@ import numpy as np
 
 from geometry.class_line import Line
 from geometry.class_point import Point
-from geometry.class_volume import Volume
 from objects.class_draw_interface import NDimensionalObject
 from objects.cube_3d import Cube3d
 

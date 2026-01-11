@@ -4,6 +4,7 @@ from geometry import geometry_functions
 from geometry.class_line import Line
 from geometry.class_point import Point
 from geometry.class_surface import Surface
+from geometry.geometry_functions import get_center_from_list_of_points
 from objects.class_draw_interface import NDimensionalObject
 
 
@@ -22,10 +23,9 @@ class Octahedron3d(NDimensionalObject):
         for i in range(0, 3):
             init_coordinate[i][self._init_points[i]] = self.size
             init_coordinate[i + 3][self._init_points[i]] = -self.size
-        print("new points", *init_coordinate)
         for coord_i in init_coordinate:
             self._my_points.append(Point(coordinates=np.array(coord_i)))
-            self.points_to_show = self._my_points.copy()
+        self.points_to_show = self._my_points.copy()
 
 
     def make_lines(self):
@@ -52,9 +52,10 @@ class Octahedron3d(NDimensionalObject):
                             [3, 4, 5],
                             [0, 5, 1],
                             [3, 5, 1]]
+        center = get_center_from_list_of_points(self._my_points)
         for list_of_points_i in number_of_points:
             list_of_points = [self._my_points[i] for i in list_of_points_i]
-            self._my_surfaces.append(Surface(list_of_points=list_of_points))
+            self._my_surfaces.append(Surface(list_of_points=list_of_points, init_center_of_the_volume=center))
 
     def make_volumes(self):
         pass
