@@ -10,10 +10,10 @@ from objects.class_draw_interface import NDimensionalObject
 
 class Octahedron3d(NDimensionalObject):
 
-    def __init__(self, dimensions: int=4, colorful: bool = False,
+    def __init__(self, dimensions: int=4, colorful: bool = False, size: float=1.0,
                  init_point: list[int]=None):
         self._init_points = init_point if init_point else [0, 1, 2]
-        super().__init__(dimensions=dimensions, colorful=colorful)
+        super().__init__(dimensions=dimensions, colorful=colorful, size=size)
         self.name_of_the_object = "Octahedron 3d"
 
 

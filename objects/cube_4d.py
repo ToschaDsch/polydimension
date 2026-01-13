@@ -9,8 +9,8 @@ from objects.cube_3d import Cube3d
 
 class Cube4d(NDimensionalObject):
 
-    def __init__(self, dimensions: int = 4, colorful: bool = False):
-        super().__init__(dimensions=dimensions, colorful=colorful)
+    def __init__(self, dimensions: int = 4, colorful: bool = False, size: float=1.0):
+        super().__init__(dimensions=dimensions, colorful=colorful, size=size)
         self.name_of_the_object = "Cube 4d"
 
 

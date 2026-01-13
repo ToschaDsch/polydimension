@@ -58,9 +58,9 @@ class DrawAll:
 
         self.init_points()      # set new center
 
-    def new_object(self, obj: Callable, dimensions: int=4) -> None:
+    def new_object(self, obj: Callable, dimensions: int=4, size: float=1.0) -> None:
         """remove the old draw object, add the new one"""
-        self._draw_object = obj(dimensions=dimensions, colorful=self._colorful)
+        self._draw_object = obj(dimensions=dimensions, colorful=self._colorful, size=size)
         self._list_of_draw_objects: list[NDimensionalObject] = self._get_object_to_draw()
         self._list_of_all_points: list[Point] = self._take_all_the_points(
             list_of_draw_objects=self._list_of_draw_objects)  # take all the points of the objects

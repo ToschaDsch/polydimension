@@ -7,12 +7,12 @@ from objects.octahedron_3d import Octahedron3d
 
 class Cell164d(NDimensionalObject):
 
-    def __init__(self, dimensions: int=4, colorful: bool = False,
+    def __init__(self, dimensions: int=4, colorful: bool = False, size: float=1.0,
                  dimension_shift_number: int=0,
                  dimension_shift_length: int=0):
         self._dimension_shift_number = dimension_shift_number
         self._dimension_shift_length = dimension_shift_length
-        super().__init__(dimensions=dimensions, colorful=colorful)
+        super().__init__(dimensions=dimensions, colorful=colorful, size=size)
         self.name_of_the_object = "16Cell 4d"
 
 
@@ -54,7 +54,6 @@ class Cell164d(NDimensionalObject):
                        [0, 2, 3],
                        [0, 1, 2])
         for list_of_init_spaces in init_spaces:
-            print("init space", list_of_init_spaces)
             octa_i = Octahedron3d(dimensions=4, init_point=list_of_init_spaces)
             volume_i = self._get_a_volume_surfaces_and_points_form_another_object(obj=octa_i)
             self._my_volumes.append(volume_i)
