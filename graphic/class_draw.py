@@ -22,7 +22,7 @@ class DrawAll:
 
     def __init__(self, draw_object: NDimensionalObject,
                  initial_dimensions: int = 3,  #2d
-                 n_web: int=10):
+                 n_web: int=10, size: float=1.0):
         """
         this is the general class to draw
         :param list_of_draw_objects: list[DrawObject], n-dimensional object to draw
@@ -34,9 +34,8 @@ class DrawAll:
         # a class to change coordinates of the objects
         self._geometry: GeometryChangePoint = GeometryChangePoint()
         self._draw_object: NDimensionalObject = draw_object
-        z = draw_object.z_min
 
-        self._web_object: NDimensionalObject = Line2dWeb(a=self._length_axes, n=n_web, z=z)
+        self._web_object: NDimensionalObject = Line2dWeb(a=self._length_axes, n=n_web, z=size)
         self._axis_object: Axis = Axis(dimension=initial_dimensions)
         self._web = True
         self._list_of_draw_objects: list[NDimensionalObject] = self._get_object_to_draw()

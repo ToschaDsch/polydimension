@@ -82,8 +82,9 @@ class GeneralWindow(QMainWindow):
         self._layout_menu.setCurrentIndex(0)
 
         # draw the object
-        self.my_object = Cube3d()
-        Menus.animation = DrawAll(draw_object=self.my_object, initial_dimensions=4)
+        size = 1
+        self.my_object = Cube3d(size=1)
+        Menus.animation = DrawAll(draw_object=self.my_object, initial_dimensions=4, size=size)
         self.animation = Menus.animation
         self.setCentralWidget(widget)
 
@@ -365,6 +366,7 @@ class GeneralWindow(QMainWindow):
     def click_on_the_list_of_the_objects(self, dimensions: str, obj: Callable, size: float):
         self._layout_menu.setCurrentIndex(2)
         self.animation.new_object(obj=obj, dimensions=dimensions, size=size)
+        self.screen_window.draw_all()
 
 
 

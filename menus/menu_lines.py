@@ -27,6 +27,6 @@ class MenusLines(Enum):
     cube_4d = MenuLine(name="cube 4d", pict="cube_4d.png", info="info_cube_4d.png", dimensions=4, obj=Cube4d, size=1.0)
     octahedron_3d = MenuLine(name="octahedron 3d", pict="octahedron_3d.png", info="info_octahedron.png", dimensions=4, obj=Octahedron3d, size=1.5)
     e16cell_4d = MenuLine(name="16-cell 4d", pict="ico16cell.png", info="info_16cell.png", dimensions=4, obj=Cell164d, size=1.5)
-    tetrahedron_3d = MenuLine(name="tetrahedron 3d", pict="ico16cell.png", info="info_tetrahedron.png", dimensions=4, obj=Tetrahedron3d, size=2.0)
-    tetrahedron_4d = MenuLine(name="tetrahedron 4d", pict="ico16cell.png", info="info_tetrahedron_4d.png", dimensions=4,
+    tetrahedron_3d = MenuLine(name="tetrahedron 3d", pict="tetrahedron_3d.png", info="info_tetrahedron.png", dimensions=4, obj=Tetrahedron3d, size=2.0)
+    tetrahedron_4d = MenuLine(name="tetrahedron 4d", pict="tetrahedron_4d.png", info="info_tetrahedron_4d.png", dimensions=4,
                                obj=Tetrahedron4d, size=2.0)
