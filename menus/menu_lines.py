@@ -30,3 +30,6 @@ class MenusLines(Enum):
     tetrahedron_3d = MenuLine(name="tetrahedron 3d", pict="tetrahedron_3d.png", info="info_tetrahedron.png", dimensions=4, obj=Tetrahedron3d, size=2.0)
     tetrahedron_4d = MenuLine(name="tetrahedron 4d", pict="tetrahedron_4d.png", info="info_tetrahedron_4d.png", dimensions=4,
                                obj=Tetrahedron4d, size=2.0)
+    icosahedron_3d = MenuLine(name="icosahedron_3d", pict="ico_3d.png", info="info_ico_3d.png", dimensions=4, size=1.0, obj=Tetrahedron4d)
+    ico24_cell_4d = MenuLine(name="24-cell 4d", pict="cell_24_ico.png", info="info_24_cell_4d.png", dimensions=4, size=1.0,
+                              obj=Tetrahedron4d)

@@ -88,3 +88,15 @@ def get_sub_layout_to_change_coordinate(name_of_the_layout: str,
     layout.addWidget(slider)
 
     return layout
+
+def mirror_it(list_0: list[list[float]], axis: int) -> list[float]:
+    """the function returns a list0 + list of mirrored coordinate respectful to axe,
+    if coordinate [axe] = 0, the function makes nothing"""
+    new_list: list[float] = []
+    for i, coord in enumerate(list_0):
+        new_list.append(coord.copy())
+        if coord[axis] == 0:
+            continue
+        coord[axis] = -coord[axis]
+        new_list.append(coord.copy())
+    return new_list
