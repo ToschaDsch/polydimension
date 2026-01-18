@@ -16,7 +16,7 @@ class Line2dWeb(NDimensionalObject):
     def make_volumes(self):
         pass
 
-    def __init__(self, a: int, n: int, z: float=0):
+    def __init__(self, a: int, n: int, z: float=-1):
         self.a = a/n  # size of a cell
         self.n = n  # numbers of the cells
         self.z = z

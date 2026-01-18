@@ -35,7 +35,7 @@ class DrawAll:
         self._geometry: GeometryChangePoint = GeometryChangePoint()
         self._draw_object: NDimensionalObject = draw_object
 
-        self._web_object: NDimensionalObject = Line2dWeb(a=self._length_axes, n=n_web, z=size)
+        self._web_object: NDimensionalObject = Line2dWeb(a=self._length_axes, n=n_web, z=-size)
         self._axis_object: Axis = Axis(dimension=initial_dimensions)
         self._web = True
         self._list_of_draw_objects: list[NDimensionalObject] = self._get_object_to_draw()

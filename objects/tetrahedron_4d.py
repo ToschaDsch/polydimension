@@ -28,7 +28,7 @@ class Tetrahedron4d(NDimensionalObject):
         for coord_i in init_coordinate:
             self._my_points.append(Point(coordinates=np.array(coord_i)))
         for point in self._my_points:  # take the object to the bottom
-            point.coord_0[2] = point.coord_0[2] - self.size
+            point.coord_0[2] = point.coord_0[2] - self.size/2
         self.points_to_show = self._my_points.copy()
 
 
