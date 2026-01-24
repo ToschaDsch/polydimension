@@ -14,7 +14,7 @@ from variables.graphics import Transparency, MyColors, default_palette
 
 class NDimensionalObject(ABC):
     def __init__(self, dimensions: int = 4,
-                 size: int = CoordinatesScreen.init_size_of_the_object,
+                 size: float = CoordinatesScreen.init_size_of_the_object,
                  line_color: QColor=None, colorful: bool = False):
         self.dimensions = dimensions
         self.draw_with_normal = False            # normal on/ off
