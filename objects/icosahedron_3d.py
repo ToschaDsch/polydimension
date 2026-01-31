@@ -2,7 +2,6 @@ import numpy as np
 
 from geometry.class_line import Line
 from geometry.class_point import Point
-from geometry.class_surface import Surface
 from geometry.geometry_functions import get_center_from_list_of_points, space_between_two_points
 from menus.single_functions import mirror_it
 from objects.class_draw_interface import NDimensionalObject
@@ -20,7 +19,7 @@ class Icosahedron3d(NDimensionalObject):
 
     def make_points(self):
         """ the function makes all vertex coordinates for the wedge"""
-        a, c = self.size, self.size * (1 + 5**.5) *0.5
+        a, c = self.size, self.size * (1 + 5**.5) * 0.5
         # this is the first triangle
         init_coordinate = [[0, a, c],
                            [a, c ,0],
@@ -28,7 +27,7 @@ class Icosahedron3d(NDimensionalObject):
 
         # make other points(mirror it)
         for i in range(0, 3):
-            init_coordinate = mirror_it(list_0=init_coordinate, axis=0)
+            init_coordinate = mirror_it(list_0=init_coordinate, axis=i)
 
         # make a 4 coordinate
         for coord_i in init_coordinate:
@@ -37,29 +36,111 @@ class Icosahedron3d(NDimensionalObject):
         for coord_i in init_coordinate:
             self._my_points.append(Point(coordinates=np.array(coord_i)))
 
-        print("points created", *self._my_points)
+        for point in self._my_points:       # take the object to the bottom
+            point.coord_0[2] = point.coord_0[2] - a + c
+        self.points_to_show = self._my_points.copy()
+
 
     def make_lines(self):
         """ the function makes all vertex coordinates for the wedge"""
         temporal_set: list[set[Point]] = list()
-        a = self.size*self.size*4
+        a = self.size*2
         for i in range(len(self._my_points)):
             for j in range(i + 1, len(self._my_points)):
                 point_i = self._my_points[i]
                 point_j = self._my_points[j]
                 length = space_between_two_points(point_0=point_i, point_1=point_j)
                 if  a * 0.99 < length < a * 1.01:
-                    print("there is a line!")
                     new_set = {point_i, point_j}
                     if new_set not in temporal_set:
                         temporal_set.append(new_set)
         for pair_of_points in temporal_set:
             point_0, point_1 = pair_of_points
             self._my_lines.append(Line(point_0=point_0, point_1=point_1))
-        print("lines created", *self._my_lines)
 
     def make_surfaces(self):
+        """the function make 3D coordinates of icos surfaces
+        """
         center = get_center_from_list_of_points(self._my_points)
+        list_of_number_points_for_surfaces: list[list[int]] = []
+        for i in range(len(self._my_lines)):
+            for j in range(i + 1, len(self._my_lines)):
+                line_i = self._my_lines[i]
+                line_j = self._my_lines[j]
+                if 0 < space_between_two_points(point_0=line_i.point_0, point_1=line_j.point_0) < 0.1*self.size:
+                    point_i = line_i.point_1
+                    point_j = line_j.point_1
+                    for k in range(j + 1, len(self._my_lines)):
+                        line_k = self._my_lines[k]
+                        point_k_i = line_k.point_0
+                        point_k_j = line_k.point_1
+                        if ((((0 < space_between_two_points(point_0=point_i, point_1=point_k_i) < 0.1*self.size) &
+                                (0 < space_between_two_points(point_0=point_j, point_1=point_k_j) < 0.1*self.size))) or
+                                ((0 < space_between_two_points(point_0=point_i, point_1=point_k_j) < 0.1*self.size) &
+                                (0 < space_between_two_points(point_0=point_j, point_1=point_k_i) < 0.1*self.size))):
+                            list_of_number_points_for_surfaces.append([i, j, k])
+
+        """
+        val surface3D: MutableList<MutableList<MutableList<Float>>> = mutableListOf()
+        for (i in edgesOfIco.indices) {
+            for (j in i + 1 until edgesOfIco.size) {
+
+                if (edgesOfIco[i].getStart() == edgesOfIco[j].getStart()) {
+                    for (k in j + 1 until edgesOfIco.size) {
+                        if (threeLinesStartStart(
+                                i = edgesOfIco[i],
+                                j = edgesOfIco[j],
+                                k = edgesOfIco[k],
+                                listOfSurfaces = surface3D
+                            )
+                        ) {
+                            break
+                        }
+                    }
+                }
+                if (edgesOfIco[i].getStart() == edgesOfIco[j].getEnd()) {
+                    for (k in j + 1 until edgesOfIco.size) {
+                        if (threeLinesStartEnd(
+                                i = edgesOfIco[i],
+                                j = edgesOfIco[j],
+                                k = edgesOfIco[k],
+                                listOfSurfaces = surface3D
+                            )
+                        ) {
+                            break
+                        }
+                    }
+                }
+                if (edgesOfIco[i].getEnd() == edgesOfIco[j].getEnd()) {
+                    for (k in j + 1 until edgesOfIco.size) {
+                        if (threeLinesEndEnd(
+                                i = edgesOfIco[i],
+                                j = edgesOfIco[j],
+                                k = edgesOfIco[k],
+                                listOfSurfaces = surface3D
+                            )
+                        ) {
+                            break
+                        }
+                    }
+                }
+                if (edgesOfIco[i].getEnd() == edgesOfIco[j].getStart()) {
+                    for (k in j + 1 until edgesOfIco.size) {
+                        if (threeLinesEndStart(
+                                i = edgesOfIco[i],
+                                j = edgesOfIco[j],
+                                k = edgesOfIco[k],
+                                listOfSurfaces = surface3D
+                            )
+                        ) {
+                            break
+                        }
+                    }
+                }
+            }
+        }
+        return surface3D
+"""
 
 
     def make_volumes(self):
