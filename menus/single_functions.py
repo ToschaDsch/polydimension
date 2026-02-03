@@ -100,3 +100,7 @@ def mirror_it(list_0: list[list[float]], axis: int) -> list[list[float]]:
         coord[axis] = -coord[axis]
         new_list.append(coord.copy())
     return new_list
+
+def open_and_read_a_file(path: str) -> str:
+    with open(path, "r") as file:
+        return file.read()

@@ -1,5 +1,6 @@
 import functools
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
 
 import numpy as np
 from PySide6.QtGui import QColor
@@ -11,6 +12,13 @@ from geometry.class_volume import Volume
 from variables.geometry_var import CoordinatesScreen
 from variables.graphics import Transparency, MyColors, default_palette
 
+
+@dataclass
+class JSONData:
+    points: list[float] = None
+    lines: list[int] = None
+    surfaces: list[int] = None
+    volumes: list[int] = None
 
 class NDimensionalObject(ABC):
     def __init__(self, dimensions: int = 4,

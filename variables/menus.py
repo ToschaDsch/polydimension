@@ -51,7 +51,8 @@ class Menus:
 
     #   paths to resources
     resource_path = "my_resources"
-    pictures_path = resource_path + "//" + "pictures"
+    pictures_path = resource_path + "//pictures"
     pictures_preview = pictures_path + "//preview//"
     pictures_menu = pictures_path + "//menu//"
     pictures_info = pictures_path + "//info//"
+    raw_data_path = resource_path + "//raw_coordinates//"
