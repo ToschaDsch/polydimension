@@ -83,7 +83,7 @@ class NDimensionalObject(ABC):
         if colorful:
             list_of_colors = default_palette
         else:
-            list_of_colors = 50*[MyColors.default_surface_color]
+            list_of_colors = 100*[MyColors.default_surface_color]
 
         if len(self._my_volumes):
             color_elements = self._my_volumes

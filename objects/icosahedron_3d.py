@@ -1,7 +1,10 @@
+import itertools
+
 import numpy as np
 
 from geometry.class_line import Line
 from geometry.class_point import Point
+from geometry.class_surface import Surface
 from geometry.geometry_functions import get_center_from_list_of_points, space_between_two_points
 from menus.single_functions import mirror_it
 from objects.class_draw_interface import NDimensionalObject
@@ -62,25 +65,24 @@ class Icosahedron3d(NDimensionalObject):
         """the function make 3D coordinates of icos surfaces
         """
         center = get_center_from_list_of_points(self._my_points)
-        list_of_number_points_for_surfaces: list[list[int]] = []
+        points_for_surfaces: list[set[Point]] = []
         for i in range(len(self._my_lines)):
             for j in range(i + 1, len(self._my_lines)):
-                line_i = self._my_lines[i]
-                line_j = self._my_lines[j]
-                if 0 < space_between_two_points(point_0=line_i.point_0, point_1=line_j.point_0) < 0.1*self.size:
-                    point_i = line_i.point_1
-                    point_j = line_j.point_1
-                    for k in range(j + 1, len(self._my_lines)):
-                        line_k = self._my_lines[k]
-                        point_k_i = line_k.point_0
-                        point_k_j = line_k.point_1
-                        if ((((0 < space_between_two_points(point_0=point_i, point_1=point_k_i) < 0.1*self.size) &
-                                (0 < space_between_two_points(point_0=point_j, point_1=point_k_j) < 0.1*self.size))) or
-                                ((0 < space_between_two_points(point_0=point_i, point_1=point_k_j) < 0.1*self.size) &
-                                (0 < space_between_two_points(point_0=point_j, point_1=point_k_i) < 0.1*self.size))):
-                            list_of_number_points_for_surfaces.append([i, j, k])
+                for k in range(j + 1, len(self._my_lines)):
+                    line_i = self._my_lines[i]
+                    line_j = self._my_lines[j]
+                    line_k = self._my_lines[k]
+                    set_of_points: set[Point] = {line_i.point_0, line_i.point_1,
+                                                 line_j.point_0, line_j.point_1,
+                                                 line_k.point_0, line_k.point_1}
+                    if len(set_of_points) == 3 and set_of_points not in points_for_surfaces:
+                        points_for_surfaces.append(set_of_points)
 
+        for set_of_points in points_for_surfaces:
+            self._my_surfaces.append(Surface(list_of_points=list(set_of_points), init_center_of_the_volume=center))
+        print("surfaces", len(self._my_surfaces))
         """
+        
         val surface3D: MutableList<MutableList<MutableList<Float>>> = mutableListOf()
         for (i in edgesOfIco.indices) {
             for (j in i + 1 until edgesOfIco.size) {
@@ -148,3 +150,14 @@ class Icosahedron3d(NDimensionalObject):
 
 
 
+    def condition_0(self, point_i: Point, point_k_i: Point, point_j: Point, point_k_j: Point) -> bool:
+        return ((((space_between_two_points(point_0=point_i, point_1=point_k_i) < 0.1 * self.size) &
+           (space_between_two_points(point_0=point_j, point_1=point_k_j) < 0.1 * self.size))) or
+         ((space_between_two_points(point_0=point_i, point_1=point_k_j) < 0.1 * self.size) &
+          (space_between_two_points(point_0=point_j, point_1=point_k_i) < 0.1 * self.size)))
+
+    def condition_1(self, point_i: Point, point_k_i: Point, point_j: Point, point_k_j: Point) -> bool:
+        return ((((space_between_two_points(point_0=point_i, point_1=point_k_i) < 0.1 * self.size) &
+           (space_between_two_points(point_0=point_j, point_1=point_k_j) < 0.1 * self.size))) or
+         ((space_between_two_points(point_0=point_i, point_1=point_k_j) < 0.1 * self.size) &
+          (space_between_two_points(point_0=point_j, point_1=point_k_i) < 0.1 * self.size)))
