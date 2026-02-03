@@ -1,4 +1,5 @@
 import functools
+import json
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 
@@ -9,8 +10,10 @@ from geometry.class_line import Line
 from geometry.class_point import Point
 from geometry.class_surface import Surface
 from geometry.class_volume import Volume
+from menus.single_functions import open_and_read_a_file
 from variables.geometry_var import CoordinatesScreen
 from variables.graphics import Transparency, MyColors, default_palette
+from variables.menus import Menus
 
 
 @dataclass
@@ -23,7 +26,7 @@ class JSONData:
 class NDimensionalObject(ABC):
     def __init__(self, dimensions: int = 4,
                  size: float = CoordinatesScreen.init_size_of_the_object,
-                 line_color: QColor=None, colorful: bool = False):
+                 line_color: QColor=None, colorful: bool = False, raw_data_path: str = None):
         self.dimensions = dimensions
         self.draw_with_normal = False            # normal on/ off
         self.points_to_show: list[Point] = []
@@ -34,12 +37,32 @@ class NDimensionalObject(ABC):
         self._solid: bool = True
         self._transparent: bool = True
         self.line_color: QColor = line_color if line_color else QColor(*MyColors.default_line_color)
-        self.size: int = size
+        self.size: float = size
         self.name_of_the_object: str = "Noname"
-        self.make_geometry()
+        self.json_data = dict()
+        if raw_data_path is None:
+            self.make_geometry()    # name the property self
+        else:
+            self.load_from_json(raw_data_path)  # load property form file
         self.change_color(colorful=colorful)
         self.z_min = self.get_z_min()
         self._send_normals_from_surfaces()
+
+    def load_from_json(self, raw_data_path: str):
+        path = Menus.raw_data_path + "//" + raw_data_path
+        raw_data = open_and_read_a_file(path=path)
+        details_of_the_objects = json.loads(raw_data)
+        self.json_data = JSONData(points=details_of_the_objects["points"],
+                                  lines=details_of_the_objects["edges"],
+                                  surfaces=details_of_the_objects["surfaces"],
+                                  volumes=details_of_the_objects["volumes"],)
+        for coord in self.json_data.points:
+            self._my_points.append(Point(coordinates=np.array(coord)))
+        center = [0,0,0,0]
+        for i, j in self.json_data.lines:
+            self._my_lines.append(Line(point_0=self._my_points[i], point_1=self._my_points[j]))
+        for list_of_points_i in self.json_data.surfaces:
+            list_of_points_i = [self._my_points[i] for i in list_of_points_i]
 
     def get_surfaces(self) -> list[Surface]:
         return self._my_surfaces
