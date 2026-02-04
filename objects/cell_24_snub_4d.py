@@ -1,12 +1,12 @@
 from objects.class_draw_interface import NDimensionalObject
 
 
-class Cell244d(NDimensionalObject):
+class Cell24Snub4d(NDimensionalObject):
 
     def __init__(self, dimensions: int = 4, colorful: bool = False, size: float=1.0, raw_data: str = None):
-        raw_data_path = "cell_24.txt"
+        raw_data_path = "cell_24_snub.txt"
         super().__init__(dimensions=dimensions, colorful=colorful, size=size, raw_data_path=raw_data_path)
-        self.name_of_the_object = "24 cell 4d"
+        self.name_of_the_object = "cell 24 snub 4d"
 
 
     def make_points(self):

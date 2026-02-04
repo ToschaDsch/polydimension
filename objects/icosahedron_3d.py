@@ -80,69 +80,7 @@ class Icosahedron3d(NDimensionalObject):
 
         for set_of_points in points_for_surfaces:
             self._my_surfaces.append(Surface(list_of_points=list(set_of_points), init_center_of_the_volume=center))
-        print("surfaces", len(self._my_surfaces))
-        """
-        
-        val surface3D: MutableList<MutableList<MutableList<Float>>> = mutableListOf()
-        for (i in edgesOfIco.indices) {
-            for (j in i + 1 until edgesOfIco.size) {
 
-                if (edgesOfIco[i].getStart() == edgesOfIco[j].getStart()) {
-                    for (k in j + 1 until edgesOfIco.size) {
-                        if (threeLinesStartStart(
-                                i = edgesOfIco[i],
-                                j = edgesOfIco[j],
-                                k = edgesOfIco[k],
-                                listOfSurfaces = surface3D
-                            )
-                        ) {
-                            break
-                        }
-                    }
-                }
-                if (edgesOfIco[i].getStart() == edgesOfIco[j].getEnd()) {
-                    for (k in j + 1 until edgesOfIco.size) {
-                        if (threeLinesStartEnd(
-                                i = edgesOfIco[i],
-                                j = edgesOfIco[j],
-                                k = edgesOfIco[k],
-                                listOfSurfaces = surface3D
-                            )
-                        ) {
-                            break
-                        }
-                    }
-                }
-                if (edgesOfIco[i].getEnd() == edgesOfIco[j].getEnd()) {
-                    for (k in j + 1 until edgesOfIco.size) {
-                        if (threeLinesEndEnd(
-                                i = edgesOfIco[i],
-                                j = edgesOfIco[j],
-                                k = edgesOfIco[k],
-                                listOfSurfaces = surface3D
-                            )
-                        ) {
-                            break
-                        }
-                    }
-                }
-                if (edgesOfIco[i].getEnd() == edgesOfIco[j].getStart()) {
-                    for (k in j + 1 until edgesOfIco.size) {
-                        if (threeLinesEndStart(
-                                i = edgesOfIco[i],
-                                j = edgesOfIco[j],
-                                k = edgesOfIco[k],
-                                listOfSurfaces = surface3D
-                            )
-                        ) {
-                            break
-                        }
-                    }
-                }
-            }
-        }
-        return surface3D
-"""
 
 
     def make_volumes(self):

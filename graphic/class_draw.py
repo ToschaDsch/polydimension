@@ -43,10 +43,6 @@ class DrawAll:
             list_of_draw_objects=self._list_of_draw_objects) # take all the points of the objects
         self._dimensions: int = initial_dimensions
 
-        self._x_c: int = 0
-        self._y_c: int = 0
-        self._z_c: int = 0
-
         self._colorful = False
         self._show_with_points: bool = False
 
@@ -139,7 +135,6 @@ class DrawAll:
 
     def by_reset_point_list(self):
         if len(self._list_of_all_points) > 0:
-            self.make_center()
             self.change_isometry()
             new_scale = self.first_scale()
             self._geometry.scale=new_scale
@@ -173,12 +168,6 @@ class DrawAll:
             draw_object.update_lighting_for_all_surfaces()
 
         return None
-
-    def make_center(self):
-        #TODO correct it to make universal
-        self._x_c = 0
-        self._y_c = 0
-        self._z_c = 0
 
 
     def _draw_on_the_canvas(self):
