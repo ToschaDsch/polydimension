@@ -11,7 +11,7 @@ from geometry.class_point import Point
 from geometry.class_surface import Surface
 from geometry.class_volume import Volume
 from geometry.geometry_functions import get_center_from_list_of_points
-from menus.single_functions import open_and_read_a_file
+from menus.single_functions import open_and_read_a_file, parce_html_with_arrays
 from variables.geometry_var import CoordinatesScreen
 from variables.graphics import Transparency, MyColors, default_palette
 from variables.menus import Menus
@@ -52,7 +52,15 @@ class NDimensionalObject(ABC):
     def load_from_json(self, raw_data_path: str):
         path = Menus.raw_data_path + "//" + raw_data_path
         raw_data = open_and_read_a_file(path=path)
-        details_of_the_objects = json.loads(raw_data)
+        typ_of_file = path.split(".")[-1]
+        if typ_of_file == "txt":
+            details_of_the_objects = json.loads(raw_data)
+        elif typ_of_file == "html":
+            print("html")
+            parce_html_with_arrays(raw_str=path)
+            return None
+        else:
+            print("cant read the file")
         self.json_data = JSONData(points=details_of_the_objects["points"],
                                   lines=details_of_the_objects["edges"],
                                   surfaces=details_of_the_objects["surfaces"],

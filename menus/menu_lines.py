@@ -3,6 +3,7 @@ from typing import Callable
 
 from objects.cell_24_4d import Cell244d
 from objects.cell_24_snub_4d import Cell24Snub4d
+from objects.cell_600_4d import Cell6004d
 from objects.cube_3d import Cube3d
 from objects.cube_4d import Cube4d
 from objects.icosahedron_3d import Icosahedron3d
@@ -34,5 +35,5 @@ class MenusLines(Enum):
     tetrahedron_4d = MenuLine(name="tetrahedron 4d", pict="tetrahedron_4d.png", info="info_tetrahedron_4d.png", dimensions=4, obj=Tetrahedron4d, size=2.0)
     icosahedron_3d = MenuLine(name="icosahedron_3d", pict="ico_3d.png", info="info_ico_3d.png", dimensions=4, size=1.0, obj=Icosahedron3d)
     ico24_cell_4d = MenuLine(name="24 cell 4d", pict="cell_24_ico.png", info="info_24_cell_4d.png", dimensions=4, size=1.0, obj=Cell244d)
-    ico24_cell_snub_4d = MenuLine(name="24 cell snub 4d", pict="cell_24.png", info="info_ico_4d_snub.png", dimensions=4,
-                             size=0.5, obj=Cell24Snub4d)
+    ico24_cell_snub_4d = MenuLine(name="24 cell snub 4d", pict="cell_24.png", info="info_ico_4d_snub.png", dimensions=4, size=0.5, obj=Cell24Snub4d)
+    cell_600_4d = MenuLine(name="600 cell 4d", pict="ico_600cell.png", info="info_ico_600_cell.png", dimensions=4, size=0.5, obj=Cell6004d)

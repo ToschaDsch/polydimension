@@ -1,5 +1,8 @@
 import itertools
 import math
+import xml.etree.ElementTree as et_
+import json
+import ast
 
 import numpy as np
 from PySide6.QtWidgets import QComboBox, QSlider, QVBoxLayout, QLabel
@@ -104,3 +107,30 @@ def mirror_it(list_0: list[list[float]], axis: int) -> list[list[float]]:
 def open_and_read_a_file(path: str) -> str:
     with open(path, "r") as file:
         return file.read()
+
+def parce_html_with_arrays(raw_str: str) -> str:
+    # Parse XML
+    tree = et_.parse(raw_str)
+    root = tree.getroot()
+
+    result = {}
+
+    # Find all string-array tags
+    for arr in root.findall("string-array"):
+        name = arr.attrib.get("name")
+        items = []
+
+        for item in arr.findall("item"):
+            text = item.text.strip()
+
+            # Convert "[0, 4]" → [0, 4]
+            try:
+                value = ast.literal_eval(text)
+            except:
+                value = text
+
+            items.append(value)
+
+        result[name] = items
+
+    print( result)
