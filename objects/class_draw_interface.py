@@ -19,7 +19,7 @@ from variables.menus import Menus
 
 @dataclass
 class JSONData:
-    points: list[float] = None
+    points: list[float|int] = None
     lines: list[list[int]] = None
     surfaces: list[list[int]] = None
     volumes: list[int] = None
@@ -53,11 +53,16 @@ class NDimensionalObject(ABC):
         path = Menus.raw_data_path + "//" + raw_data_path
         raw_data = open_and_read_a_file(path=path)
         typ_of_file = path.split(".")[-1]
+        details_of_the_objects = dict()
         if typ_of_file == "txt":
             details_of_the_objects = json.loads(raw_data)
         elif typ_of_file == "html":
             print("html")
-            parce_html_with_arrays(raw_str=path)
+            result = parce_html_with_arrays(raw_str=path)
+            self.json_data = JSONData(points=[],
+                                      lines=result["lines_600_cell"],
+                                      surfaces=result["surfaces_600_cell"],
+                                      volumes=[], )
             return None
         else:
             print("cant read the file")

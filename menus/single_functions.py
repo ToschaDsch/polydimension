@@ -108,7 +108,7 @@ def open_and_read_a_file(path: str) -> str:
     with open(path, "r") as file:
         return file.read()
 
-def parce_html_with_arrays(raw_str: str) -> str:
+def parce_html_with_arrays(raw_str: str) -> dict[str, list[list[int]]]:
     # Parse XML
     tree = et_.parse(raw_str)
     root = tree.getroot()
@@ -133,4 +133,30 @@ def parce_html_with_arrays(raw_str: str) -> str:
 
         result[name] = items
 
-    print( result)
+    for key, value in result.items():
+        print(key, value)
+    return result
+
+def is_even_permutation(p: list[float]) -> bool:
+    inv = 0
+    n = len(p)
+
+    for i in range(n):
+        for j in range(i + 1, n):
+            if p[i] > p[j]:
+                inv += 1
+
+    return inv % 2 == 0
+
+
+def even_permutations(init_list: list[float]) -> list[list[float]]:
+    indexed = list(enumerate(init_list))
+    even_perms = []
+
+    for perm in itertools.permutations(indexed):
+        indices = [i for i, _ in perm]
+
+        if is_even_permutation(indices):
+            even_perms.append([x for _, x in perm])
+
+    return even_perms
