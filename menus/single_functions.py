@@ -1,7 +1,7 @@
 import itertools
 import math
 import xml.etree.ElementTree as et_
-import json
+from itertools import permutations
 import ast
 
 import numpy as np
@@ -157,6 +157,58 @@ def even_permutations(init_list: list[float]) -> list[list[float]]:
         indices = [i for i, _ in perm]
 
         if is_even_permutation(indices):
-            even_perms.append([x for _, x in perm])
+            perm_i = [x for _, x in perm]
+            if perm_i not in even_perms:
+                even_perms.append(perm_i)
 
     return even_perms
+
+def is_the_permutation_even(initial_sequence, permutation):
+    """
+    Checks whether a permutation is even.
+
+    Example:
+    initial = [2, 3, 4, 6]
+    perm = [3, 2, 6, 4]
+    returns True
+    """
+
+    # Create a mutable copy
+    a = list(permutation)
+
+    # Replace values with their indices from initial_sequence
+    for i in range(len(initial_sequence)):
+        for j in range(len(permutation)):
+            if initial_sequence[i] == permutation[j]:
+                a[j] = float(i)
+
+    # Count inversions
+    k = 0
+    n = len(initial_sequence)
+
+    for i in range(len(a)):
+        for j in range(i + 1, n):
+            if a[i] > a[j]:
+                k += 1
+
+    # Even if number of inversions is even
+    return k % 2 == 0
+
+
+def only_even_permutations(symbols):
+    """
+    Returns only even permutations of the array `symbols`.
+    """
+
+    # Generate all permutations without repetition
+    all_permutations = permutations(set(symbols))
+
+    only_even = []
+
+    for perm in all_permutations:
+        perm_list = list(perm)
+
+        if is_the_permutation_even(symbols, perm_list):
+            only_even.append(perm_list)
+
+    return only_even

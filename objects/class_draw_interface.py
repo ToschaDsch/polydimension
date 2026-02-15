@@ -10,7 +10,7 @@ from geometry.class_line import Line
 from geometry.class_point import Point
 from geometry.class_surface import Surface
 from geometry.class_volume import Volume
-from geometry.geometry_functions import get_center_from_list_of_points
+from geometry.geometry_functions import get_center_from_list_of_points, space_between_two_points
 from menus.single_functions import open_and_read_a_file, parce_html_with_arrays
 from variables.geometry_var import CoordinatesScreen
 from variables.graphics import Transparency, MyColors, default_palette
@@ -75,10 +75,13 @@ class NDimensionalObject(ABC):
         self.points_to_show = self._my_points.copy()
         center = get_center_from_list_of_points(list_of_points=self._my_points)
         for i, j in self.json_data.lines:
+            d = space_between_two_points(point_0=self._my_points[i], point_1=self._my_points[j])
+            print("length", d)
             self._my_lines.append(Line(point_0=self._my_points[i], point_1=self._my_points[j]))
         for list_of_points_i in self.json_data.surfaces:
             list_of_points_i = [self._my_points[i] for i in list_of_points_i]
             self._my_surfaces.append(Surface(list_of_points=list_of_points_i, init_center_of_the_volume=center))
+        return None
 
     def get_surfaces(self) -> list[Surface]:
         return self._my_surfaces
