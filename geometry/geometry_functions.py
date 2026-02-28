@@ -1,7 +1,9 @@
 import math
+from itertools import combinations
 
 import numpy as np
 
+from geometry.class_line import Line
 from geometry.class_point import Point
 
 
@@ -117,3 +119,55 @@ def sphere_perspective(x: float, y: float, z: float, diameter: float=400) -> np.
 def space_between_two_points(point_0: Point, point_1: Point) -> float:
         coord: np.ndarray = np.subtract(point_1.coord_0, point_0.coord_0)
         return np.sqrt(np.dot(coord, coord))
+
+
+def find_closed_contours_from_lines(lines: list[list[int]], how_lines_in_the_surface: int = 3) -> list[tuple[int, int, int]]:
+    """the function finds all the surfaces in the given lines
+    how_lines_in_the_surface = 2 for triangles
+    return numbers of points of the contour lines
+    """
+    surfaces = []
+
+    for l1, l2, l3 in combinations(lines, how_lines_in_the_surface):
+        # set of all points
+        points = {
+            l1[0], l1[1],
+            l2[0], l2[1],
+            l3[0], l3[1]
+        }
+
+        # a triangle have only 3 points/ check
+        if len(points) != 3:
+            continue
+
+        # check degree for all points/ double-check
+        degree = {p: 0 for p in points}
+
+        for line in (l1, l2, l3):
+            degree[line[0]] += 1
+            degree[line[1]] += 1
+
+        if all(d == 2 for d in degree.values()):
+            surfaces.append((l1, l2, l3))
+
+    # make a list of points from lists of lines
+    numbers_of_points = []
+    for number_of_lines_i in surfaces:
+        set_of_point_i = set()
+        for line_i in number_of_lines_i:
+            set_of_point_i.add(line_i[0])
+            set_of_point_i.add(line_i[1])
+        numbers_of_points.append(list(set_of_point_i))
+    return numbers_of_points
+
+def find_lines(points: list[Point], length: float = 1.0) -> list[set[int]]:
+    """the function finds all the lines in the given points with length = length"""
+    l_0 = length*0.99
+    l_1 = length*1.01
+    number_of_points = []
+    for (i, p1), (j, p2) in combinations(enumerate(points), 2):
+        if l_0 < space_between_two_points(point_0=p1, point_1=p2) < l_1:
+            set_l = {i, j}
+            if set_l not in number_of_points:
+                number_of_points.append(set_l)
+    return number_of_points
