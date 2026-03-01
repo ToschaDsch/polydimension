@@ -40,7 +40,7 @@ class NDimensionalObject(ABC):
         self.line_color: QColor = line_color if line_color else QColor(*MyColors.default_line_color)
         self.size: float = size
         self.name_of_the_object: str = "Noname"
-        self.json_data = dict()
+        self.json_data: JSONData = JSONData()
         if raw_data_path is None:
             self.make_geometry()    # name the property self
         else:
@@ -57,7 +57,6 @@ class NDimensionalObject(ABC):
         if typ_of_file == "txt":
             details_of_the_objects = json.loads(raw_data)
         elif typ_of_file == "html":
-            print("html")
             result = parce_html_with_arrays(raw_str=path)
             self.json_data = JSONData(points=[],
                                       lines=result["lines_600_cell"],
@@ -70,18 +69,20 @@ class NDimensionalObject(ABC):
                                   lines=details_of_the_objects["edges"],
                                   surfaces=details_of_the_objects["surfaces"],
                                   volumes=details_of_the_objects["volumes"],)
+        self.make_geometry_from_json()
+        return None
+
+    def make_geometry_from_json(self):
         for coord in self.json_data.points:
             self._my_points.append(Point(coordinates=self.size*np.array(coord)))
         self.points_to_show = self._my_points.copy()
         center = get_center_from_list_of_points(list_of_points=self._my_points)
         for i, j in self.json_data.lines:
-            d = space_between_two_points(point_0=self._my_points[i], point_1=self._my_points[j])
-            print("length", d)
             self._my_lines.append(Line(point_0=self._my_points[i], point_1=self._my_points[j]))
         for list_of_points_i in self.json_data.surfaces:
             list_of_points_i = [self._my_points[i] for i in list_of_points_i]
             self._my_surfaces.append(Surface(list_of_points=list_of_points_i, init_center_of_the_volume=center))
-        return None
+
 
     def get_surfaces(self) -> list[Surface]:
         return self._my_surfaces
@@ -144,15 +145,15 @@ class NDimensionalObject(ABC):
 
         for i, color_element in enumerate(color_elements):
             if i > len(list_of_colors) - 1:
-                #  random color
-                number = np.random.choice(range(256), size=3)
-                color = QColor(*number)
+                if colorful:
+                    #  random color
+                    number = np.random.choice(range(256), size=3)
+                    color = QColor(*number)
+                else:
+                    color = QColor(*MyColors.default_surface_color)
             else:
                 color = QColor(*list_of_colors[i])
             color_element.color = color
-
-    def init_geometry(self) -> None:
-        pass
 
     @property
     def solid(self)->bool:
@@ -179,7 +180,6 @@ class NDimensionalObject(ABC):
             case _:
                 print("there is no case for transparency")
                 return None
-
 
     def __str__(self):
         list_of_points: list[str] = [str(x) for x in self._my_points]

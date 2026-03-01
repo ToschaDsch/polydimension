@@ -4,7 +4,7 @@ from geometry.class_line import Line
 from geometry.class_point import Point
 from geometry.geometry_functions import find_closed_contours_from_lines, find_lines
 from menus.single_functions import even_permutations, mirror_it, only_even_permutations
-from objects.class_draw_interface import NDimensionalObject, JSONData
+from objects.class_draw_interface import NDimensionalObject
 import json
 
 class Cell6004d(NDimensionalObject):

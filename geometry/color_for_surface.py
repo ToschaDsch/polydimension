@@ -27,8 +27,8 @@ def give_me_return_color(points: list[Point],
 
     # if (distanceFromLamp > lamp.intensity) { // in dark } -- original commented out
 
-    vector_of_distance = np.resize(normalize_me_in_3d(vector_of_distance), (len(normal), ))
-    vector_from_observer = np.resize(np.array([0, 0, 10]), len(normal))
+    #vector_of_distance = np.resize(normalize_me_in_3d(vector_of_distance), (len(normal), ))
+    vector_from_observer = np.resize(np.array([0, 10, 10]), len(normal))
     i_see_it = cos_between_two_vectors(normal, vector_from_observer) < 0.0
 
     vector_from_lamp = np.resize(normalize_me_in_3d(vector_from_lamp), (len(normal),))

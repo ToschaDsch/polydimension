@@ -42,7 +42,6 @@ class Surface(GeometricObject):
         self._update_color()
 
         # add normal line
-
         point_1 = Point(coordinates=(self.center.coord_0 + self.normal.coord_0))    #end of normal line
         self.normal_line = Line(point_0=self.center, point_1=point_1, name="normal", width=8, color=QColor(0,0,0))
         if self._draw_with_normal:
