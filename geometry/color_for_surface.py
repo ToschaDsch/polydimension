@@ -14,7 +14,7 @@ class ReturnColor:
     distance: float
 
 def give_me_return_color(points: list[Point],
-                         color: "QColor",
+                         color: QColor,
                          normal: np.ndarray,
                          lamp: SourceOfLight) -> ReturnColor:
     """it works only in 3d
@@ -115,7 +115,6 @@ def make_color(angle0: float, distance: float, color: QColor) -> QColor:
     dispersion_of_light = 0.5
     # val add = (1f - Properties.DISPERSION_OF_LIGHT) + abs(angle0) * Properties.DISPERSION_OF_LIGHT
     add = (1.0 - dispersion_of_light) + abs(angle0) * dispersion_of_light
-
     if (add > 0.0) and (add < 1.0):
         return QColor(*[int(color.red()* add),
                         int(color.green() * add),

@@ -6,6 +6,8 @@ from sortedcontainers import SortedDict
 import geometry.class_line
 from geometry.class_geometric_object import GeometricObject
 from geometry.class_point import Point
+from geometry.class_surface import Surface
+from geometry.class_volume import Volume
 from geometry.geometry_functions import get_rotate_matrix, get_2d_coordinate_with_perspective
 from variables.geometry_var import CoordinatesScreen
 from variables.menus import Menus
@@ -81,6 +83,9 @@ class  GeometryChangePoint:
                 z = draw_object.get_center().coord_n[2]
             case geometry.class_volume.Volume:
                 z = draw_object.get_center().coord_n[2]
+                list_of_surfaces = get_all_unic_surfaces_from_a_volume(list_of_surfaces=draw_object.list_of_surfaces)
+                for surface in list_of_surfaces:
+                    self.add_the_draw_element_to_sorted_dict(draw_object=surface)
             case _other:
                 z = 0
         self._add_an_object_to_the_dict(draw_object=draw_object, z=z)
@@ -92,3 +97,9 @@ class  GeometryChangePoint:
             self._add_an_object_to_the_dict(z=z, draw_object=draw_object)
         else:
             self.dict_of_objects_to_draw[z] = draw_object
+
+def get_all_unic_surfaces_from_a_volume(list_of_surfaces: list[Surface]) -> list[Surface]:
+    surfaces = []
+    for surface in list_of_surfaces:
+        pass
+    return list_of_surfaces

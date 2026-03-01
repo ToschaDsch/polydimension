@@ -144,13 +144,15 @@ class NDimensionalObject(ABC):
             color_elements = []
 
         for i, color_element in enumerate(color_elements):
+            if not colorful:
+                color_element.color = QColor(*MyColors.default_surface_color)
+                continue
+            #   if it is colorful
             if i > len(list_of_colors) - 1:
-                if colorful:
-                    #  random color
-                    number = np.random.choice(range(256), size=3)
-                    color = QColor(*number)
-                else:
-                    color = QColor(*MyColors.default_surface_color)
+                #  random color
+                number = np.random.choice(range(256), size=3)
+                color = QColor(*number)
+                color.setAlpha(MyColors.default_surface_color[-1])
             else:
                 color = QColor(*list_of_colors[i])
             color_element.color = color
