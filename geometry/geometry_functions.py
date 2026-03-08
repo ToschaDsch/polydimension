@@ -1,9 +1,6 @@
 import math
 from itertools import combinations
-
 import numpy as np
-
-from geometry.class_line import Line
 from geometry.class_point import Point
 
 
@@ -121,45 +118,6 @@ def space_between_two_points(point_0: Point, point_1: Point) -> float:
         return np.sqrt(np.dot(coord, coord))
 
 
-def find_closed_contours_from_lines(lines: list[list[int]], how_lines_in_the_surface: int = 3) -> list[tuple[int, int, int]]:
-    """the function finds all the surfaces in the given lines
-    how_lines_in_the_surface = 2 for triangles
-    return numbers of points of the contour lines
-    """
-    surfaces = []
-
-    for l1, l2, l3 in combinations(lines, how_lines_in_the_surface):
-        # set of all points
-        points = {
-            l1[0], l1[1],
-            l2[0], l2[1],
-            l3[0], l3[1]
-        }
-
-        # a triangle have only 3 points/ check
-        if len(points) != 3:
-            continue
-
-        # check degree for all points/ double-check
-        degree = {p: 0 for p in points}
-
-        for line in (l1, l2, l3):
-            degree[line[0]] += 1
-            degree[line[1]] += 1
-
-        if all(d == 2 for d in degree.values()):
-            surfaces.append((l1, l2, l3))
-
-    # make a list of points from lists of lines
-    numbers_of_points = []
-    for number_of_lines_i in surfaces:
-        set_of_point_i = set()
-        for line_i in number_of_lines_i:
-            set_of_point_i.add(line_i[0])
-            set_of_point_i.add(line_i[1])
-        numbers_of_points.append(list(set_of_point_i))
-    return numbers_of_points
-
 def find_lines(points: list[Point], length: float = 1.0) -> list[set[int]]:
     """the function finds all the lines in the given points with length = length"""
     l_0 = length*0.99
@@ -171,3 +129,127 @@ def find_lines(points: list[Point], length: float = 1.0) -> list[set[int]]:
             if set_l not in number_of_points:
                 number_of_points.append(set_l)
     return number_of_points
+
+import numpy as np
+
+
+def find_cycles(edges: list[tuple[int]], points: list[Point], cycle_size: int=5, eps=1e-9):
+    """
+    Find simple cycles of given size where vertices lie in a common 3D hyperplane in 4D space.
+
+    Parameters
+    ----------
+    edges : array-like (N,2)
+        Graph edges as vertex index pairs.
+
+    points : array-like (M,)
+        Each element must have attribute coord_0 (4D numpy array).
+
+    cycle_size : int
+        Number of vertices in cycle.
+
+    eps : float
+        Numerical tolerance.
+
+    Returns
+    -------
+    list of tuples
+        Each tuple contains Python int vertex indices forming a valid cycle.
+    """
+
+    edges = np.asarray(edges, dtype=np.int32)
+
+    n_points = edges.max() + 1
+
+    # -------------------------------------------------
+    # Build adjacency list
+    # -------------------------------------------------
+    deg = np.zeros(n_points, dtype=np.int32)
+
+    for a, b in edges:
+        deg[a] += 1
+        deg[b] += 1
+
+    graph = [np.empty(deg[i], dtype=np.int32) for i in range(n_points)]
+    fill = np.zeros(n_points, dtype=np.int32)
+
+    for a, b in edges:
+        graph[a][fill[a]] = b
+        fill[a] += 1
+
+        graph[b][fill[b]] = a
+        fill[b] += 1
+
+    # -------------------------------------------------
+    # Extract 4D coordinates
+    # -------------------------------------------------
+    coords = np.array([p.coord_0 for p in points], dtype=np.float64)
+
+    # -------------------------------------------------
+    # Hyperplane coplanarity check in 4D
+    # Rank of difference matrix must be <= 3
+    # -------------------------------------------------
+    def is_coplanar(indices) -> bool:
+        if len(indices) <= 3:
+            return True
+        base = coords[indices[0]]
+        diffs = coords[indices[1:]] - base
+        rank = np.linalg.matrix_rank(diffs, tol=eps)
+        return rank <= 3
+
+    # -------------------------------------------------
+    # DFS cycle search
+    # -------------------------------------------------
+    visited = np.zeros(n_points, dtype=np.bool_)
+    path = np.empty(cycle_size, dtype=np.int32)
+
+    cycles = []
+
+    def dfs(start, current, depth):
+        """
+        Depth-first search recursive traversal.
+        """
+
+        if depth == cycle_size:
+
+            # Check cycle closure
+            for nxt in graph[current]:
+                if nxt == start:
+
+                    cycle = tuple(int(x) for x in path)
+
+                    if is_coplanar(cycle):
+                        cycles.append(cycle)
+
+                    break
+            return
+
+        for nxt in graph[current]:
+
+            if visited[nxt]:
+                continue
+
+            # Canonical ordering to avoid duplicate cycles
+            if nxt < start:
+                continue
+
+            visited[nxt] = True
+            path[depth] = nxt
+
+            dfs(start, nxt, depth + 1)
+
+            visited[nxt] = False
+
+    # -------------------------------------------------
+    # Main loop
+    # -------------------------------------------------
+    for start in range(n_points):
+
+        visited[start] = True
+        path[0] = start
+
+        dfs(start, start, 1)
+
+        visited[start] = False
+
+    return cycles
