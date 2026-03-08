@@ -76,7 +76,7 @@ class Dodecahedron3d(NDimensionalObject):
 
 
 def cross(o: Point, a: Point, b: Point, order: str='xy'):
-    """Векторное произведение (2D)"""
+    """cross product (2D)"""
     if order == 'xy':
         x1, x2 = 0, 1
     else:  # yz
@@ -92,7 +92,7 @@ def convex_hull(points: list[Point], order: str = "xy") -> list[Point]:
     if len(points) <= 1:
         return points
 
-    # Используем только x, y
+    # we use only x1, x2 coordinate
     if order == "xy":
         points = sorted(points, key=lambda p: (p.coord_0[0], p.coord_0[1]))
     else:   #yz
@@ -100,21 +100,21 @@ def convex_hull(points: list[Point], order: str = "xy") -> list[Point]:
 
     EPS = 1e-9
 
-    # Нижняя оболочка
+    # top chain
     lower = []
     for p in points:
         while len(lower) >= 2 and cross(lower[-2], lower[-1], p, order=order) <= EPS:
             lower.pop()
         lower.append(p)
 
-    # Верхняя оболочка
+    # bottom chain
     upper = []
     for p in reversed(points):
         while len(upper) >= 2 and cross(upper[-2], upper[-1], p, order=order) <= EPS:
             upper.pop()
         upper.append(p)
 
-    # Объединяем
+    # combine all
     result = lower[:-1] + upper[:-1]
     if len(result) == 5:
         return result

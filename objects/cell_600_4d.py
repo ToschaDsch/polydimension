@@ -35,17 +35,15 @@ class Cell6004d(NDimensionalObject):
 
         init_coordinate.extend(another_16_coordinates)
         self.json_data.points = init_coordinate
-        print("json_data", self.json_data)
         new_dict = {"points": self.json_data.points,
                     "edges": self.json_data.lines,
                     "surfaces": self.json_data.surfaces,
                     "volumes": self.json_data.volumes,}
         json_ = json.dumps(new_dict)
-        print("json_", json_)
+        #print("json_", json_)
 
         for i in init_coordinate:
             self._my_points.append(Point(coordinates=np.array(i)))
-        print("my points", len(self._my_points))
         self.json_data.points = init_coordinate
 
 

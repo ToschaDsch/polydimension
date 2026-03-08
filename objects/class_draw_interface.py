@@ -59,8 +59,8 @@ class NDimensionalObject(ABC):
         elif typ_of_file == "html":
             result = parce_html_with_arrays(raw_str=path)
             self.json_data = JSONData(points=[],
-                                      lines=result["lines_600_cell"],
-                                      surfaces=result["surfaces_600_cell"],
+                                      lines=result["lines_120_cell"],
+                                      surfaces=result["surfaces_120_cell"],
                                       volumes=[], )
             return None
         else:
