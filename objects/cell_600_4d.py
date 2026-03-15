@@ -2,7 +2,7 @@ import numpy as np
 
 from geometry.class_line import Line
 from geometry.class_point import Point
-from geometry.geometry_functions import find_closed_contours_from_lines, find_lines
+from geometry.geometry_functions import find_lines, find_cycles
 from menus.single_functions import even_permutations, mirror_it, only_even_permutations
 from objects.class_draw_interface import NDimensionalObject
 import json
@@ -91,14 +91,14 @@ class Cell6004d(NDimensionalObject):
     def make_lines(self):
         length = 0.618*self.size*2
         number_of_lines = find_lines(points=self._my_points, length=length)
-        number_of_lines_2 = [list(x) for x in number_of_lines]
-        numbers_of_surfaces = find_closed_contours_from_lines(lines=number_of_lines_2)
+        number_of_lines_2: list[tuple[int, int]] = [list(x) for x in number_of_lines]
+        numbers_of_surfaces = find_cycles(edges=number_of_lines_2, cycle_size=3, points=self._my_points)
         print("snub_lines", len(number_of_lines))
         for i, j in number_of_lines:
             self._my_lines.append(Line(point_0=self._my_points[i], point_1=self._my_points[j]))
         self.json_data.lines = [list(x) for x in number_of_lines]
         print("numbers_of_surfaces", len(numbers_of_surfaces))
-        self.json_data.surfaces = numbers_of_surfaces
+        self.json_data.surfaces = [list(x) for x in numbers_of_surfaces]
         print("json_data", self.json_data)
 
         dict_json = {"points": self.json_data.points,

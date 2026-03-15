@@ -57,6 +57,7 @@ class NDimensionalObject(ABC):
         if typ_of_file == "txt":
             details_of_the_objects = json.loads(raw_data)
         elif typ_of_file == "html":
+            return None
             result = parce_html_with_arrays(raw_str=path)
             self.json_data = JSONData(points=[],
                                       lines=result["lines_120_cell"],
