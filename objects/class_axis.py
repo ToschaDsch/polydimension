@@ -39,7 +39,7 @@ class Axis(NDimensionalObject):
             coord_i2[i] = -self.size*self.k2
             list_of_the_points.append(Point(coordinates=coord_i1))
             list_of_the_points.append(Point(coordinates=coord_i2))
-        self.my_points = list_of_the_points
+        self._my_points = list_of_the_points
 
     @property
     def solid(self):

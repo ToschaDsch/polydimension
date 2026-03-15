@@ -13,7 +13,8 @@ from geometry.class_volume import Volume
 from variables.graphics import Transparency
 
 
-def draw_from_dict( bus: EventBus, dick_of_draw_objects: SortedDict,
+def draw_from_dict(
+        bus: EventBus, dick_of_draw_objects: SortedDict,
                     transparency: Transparency = Transparency.transparent):
     """it is general function of the module.
     the function becomes objects from dict show.

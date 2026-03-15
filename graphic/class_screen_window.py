@@ -5,7 +5,7 @@ from PySide6.QtWidgets import QWidget
 from frontend.event_bus.decorators import subscribe
 from frontend.event_bus.event_bus import EventBus
 from frontend.event_bus.events import DrawPoint, DrawPointText, DrawLine, DrawCircle, DrawPolygon, \
-    DrawAllPrimitives
+    DrawAllPrimitives, RecalculateAndDrawAllPrimitives
 from graphic.functions_for_screen_window import rotate_the_object, shift_the_object, left_release, right_release, \
     start_shift, start_to_rotate
 from variables.geometry_var import CoordinatesScreen
@@ -28,7 +28,8 @@ class ScreenWindow(QWidget):
         self._ctrl: bool = False  # is ctrl pressed
         self.setMouseTracking(True)
         self.shapes = []
-        bus.register(self)
+        self.bus = bus
+        self.bus.register(self)
 
     def resizeEvent(self, event):
         #Menus.screen_width, Menus.screen_height = self.geometry()
@@ -63,11 +64,9 @@ class ScreenWindow(QWidget):
                 #  the function checks collapse by mouse motion
                 pass
             case QtCore.Qt.MouseButton.RightButton|QtCore.Qt.MouseButton.MiddleButton:
-                rotate_the_object(x=event.x(), y=event.y())
-                self.draw_all()
+                rotate_the_object(x=event.x(), y=event.y(), bus=self.bus)
             case QtCore.Qt.MouseButton.LeftButton:
-                shift_the_object(x=event.x(), y=event.y())
-                self.draw_all()
+                shift_the_object(x=event.x(), y=event.y(), bus=self.bus)
             case QtCore.Qt.MouseButton.RightButton:
                 pass
             case QtCore.Qt.MouseButton.MiddleButton:
@@ -114,10 +113,11 @@ class ScreenWindow(QWidget):
         """MOUSEWHEEL:"""
         ds = int(event.angleDelta().y())
         CoordinatesScreen.scale +=0.05*ds
-        self.draw_all(scale=CoordinatesScreen.scale)
+        event = RecalculateAndDrawAllPrimitives(scale=CoordinatesScreen.scale)
+        self.bus.publish(event)
 
     @subscribe
-    def draw_all(self, event: DrawAllPrimitives):
+    def draw_all(self, event: DrawAllPrimitives=None):
         self.update()
 
     def paintEvent(self, e):

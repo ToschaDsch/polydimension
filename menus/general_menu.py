@@ -1,25 +1,21 @@
-import math
 from functools import partial
 from typing import Callable
 
-from PySide6 import QtGui
 from PySide6.QtCore import QSize
-from PySide6.QtGui import QFont, QPixmap, Qt
+from PySide6.QtGui import QPixmap, Qt
 from PySide6.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QHBoxLayout, QLabel, QPushButton, QStackedLayout, \
-    QTableWidget, QComboBox, QSlider
+    QTableWidget
 
 from frontend.event_bus.event_bus import EventBus
-from frontend_classes.class_ToggleButton import ToggleButton
+from frontend.event_bus.events import DrawAllPrimitives, RecalculateAndDrawAllPrimitives
 from graphic.class_draw import DrawAll
 from graphic.class_screen_window import ScreenWindow
 from menus.menu_lines import MenusLines
 from frontend_classes.class_ClickableWidget import ClickableWidget
+from menus.submenus.menu_3_input import Menu3Input
 from objects.cube_3d import Cube3d
-from menus.single_functions import get_list_of_all_dimensions, correct_global_variables_by_change_dimensions, \
-    current_displacement_changed, current_rotation_changed, get_sub_layout_to_change_coordinate
-from variables.graphics import GraphicRegimes, Transparency
 from variables.menus import Menus
-from variables.geometry_var import MyCoordinates
+from variables.geometry_var import MyCoordinates, CoordinatesScreen
 
 
 class GeneralWindow(QMainWindow):
@@ -35,6 +31,7 @@ class GeneralWindow(QMainWindow):
 
         # variables to calculate
         self.bus = EventBus()
+        self.bus.register(self)
         # load menus
         #   menu_1 (display and menu)
         # display
@@ -43,8 +40,9 @@ class GeneralWindow(QMainWindow):
         Menus.display_width = b_display
         Menus.display_height = h_display
         self.screen_window = ScreenWindow(bus=self.bus)
+        self.screen_window.setFixedWidth(Menus.display_width)
+        self.screen_window.setFixedHeight(Menus.display_height)
         self.load_display(general_layout=self._general_layout)
-
 
         # menu right
         self._layout_menu = QStackedLayout()
@@ -66,13 +64,10 @@ class GeneralWindow(QMainWindow):
         self._layout_menu.addWidget(widget_layout_2)
 
         # menu 3 input
-        self.button_minus = QPushButton('-')
-        self.label_dimensions = QLabel(Menus.label_dimensions)
-        self.combobox_displacement = QComboBox()
-        self.combobox_rotation = QComboBox()
-        self.slider_displacement = QSlider(Qt.Orientation.Horizontal)
-        self.slider_rotation = QSlider(Qt.Orientation.Horizontal)
-        widget_layout_3 = self.load_menu_3()
+        button_back = get_button(function_to_the_button=self.go_back_to_menu_1,
+                                 path="back.png", width=Menus.width_of_button_back,
+                                 height=Menus.height_of_button_back)
+        widget_layout_3 = Menu3Input(button_back=button_back, bus=self.bus) #self.load_menu_3()
         self._layout_menu.addWidget(widget_layout_3)
         self._layout_menu.setCurrentIndex(0)
 
@@ -81,186 +76,11 @@ class GeneralWindow(QMainWindow):
         self.my_object = Cube3d(size=1)
         self.animation = DrawAll(draw_object=self.my_object, initial_dimensions=4, size=size, bus=self.bus)
         self.setCentralWidget(widget)
+        event = RecalculateAndDrawAllPrimitives(angles=MyCoordinates.angles,
+                                                dxi=MyCoordinates.displacement,
+                                                scale=CoordinatesScreen.scale)
+        self.animation.draw_all(event=event)
 
-        self.animation.draw_all(dxi=MyCoordinates.displacement, angles=MyCoordinates.angles)
-        self.screen_window.draw_all()
-
-
-    def load_menu_3(self) -> QWidget:
-        layout_menu_2 = QVBoxLayout()
-        layout_menu_2.addWidget(QLabel(Menus.name_ot_menu_3))   # name of the menu
-        widget_layout_2 = QWidget()
-
-        # menu with options (perspective at cetera)
-        menu_with_icons = self.load_menu_with_icons()
-        layout_menu_2.addLayout(menu_with_icons)
-        # dimensions
-        menu_with_dimensions = self.load_buttons_with_dimensions()
-        layout_menu_2.addLayout(menu_with_dimensions)
-        # sliders
-        layout_displacement, layout_rotation = self.get_layout_displacement_and_rotation()
-        layout_menu_2.addLayout(layout_displacement)
-        layout_menu_2.addLayout(layout_rotation)
-
-        # separator
-        separator = QLabel()
-        separator.setFixedHeight(Menus.separators_height)
-        layout_menu_2.addWidget(separator)
-
-        # button back
-        button_back = get_button(function_to_the_button=self.go_back_to_menu_1,
-                                 path="back.png", width=Menus.width_of_button_back,
-                                 height=Menus.height_of_button_back)
-        layout_menu_2.addWidget(button_back)
-
-        widget_layout_2.setLayout(layout_menu_2)
-
-        return widget_layout_2
-
-    def get_layout_displacement_and_rotation(self) -> tuple[QVBoxLayout, QVBoxLayout]:
-        list_of_displacements, list_of_rotations = get_list_of_all_dimensions(
-            number_of_dimensions=MyCoordinates.dimensions)
-        layout_displacement = get_sub_layout_to_change_coordinate(
-            name_of_the_layout=Menus.name_of_the_layout_displacement,
-            list_of_dimensions=list_of_displacements,
-            combobox=self.combobox_displacement,
-            slider=self.slider_displacement,
-            function_to_the_combobox=self.number_of_displacement_changed,
-            function_to_the_slider=current_displacement_changed,
-            init_position_of_the_slider=int(MyCoordinates.displacement[0]))
-        layout_rotation = get_sub_layout_to_change_coordinate(
-            name_of_the_layout=Menus.name_of_the_layout_rotation,
-            list_of_dimensions=list_of_rotations,
-            combobox=self.combobox_rotation,
-            slider=self.slider_rotation,
-            function_to_the_combobox=self.number_of_rotation_changed,
-            function_to_the_slider=current_rotation_changed,
-            init_position_of_the_slider=int(MyCoordinates.angles[0] * 180 / math.pi))
-        return layout_displacement, layout_rotation
-
-    def number_of_displacement_changed(self, number_of_displacement: int = 0) -> None:
-        MyCoordinates.current_displacement = number_of_displacement
-        current_displacement = MyCoordinates.displacement[number_of_displacement]
-        self.slider_displacement.setSliderPosition(int(current_displacement))
-
-
-    def number_of_rotation_changed(self, number_of_rotations: int = 0) -> None:
-        MyCoordinates.current_rotation = number_of_rotations
-        current_rotation = MyCoordinates.angles[number_of_rotations]
-        self.slider_rotation.setSliderPosition(int(current_rotation*180/math.pi))
-
-
-    def load_buttons_with_dimensions(self) -> QHBoxLayout:
-        layout_dimensions = QHBoxLayout()
-
-        self.button_minus.setFixedHeight(Menus.size_of_pictures_in_the_list)
-        self.button_minus.setEnabled(False)
-        self.button_minus.clicked.connect(self.minus_dimensions)
-        layout_dimensions.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.label_dimensions.setFixedHeight(Menus.size_of_pictures_in_the_list)
-        button_plus = QPushButton('+')
-        button_plus.setFixedHeight(Menus.size_of_pictures_in_the_list)
-        layout_dimensions.addWidget(self.button_minus)
-        layout_dimensions.addWidget(self.label_dimensions)
-        layout_dimensions.addWidget(button_plus)
-        button_plus.clicked.connect(self.plus_dimensions)
-        return layout_dimensions
-
-    def minus_dimensions(self):
-        if MyCoordinates.dimensions == 4:
-            self.button_minus.setEnabled(False)
-        MyCoordinates.dimensions -= 1
-        self.write_dimensions_in_the_label(new_dimensions=MyCoordinates.dimensions)
-
-    def plus_dimensions(self):
-        MyCoordinates.dimensions += 1
-        self.button_minus.setEnabled(True)
-        self.write_dimensions_in_the_label(new_dimensions=MyCoordinates.dimensions)
-
-
-    def write_dimensions_in_the_label(self, new_dimensions: int):
-        # correct the label
-        new_string = str(str(new_dimensions) + "d")
-        self.label_dimensions.setText(new_string)
-
-        # correct combo-boxes
-        list_of_displacements, list_of_rotations = get_list_of_all_dimensions(number_of_dimensions=new_dimensions)
-        for combobox, list_of_items in ((self.combobox_displacement, list_of_displacements),(self.combobox_rotation, list_of_rotations)):
-            combobox.clear()
-            for key in list_of_items:
-                combobox.addItem(key)
-            combobox.setCurrentIndex(0)
-
-        # correct global variables
-        correct_global_variables_by_change_dimensions(dimensions=new_dimensions,
-                                                      list_of_displacements=list_of_displacements,
-                                                      list_of_rotations=list_of_rotations)
-
-    def shift_the_slider_displacement(self, shift: int):
-        self.slider_displacement.setSliderPosition(shift)
-
-    def shift_the_slider_rotation(self, shift: int):
-        """
-        :param shift: ann angle in grad
-        :return None:
-        """
-        self.slider_rotation.setSliderPosition(shift)
-
-    def load_menu_with_icons(self) -> QVBoxLayout:
-        menu_with_icons = QVBoxLayout()
-        menu_with_icons_0 = QHBoxLayout()
-        button_perspective = ToggleButton(function=self.function_perspective,
-                                          list_of_paths_for_images=["without_perspective.png",
-                                                                    "with_perspective.png"])
-        button_web = ToggleButton(function=self.function_web,
-                                  list_of_paths_for_images=["without_lines.png",
-                                                            "with_lines.png"])
-        button_transparent = ToggleButton(function=self.function_transparent,
-                                          list_of_paths_for_images=["with_perspective.png",
-                                                                    "sceleton.png",
-                                                                    "transparent.png",
-                                                                    ])
-        button_color = ToggleButton(function=self.function_color,
-                                    list_of_paths_for_images=["cube_color.png",
-                                                                "with_lines.png"])
-
-        menu_with_icons_0.addWidget(button_web)
-        menu_with_icons_0.addWidget(button_perspective)
-        menu_with_icons_0.addWidget(button_transparent)
-        menu_with_icons_0.addWidget(button_color)
-        menu_with_icons_1 = QHBoxLayout()
-        button_with_points = ToggleButton(function=self.function_show_with_points,
-                                          list_of_paths_for_images=["with_points.png",
-                                                                    "with_perspective.png"])
-        menu_with_icons_1.addWidget(button_with_points)
-        menu_with_icons.addLayout(menu_with_icons_0)
-        menu_with_icons.addLayout(menu_with_icons_1)
-        return menu_with_icons
-
-    def function_show_with_points(self, i: int):
-        GraphicRegimes.show_with_points = bool(i)
-        self.animation.show_with_points = bool(i)
-        self.screen_window.draw_all()
-
-    def function_perspective(self, i: int):
-        GraphicRegimes.perspective = bool(not i)
-        self.animation.perspective = bool(not i)
-        self.screen_window.draw_all()
-
-    def function_web(self, i: int):
-        GraphicRegimes.web = bool(not i)
-        self.animation.web = bool(not i)
-        self.screen_window.draw_all()
-
-    def function_transparent(self, i: int):
-        GraphicRegimes.transparent = list(Transparency)[i]
-        self.animation.transparency = GraphicRegimes.transparent
-        self.screen_window.draw_all()
-
-    def function_color(self, i: int):
-        GraphicRegimes.color = bool(i)
-        self.animation.colorful=bool(i)
-        self.screen_window.draw_all()
 
     def load_menu_2(self) -> QWidget:
         layout_menu_2 = QVBoxLayout()
@@ -357,10 +177,10 @@ class GeneralWindow(QMainWindow):
 
         return button_with_ico
 
-    def click_on_the_list_of_the_objects(self, dimensions: str, obj: Callable, size: float):
+    def click_on_the_list_of_the_objects(self, dimensions: int, obj: Callable, size: float):
         self._layout_menu.setCurrentIndex(2)
         self.animation.new_object(obj=obj, dimensions=dimensions, size=size)
-        self.screen_window.draw_all()
+        self.screen_window.draw_all(event=DrawAllPrimitives())
 
 
 

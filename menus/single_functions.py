@@ -7,6 +7,8 @@ import ast
 import numpy as np
 from PySide6.QtWidgets import QComboBox, QSlider, QVBoxLayout, QLabel
 
+from frontend.event_bus.event_bus import EventBus
+from frontend.event_bus.events import RecalculateAndDrawAllPrimitives
 from variables.geometry_var import MyCoordinates
 from variables.menus import Menus
 
@@ -47,21 +49,6 @@ def correct_global_variables_by_change_dimensions(dimensions: int = 4,
             np.delete(MyCoordinates.angles, -1)
 
 
-
-
-def current_displacement_changed(displacement: int = 0) -> None:
-    MyCoordinates.displacement[MyCoordinates.current_displacement] = displacement
-    Menus.animation.draw_all(dxi=MyCoordinates.displacement, angles=MyCoordinates.angles)
-    Menus.screen_window.draw_all()
-
-def current_rotation_changed(rotations: int = 0) -> None:
-    """
-    :param rotations: angle in grad -180 +180:
-    :return None:
-    """
-    MyCoordinates.angles[MyCoordinates.current_rotation] = rotations*math.pi/180
-    Menus.animation.draw_all(dxi=MyCoordinates.displacement, angles=MyCoordinates.angles)
-    Menus.screen_window.draw_all()
 
 
 def get_sub_layout_to_change_coordinate(name_of_the_layout: str,

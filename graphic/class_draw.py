@@ -1,6 +1,9 @@
 from typing import Literal, Callable
 
+from frontend.event_bus.decorators import subscribe
 from frontend.event_bus.event_bus import EventBus
+from frontend.event_bus.events import DrawWithPoints, DrawWithPerspective, DrawWithWeb, DrawTransparent, DrawColorful, \
+    RecalculateAndDrawAllPrimitives
 from graphic.functions_for_class_draw.draw_from_draw_dict import draw_from_dict
 from geometry.class_point import Point
 from  geometry.class_geometry_change_point import GeometryChangePoint
@@ -32,6 +35,7 @@ class DrawAll:
         """
         # general variables
         self._length_axes = 4
+
         # a class to change coordinates of the objects
         self._geometry: GeometryChangePoint = GeometryChangePoint()
         self._draw_object: NDimensionalObject = draw_object
@@ -44,16 +48,14 @@ class DrawAll:
             list_of_draw_objects=self._list_of_draw_objects) # take all the points of the objects
         self._dimensions: int = initial_dimensions
 
+        # draw options
         self._colorful = False
         self._show_with_points: bool = False
-
-        # draw options
         self._transparency: Literal[Transparency.transparent] = Transparency.transparent
-        self._perspective: bool = GraphicRegimes.perspective
-        self._geometry.draw_with_perspective = self._perspective
 
-        self.init_points()      # set new center
         self.bus = bus
+        self.bus.register(self)
+        self.init_points()      # set new center
 
     def new_object(self, obj: Callable, dimensions: int=4, size: float=1.0) -> None:
         """remove the old draw object, add the new one"""
@@ -71,54 +73,41 @@ class DrawAll:
         else:
             return [self._axis_object, self._draw_object]
 
-    @property
-    def show_with_points(self) -> bool:
-        return self._show_with_points
+    @subscribe
+    def draw_with_points(self, event: DrawWithPoints):
+        self._show_with_points = event.with_points
+        self.draw_all()
 
-    @show_with_points.setter
-    def show_with_points(self, show_with_points: bool) -> None:
-        self._show_with_points = show_with_points
+    @subscribe
+    def colorful(self, event: DrawColorful):
+        self._draw_object.change_color(colorful=event.colorful)
+        self.draw_all()
 
-
-    @property
-    def colorful(self) -> bool:
-        return self._colorful
-
-    @colorful.setter
-    def colorful(self, colorful: bool = True):
-        self._draw_object.change_color(colorful=colorful)
-
-    @property
-    def perspective(self):
-        return self._perspective
-
-    @perspective.setter
-    def perspective(self, value: bool):
-        self._perspective = value
-        self._geometry.draw_with_perspective = value
+    @subscribe
+    def draw_with_perspective(self, event: DrawWithPerspective):
+        self._geometry.draw_with_perspective = event.with_perspective
         self._geometry.calculate_new_coordinates_for_the_list_of_points(points=self._list_of_all_points)
         self.draw_all()
 
-    @property
-    def web(self):
-        return self._web
-
-    @web.setter
-    def web(self, value: bool):
-        self._web = value
-        self._list_of_draw_objects = self._get_object_to_draw()
+    @subscribe
+    def draw_with_web(self, event: DrawWithWeb):
+        if event.with_web:
+            self._web = True
+            self._list_of_draw_objects = [self._web_object, self._draw_object, self._axis_object]
+        else:
+            self._web = False
+            self._list_of_draw_objects = [self._draw_object, self._axis_object]
+        self._list_of_draw_objects: list[NDimensionalObject] = self._get_object_to_draw()
+        self._list_of_all_points: list[Point] = self._take_all_the_points(
+            list_of_draw_objects=self._list_of_draw_objects)  # take all the points of the objects
         self._geometry.calculate_new_coordinates_for_the_list_of_points(points=self._list_of_all_points)
         self.draw_all()
 
-    @property
-    def transparency(self) -> Literal[Transparency.transparent]:
-        return self._transparency
-
-    @transparency.setter
-    def transparency(self, transparency: int):
-        self._transparency = transparency
+    @subscribe
+    def draw_transparent(self, event: DrawTransparent):
+        self._transparency = event.transparent
         for draw_object in self._list_of_draw_objects:
-            draw_object.transparent = transparency
+            draw_object.transparent = self._transparency
         self.draw_all()
 
 
@@ -127,7 +116,7 @@ class DrawAll:
         list_of_points: list[Point] = []
         # add points of all objects
         for draw_object in list_of_draw_objects:
-            list_of_points.extend(draw_object._my_points)
+            list_of_points.extend(draw_object.my_points)
 
         return list_of_points
 
@@ -139,12 +128,19 @@ class DrawAll:
         if len(self._list_of_all_points) > 0:
             self.change_isometry()
             new_scale = self.first_scale()
+            CoordinatesScreen.scale = new_scale
             self._geometry.scale=new_scale
-            angle_0: np.ndarray = MyCoordinates.angles_0
-            dx_dy: np.ndarray = MyCoordinates.displacement_0
-            self.draw_all(angles=angle_0, dxi=dx_dy)
 
-    def draw_all(self, angles: np.ndarray=None, dxi: np.ndarray=None, scale:float=None):
+    @subscribe
+    def draw_all(self, event: RecalculateAndDrawAllPrimitives=None):
+        if event is None:
+            angles: np.ndarray = None
+            dxi: np.ndarray = None
+            scale: float = None
+        else:
+            angles: np.ndarray = event.angles
+            dxi: np.ndarray = event.dxi
+            scale: float = event.scale
         self.change_isometry(angles=angles, dxi=dxi, scale=scale)
         self._draw_on_the_canvas()
 
@@ -168,7 +164,6 @@ class DrawAll:
         #   update lighting for all surfaces
         for draw_object in self._list_of_draw_objects:
             draw_object.update_lighting_for_all_surfaces()
-
         return None
 
 
@@ -179,7 +174,7 @@ class DrawAll:
         add_all_draw_objects_to_the_dict(list_of_all_objects=self._list_of_draw_objects,
                                          geometry=self._geometry,
                                          transparency=self._transparency,
-                                         show_the_points=self.show_with_points)
+                                         show_the_points=self._show_with_points)
         draw_from_dict(dick_of_draw_objects=self._geometry.dict_of_objects_to_draw,
                        transparency=self._transparency, bus=self.bus)
 

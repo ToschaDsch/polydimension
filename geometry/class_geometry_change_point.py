@@ -39,7 +39,7 @@ class  GeometryChangePoint:
         self.scale: float = CoordinatesScreen.scale
 
         self.dict_of_objects_to_draw: SortedDict = SortedDict()
-        self.draw_with_perspective: bool = False
+        self.draw_with_perspective: bool = True
 
     def _change_corners(self):
         self.sin: list[float] = [math.sin(x) for x in self.angles]

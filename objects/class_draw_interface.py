@@ -95,6 +95,10 @@ class NDimensionalObject(ABC):
     def transparent(self):
         return self._transparent
 
+    @property
+    def my_points(self):
+        return self._my_points
+
     @transparent.setter
     def transparent(self, value: bool):
         self._transparent = value

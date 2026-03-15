@@ -1,9 +1,10 @@
 import math
 
+from frontend.event_bus.event_bus import EventBus
+from frontend.event_bus.events import ShiftTheSliderRotation, ShiftTheSliderDisplacement, \
+    RecalculateAndDrawAllPrimitives
 from geometry.class_point import Point
-from menus.single_functions import current_displacement_changed, current_rotation_changed
 from variables.geometry_var import MyCoordinates
-from variables.menus import Menus
 
 
 def get_scale(list_of_point: list[Point],
@@ -40,31 +41,31 @@ def shift(x: int, y: int):
     MyCoordinates.displacement[1] = MyCoordinates.displacement[1] + y
 
 
-def rotate_the_object(x: int, y: int):
+def rotate_the_object(x: int, y: int, bus: EventBus):
     old_number_of_rotation = MyCoordinates.current_rotation
     dxy = [x - MyCoordinates.x0_y0[0],y - MyCoordinates.x0_y0[1]]
     order = {0:dxy[0], 2:dxy[1]}
     for ni, di in order.items():  # xy, xz angles
         MyCoordinates.current_rotation = ni
-        rotation = -di + MyCoordinates.angles[ni]/math.pi*180  #   in grad
+        rotation = int(-di + MyCoordinates.angles[ni]/math.pi*180)  #   in grad
         if old_number_of_rotation == ni:    # if the slider is current - move the slider
-            Menus.general_window.shift_the_slider_rotation(shift=rotation)
+            bus.publish(ShiftTheSliderRotation(angle=rotation))
             continue
-        current_rotation_changed(rotations=int(rotation))    # in Rad
+        current_rotation_changed(rotations=int(rotation), bus=bus)    # in Rad
     MyCoordinates.current_rotation = old_number_of_rotation
     MyCoordinates.x0_y0 = [x, y]
 
 
-def shift_the_object(x: int, y: int):
+def shift_the_object(x: int, y: int, bus: EventBus):
     old_number_of_displacement = MyCoordinates.current_displacement
     for ni, di in enumerate([x, y]):    # x, y coordinates
         MyCoordinates.current_displacement = ni
-        displacement = di + MyCoordinates.displacement[ni] - MyCoordinates.x0_y0[ni]
+        displacement = int(di + MyCoordinates.displacement[ni] - MyCoordinates.x0_y0[ni])
 
         if old_number_of_displacement == ni:    # if the slider is current - move the slider
-            Menus.general_window.shift_the_slider_displacement(shift=displacement)
+            bus.publish(ShiftTheSliderDisplacement(shift=displacement))
             continue
-        current_displacement_changed(displacement=int(displacement))
+        current_displacement_changed(displacement=int(displacement), bus=bus)
     MyCoordinates.current_displacement = old_number_of_displacement
     MyCoordinates.x0_y0 = [x, y]
 
@@ -82,3 +83,16 @@ def start_shift(x: int, y: int):
 def start_to_rotate(x: int, y: int):
     """first click of the right button"""
     MyCoordinates.x0_y0 = [x, y]
+
+def current_displacement_changed(bus:EventBus, displacement: int = 0) -> None:
+    MyCoordinates.displacement[MyCoordinates.current_displacement] = displacement
+    bus.publish(RecalculateAndDrawAllPrimitives(dxi=MyCoordinates.displacement))
+
+def current_rotation_changed(bus:EventBus, rotations: int = 0) -> None:
+    """
+    :param bus:
+    :param rotations: angle in grad -180 +180:
+    :return None:
+    """
+    MyCoordinates.angles[MyCoordinates.current_rotation] = rotations * math.pi / 180
+    bus.publish(RecalculateAndDrawAllPrimitives(angles=MyCoordinates.angles))
