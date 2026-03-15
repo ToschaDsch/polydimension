@@ -18,6 +18,7 @@ def load_general_menu():
     Menus.window_height = size.height()
     Menus.general_window = GeneralWindow()
     Menus.general_window.show()
+
     sys.exit(app.exec())
 
 

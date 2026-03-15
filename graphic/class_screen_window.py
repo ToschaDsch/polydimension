@@ -1,66 +1,61 @@
 from PySide6 import QtGui, QtCore
-from PySide6.QtGui import QColor, QFont, QPolygonF, QPixmap, QPen, QBrush
-from PySide6.QtWidgets import QLabel
+from PySide6.QtGui import QPainter
+from PySide6.QtWidgets import QWidget
 
+from frontend.event_bus.decorators import subscribe
+from frontend.event_bus.event_bus import EventBus
+from frontend.event_bus.events import DrawPoint, DrawPointText, DrawLine, DrawCircle, DrawPolygon, \
+    DrawAllPrimitives
 from graphic.functions_for_screen_window import rotate_the_object, shift_the_object, left_release, right_release, \
     start_shift, start_to_rotate
 from variables.geometry_var import CoordinatesScreen
-from variables.graphics import MyColors
 from variables.menus import Menus
 
 
-class ScreenWindow(QLabel):
+def change_brush_and_pen(painter: QPainter=None, brush: QtGui.QBrush=None, pen: QtGui.QPen=None):
+    if brush and pen:
+        painter.setBrush(brush)
+        painter.setPen(pen)
+
+
+class ScreenWindow(QWidget):
     """the window shows the model and graphic"""
 
-    def __init__(self, canvas: QPixmap, parent=None):
-        super().__init__(parent)
+    def __init__(self, bus: EventBus):
+        super().__init__()
         self._right_button = False
         self._middle_button = False
         self._ctrl: bool = False  # is ctrl pressed
-        # make parent a label + self
-        self.canvas = QtGui.QPixmap(Menus.display_width, Menus.display_height)
-        self.setPixmap(self.canvas)
-        self.my_size = self.canvas.size()
-        self.painter = QtGui.QPainter(self.canvas)
-        font = QFont('Century Gothic', 10)
-        self.painter.setFont(font)
-
-        self.pen = QPen()
-        self.brush = QBrush()
-        self.painter.setPen(self.pen)
-        self.painter.setBrush(self.brush)
-        self.canvas.fill(QColor(*MyColors.general_screen))
         self.setMouseTracking(True)
+        self.shapes = []
+        bus.register(self)
 
     def resizeEvent(self, event):
         #Menus.screen_width, Menus.screen_height = self.geometry()
-        canvas = self.canvas.scaled(Menus.window_width, Menus.window_height)
+        return
+        canvas = self.scaled(Menus.window_width, Menus.window_height)
         self.setPixmap(canvas)
         self.draw_all()
 
-    def draw_a_point(self, brush: QBrush, pen: QPen,
-                     x: int = 0, y: int = 0, radius: int=2,):
-        self.change_brush_and_pen(pen=pen, brush=brush)
-        if radius == 0:
-            self.painter.drawEllipse((x, y))
-        else:
-            self.painter.drawEllipse(int(x - radius), int(y - radius), 2 * radius, 2 * radius)
+    @subscribe
+    def draw_a_point(self, event: DrawPoint):
+        self.shapes.append(event)
 
+    @subscribe
+    def draw_a_point_text(self, event: DrawPointText):
+        self.shapes.append(event)
 
-    def draw_a_point_text(self, x0_y0, text: str):
-        self.painter.drawText(x0_y0[0] + 8, x0_y0[1] + 8, text)
+    @subscribe
+    def draw_a_line(self, event: DrawLine):
+        self.shapes.append(event)
 
+    @subscribe
+    def draw_a_circle(self, event: DrawCircle):
+        self.shapes.append(event)
 
-    def draw_a_line(self, x1: int, y1: int, x2: int, y2: int, brush: QBrush, pen: QPen):
-        self.change_brush_and_pen(pen=pen, brush=brush)
-        self.painter.drawLine(x1, y1, x2, y2)
-
-    def draw_a_circle(self, x: int, y: int, r: int, type_of_line: str = None):
-        self.painter.drawEllipse(int(x - r), int(y - r), 2 * r, 2 * r)
-
-    def draw_a_polygon(self, polygon: QPolygonF, brush: QBrush, pen: QPen):
-        self.change_brush_and_pen(pen=pen, brush=brush)
-        self.painter.drawPolygon(polygon)
+    @subscribe
+    def draw_a_polygon(self, event: DrawPolygon):
+        self.shapes.append(event)
 
     def mouseMoveEvent(self, event):
         match event.buttons():
@@ -80,11 +75,6 @@ class ScreenWindow(QLabel):
 
     def mouseDoubleClickEvent(self, event):
         print("mause_double_click")
-
-    def change_brush_and_pen(self, brush: QtGui.QBrush=None, pen: QtGui.QPen=None):
-        if brush and pen:
-            self.painter.setBrush(brush)
-            self.painter.setPen(pen)
 
     def mouseReleaseEvent(self, event):
         match event.button():
@@ -126,14 +116,32 @@ class ScreenWindow(QLabel):
         CoordinatesScreen.scale +=0.05*ds
         self.draw_all(scale=CoordinatesScreen.scale)
 
-    def draw_all(self, scale: float=None):
-        canvas = QtGui.QPixmap(self.my_size)
-        canvas.fill(QColor(*MyColors.general_screen))
-        self.painter = QtGui.QPainter(canvas)
-        Menus.animation.draw_all(scale=scale)
-        self.painter.end()
-        self.setPixmap(canvas)
+    @subscribe
+    def draw_all(self, event: DrawAllPrimitives):
+        self.update()
 
+    def paintEvent(self, e):
+        painter = QPainter(self)
 
+        for shape in self.shapes:
+            if isinstance(shape, DrawPoint):
+                change_brush_and_pen(pen=shape.pen, brush=shape.brush, painter=painter)
+                if shape.radius == 0:
+                    painter.drawEllipse((shape.x, shape.y))
+                else:
+                    painter.drawEllipse(int(shape.x - shape.radius),
+                                             int(shape.y - shape.radius),
+                                             2 * shape.radius, 2 * shape.radius)
+            elif isinstance(shape, DrawPointText):
+                painter.drawText(shape.x0_y0[0] + 8, shape.x0_y0[1] + 8, shape.text)
+            elif isinstance(shape, DrawLine):
+                change_brush_and_pen(pen=shape.pen, brush=shape.brush, painter=painter)
+                painter.drawLine(shape.x1, shape.y1, shape.x2, shape.y2)
+            elif isinstance(shape, DrawCircle):
+                painter.drawEllipse(int(shape.x - shape.r), int(shape.y - shape.r), 2 * shape.r, 2 * shape.r)
+            elif isinstance(shape, DrawPolygon):
+                change_brush_and_pen(pen=shape.pen, brush=shape.brush, painter=painter)
+                painter.drawPolygon(shape.polygon)
+        self.shapes = []
 
 

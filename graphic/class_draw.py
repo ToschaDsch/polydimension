@@ -1,5 +1,6 @@
 from typing import Literal, Callable
 
+from frontend.event_bus.event_bus import EventBus
 from graphic.functions_for_class_draw.draw_from_draw_dict import draw_from_dict
 from geometry.class_point import Point
 from  geometry.class_geometry_change_point import GeometryChangePoint
@@ -20,7 +21,7 @@ class DrawAll:
     sends all object to dict for draw (objects there are sorted by z coordinate) - modul send_to_draw_doct
     draws all object from the dict - modul draw_from_draw_dict"""
 
-    def __init__(self, draw_object: NDimensionalObject,
+    def __init__(self, bus: EventBus, draw_object: NDimensionalObject,
                  initial_dimensions: int = 3,  #2d
                  n_web: int=10, size: float=1.0):
         """
@@ -52,6 +53,7 @@ class DrawAll:
         self._geometry.draw_with_perspective = self._perspective
 
         self.init_points()      # set new center
+        self.bus = bus
 
     def new_object(self, obj: Callable, dimensions: int=4, size: float=1.0) -> None:
         """remove the old draw object, add the new one"""
@@ -178,7 +180,8 @@ class DrawAll:
                                          geometry=self._geometry,
                                          transparency=self._transparency,
                                          show_the_points=self.show_with_points)
-        draw_from_dict(dick_of_draw_objects=self._geometry.dict_of_objects_to_draw, transparency=self._transparency)
+        draw_from_dict(dick_of_draw_objects=self._geometry.dict_of_objects_to_draw,
+                       transparency=self._transparency, bus=self.bus)
 
 
 

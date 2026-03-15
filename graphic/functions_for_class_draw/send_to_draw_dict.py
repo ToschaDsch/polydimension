@@ -5,7 +5,7 @@ from variables.graphics import Transparency
 
 def add_all_draw_objects_to_the_dict(list_of_all_objects: list[NDimensionalObject],
                                      geometry: GeometryChangePoint,
-                                     transparency: int = Transparency.transparent,
+                                     transparency: Transparency = Transparency.transparent,
                                      show_the_points: bool = False):
     for draw_object in list_of_all_objects:
         for element in draw_object.get_geometric_objects(transparency=transparency):

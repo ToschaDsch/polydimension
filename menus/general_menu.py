@@ -8,6 +8,7 @@ from PySide6.QtGui import QFont, QPixmap, Qt
 from PySide6.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QHBoxLayout, QLabel, QPushButton, QStackedLayout, \
     QTableWidget, QComboBox, QSlider
 
+from frontend.event_bus.event_bus import EventBus
 from frontend_classes.class_ToggleButton import ToggleButton
 from graphic.class_draw import DrawAll
 from graphic.class_screen_window import ScreenWindow
@@ -33,21 +34,15 @@ class GeneralWindow(QMainWindow):
         self._general_layout.setContentsMargins(Menus.frame, Menus.frame, Menus.frame, Menus.frame)
 
         # variables to calculate
-
+        self.bus = EventBus()
         # load menus
         #   menu_1 (display and menu)
         # display
-        b_display = b - Menus.b_menu - 2*Menus.frame
-        h_display = h - 2*Menus.frame
+        b_display = b - Menus.b_menu - 2 * Menus.frame
+        h_display = h - 2 * Menus.frame
         Menus.display_width = b_display
         Menus.display_height = h_display
-        self.canvas_section = QtGui.QPixmap(b_display, h_display)
-
-        self.painter_section = QtGui.QPainter(self.canvas_section)
-        font = QFont('Century Gothic', Menus.font_height)
-        self.painter_section.setFont(font)
-        Menus.screen_window = ScreenWindow(canvas=self.canvas_section)
-        self.screen_window = Menus.screen_window
+        self.screen_window = ScreenWindow(bus=self.bus)
         self.load_display(general_layout=self._general_layout)
 
 
@@ -84,8 +79,7 @@ class GeneralWindow(QMainWindow):
         # draw the object
         size = 1
         self.my_object = Cube3d(size=1)
-        Menus.animation = DrawAll(draw_object=self.my_object, initial_dimensions=4, size=size)
-        self.animation = Menus.animation
+        self.animation = DrawAll(draw_object=self.my_object, initial_dimensions=4, size=size, bus=self.bus)
         self.setCentralWidget(widget)
 
         self.animation.draw_all(dxi=MyCoordinates.displacement, angles=MyCoordinates.angles)

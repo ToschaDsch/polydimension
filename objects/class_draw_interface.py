@@ -165,7 +165,7 @@ class NDimensionalObject(ABC):
     def solid(self, solid: bool):
         self._solid = solid
 
-    def get_geometric_objects(self, transparency: int = Transparency.transparent) \
+    def get_geometric_objects(self, transparency: Transparency = Transparency.transparent) \
             -> list[Line] | list[Surface] | list[Volume] | None:
         if not self._solid:
             return self._my_lines
