@@ -10,9 +10,8 @@ from geometry.class_line import Line
 from geometry.class_point import Point
 from geometry.class_surface import Surface
 from geometry.class_volume import Volume
-from geometry.geometry_functions import get_center_from_list_of_points, space_between_two_points
+from geometry.geometry_functions import get_center_from_list_of_points
 from menus.single_functions import open_and_read_a_file, parce_html_with_arrays
-from variables.geometry_var import CoordinatesScreen
 from variables.graphics import Transparency, MyColors, default_palette
 from variables.menus import Menus
 
@@ -26,7 +25,7 @@ class JSONData:
 
 class NDimensionalObject(ABC):
     def __init__(self, dimensions: int = 4,
-                 size: float = CoordinatesScreen.init_size_of_the_object,
+                 size: float = 1,
                  line_color: QColor=None, colorful: bool = False, raw_data_path: str = None):
         self.dimensions = dimensions
         self.draw_with_normal = False            # normal on/ off

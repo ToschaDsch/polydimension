@@ -4,7 +4,7 @@ from frontend.event_bus.event_bus import EventBus
 from frontend.event_bus.events import ShiftTheSliderRotation, ShiftTheSliderDisplacement, \
     RecalculateAndDrawAllPrimitives
 from geometry.class_point import Point
-from variables.geometry_var import MyCoordinates
+from variables.class_state import MyState
 
 
 def get_scale(list_of_point: list[Point],
@@ -36,63 +36,64 @@ def get_scale(list_of_point: list[Point],
         scale_y = (screen_height - 10) / max_value_y * 0.3
     return min(scale_x, scale_y)
 
-def shift(x: int, y: int):
-    MyCoordinates.displacement[0] = MyCoordinates.displacement[0] + x
-    MyCoordinates.displacement[1] = MyCoordinates.displacement[1] + y
+def shift(state: MyState, x: int, y: int):
+    state.MyCoordinates.displacement[0] = state.MyCoordinates.displacement[0] + x
+    state.MyCoordinates.displacement[1] = state.MyCoordinates.displacement[1] + y
 
 
-def rotate_the_object(x: int, y: int, bus: EventBus):
-    old_number_of_rotation = MyCoordinates.current_rotation
-    dxy = [x - MyCoordinates.x0_y0[0],y - MyCoordinates.x0_y0[1]]
+def rotate_the_object(state: MyState, x: int, y: int, bus: EventBus):
+    old_number_of_rotation = state.MyCoordinates.current_rotation
+    dxy = [x - state.MyCoordinates.x0_y0[0],y - state.MyCoordinates.x0_y0[1]]
     order = {0:dxy[0], 2:dxy[1]}
     for ni, di in order.items():  # xy, xz angles
-        MyCoordinates.current_rotation = ni
-        rotation = int(-di + MyCoordinates.angles[ni]/math.pi*180)  #   in grad
+        state.MyCoordinates.current_rotation = ni
+        rotation = int(-di + state.MyCoordinates.angles[ni]/math.pi*180)  #   in grad
         if old_number_of_rotation == ni:    # if the slider is current - move the slider
             bus.publish(ShiftTheSliderRotation(angle=rotation))
             continue
-        current_rotation_changed(rotations=int(rotation), bus=bus)    # in Rad
-    MyCoordinates.current_rotation = old_number_of_rotation
-    MyCoordinates.x0_y0 = [x, y]
+        current_rotation_changed(rotations=int(rotation), bus=bus, state=state)    # in Rad
+    state.MyCoordinates.current_rotation = old_number_of_rotation
+    state.MyCoordinates.x0_y0 = [x, y]
 
 
-def shift_the_object(x: int, y: int, bus: EventBus):
-    old_number_of_displacement = MyCoordinates.current_displacement
+def shift_the_object(state: MyState, x: int, y: int, bus: EventBus):
+    old_number_of_displacement = state.MyCoordinates.current_displacement
     for ni, di in enumerate([x, y]):    # x, y coordinates
-        MyCoordinates.current_displacement = ni
-        displacement = int(di + MyCoordinates.displacement[ni] - MyCoordinates.x0_y0[ni])
+        state.MyCoordinates.current_displacement = ni
+        displacement = int(di + state.MyCoordinates.displacement[ni] - state.MyCoordinates.x0_y0[ni])
 
         if old_number_of_displacement == ni:    # if the slider is current - move the slider
             bus.publish(ShiftTheSliderDisplacement(shift=displacement))
             continue
-        current_displacement_changed(displacement=int(displacement), bus=bus)
-    MyCoordinates.current_displacement = old_number_of_displacement
-    MyCoordinates.x0_y0 = [x, y]
+        current_displacement_changed(displacement=int(displacement), bus=bus, state=state)
+    state.MyCoordinates.current_displacement = old_number_of_displacement
+    state.MyCoordinates.x0_y0 = [x, y]
 
 
-def left_release(x: int, y: int):
+def left_release(state: MyState, x: int, y: int):
     pass
 
-def right_release(x: int, y: int):
+def right_release(state: MyState, x: int, y: int):
     pass
 
-def start_shift(x: int, y: int):
+def start_shift(state: MyState, x: int, y: int):
     """first click of the left button"""
-    MyCoordinates.x0_y0 = [x, y]
+    state.MyCoordinates.x0_y0 = [x, y]
 
-def start_to_rotate(x: int, y: int):
+def start_to_rotate(state: MyState, x:  int, y: int):
     """first click of the right button"""
-    MyCoordinates.x0_y0 = [x, y]
+    state.MyCoordinates.x0_y0 = [x, y]
 
-def current_displacement_changed(bus:EventBus, displacement: int = 0) -> None:
-    MyCoordinates.displacement[MyCoordinates.current_displacement] = displacement
-    bus.publish(RecalculateAndDrawAllPrimitives(dxi=MyCoordinates.displacement))
+def current_displacement_changed(state: MyState, bus:EventBus, displacement: int = 0) -> None:
+    state.MyCoordinates.displacement[state.MyCoordinates.current_displacement] = displacement
+    bus.publish(RecalculateAndDrawAllPrimitives(dxi=state.MyCoordinates.displacement))
 
-def current_rotation_changed(bus:EventBus, rotations: int = 0) -> None:
+def current_rotation_changed(state: MyState, bus:EventBus, rotations: int = 0) -> None:
     """
+    :param state:
     :param bus:
     :param rotations: angle in grad -180 +180:
     :return None:
     """
-    MyCoordinates.angles[MyCoordinates.current_rotation] = rotations * math.pi / 180
-    bus.publish(RecalculateAndDrawAllPrimitives(angles=MyCoordinates.angles))
+    state.MyCoordinates.angles[state.MyCoordinates.current_rotation] = rotations * math.pi / 180
+    bus.publish(RecalculateAndDrawAllPrimitives(angles=state.MyCoordinates.angles))

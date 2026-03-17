@@ -3,8 +3,6 @@ from dataclasses import dataclass
 import numpy as np
 from PySide6.QtGui import QPen, QBrush, QPolygon
 
-from variables.geometry_var import CoordinatesScreen
-
 
 class DrawEvent:
     pass
@@ -17,7 +15,7 @@ class DrawAllPrimitives(DrawEvent):
 class RecalculateAndDrawAllPrimitives(DrawEvent):
     angles: np.ndarray = None
     dxi: np.ndarray = None
-    scale:float = CoordinatesScreen.scale
+    scale:float = None
 
 @dataclass
 class DrawPoint(DrawEvent):

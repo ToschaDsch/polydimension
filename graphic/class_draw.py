@@ -12,8 +12,8 @@ from graphic.functions_for_screen_window import get_scale
 from objects.class_axis import Axis
 from objects.class_draw_interface import NDimensionalObject
 from objects.class_web import Line2dWeb
-from variables.geometry_var import CoordinatesScreen, MyCoordinates
-from variables.graphics import Transparency, GraphicRegimes
+from variables.class_state import MyState
+from variables.graphics import Transparency
 from variables.menus import Menus
 import numpy as np
 
@@ -24,7 +24,7 @@ class DrawAll:
     sends all object to dict for draw (objects there are sorted by z coordinate) - modul send_to_draw_doct
     draws all object from the dict - modul draw_from_draw_dict"""
 
-    def __init__(self, bus: EventBus, draw_object: NDimensionalObject,
+    def __init__(self, state: MyState, bus: EventBus, draw_object: NDimensionalObject,
                  initial_dimensions: int = 3,  #2d
                  n_web: int=10, size: float=1.0):
         """
@@ -35,9 +35,10 @@ class DrawAll:
         """
         # general variables
         self._length_axes = 4
+        self.state: MyState = state
 
         # a class to change coordinates of the objects
-        self._geometry: GeometryChangePoint = GeometryChangePoint()
+        self._geometry: GeometryChangePoint = GeometryChangePoint(init_scale=self.state.CoordinatesScreen.scale)
         self._draw_object: NDimensionalObject = draw_object
 
         self._web_object: NDimensionalObject = Line2dWeb(a=self._length_axes, n=n_web, z=-size)
@@ -52,6 +53,7 @@ class DrawAll:
         self._colorful = False
         self._show_with_points: bool = False
         self._transparency: Literal[Transparency.transparent] = Transparency.transparent
+
 
         self.bus = bus
         self.bus.register(self)
@@ -128,7 +130,7 @@ class DrawAll:
         if len(self._list_of_all_points) > 0:
             self.change_isometry()
             new_scale = self.first_scale()
-            CoordinatesScreen.scale = new_scale
+            self.state.CoordinatesScreen.scale = new_scale
             self._geometry.scale=new_scale
 
     @subscribe
@@ -149,7 +151,7 @@ class DrawAll:
         scale = get_scale(list_of_point=self._list_of_all_points,
                           screen_height=Menus.window_height,
                           screen_width=Menus.window_width)
-        CoordinatesScreen.scale = scale
+        self.state.CoordinatesScreen.scale = scale
 
         return scale
 
@@ -177,9 +179,3 @@ class DrawAll:
                                          show_the_points=self._show_with_points)
         draw_from_dict(dick_of_draw_objects=self._geometry.dict_of_objects_to_draw,
                        transparency=self._transparency, bus=self.bus)
-
-
-
-
-
-

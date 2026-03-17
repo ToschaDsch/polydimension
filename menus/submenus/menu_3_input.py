@@ -7,19 +7,20 @@ from frontend.event_bus.decorators import subscribe
 from frontend.event_bus.event_bus import EventBus
 from frontend.event_bus.events import DrawWithPoints, DrawWithPerspective, DrawWithWeb, DrawTransparent, DrawColorful, \
     ShiftTheSliderRotation, ShiftTheSliderDisplacement, RecalculateAndDrawAllPrimitives
-from frontend_classes.class_ToggleButton import ToggleButton
+from frontend.frontend_classes.class_ToggleButton import ToggleButton
 from menus.single_functions import correct_global_variables_by_change_dimensions, get_list_of_all_dimensions, \
     get_sub_layout_to_change_coordinate
-from variables.geometry_var import MyCoordinates
+from variables.class_state import MyState
 from variables.menus import Menus
 
 
 class Menu3Input(QWidget):
-    def __init__(self, button_back: QPushButton, parent=None, bus: EventBus = None):
+    def __init__(self, bus: EventBus, state: MyState, button_back: QPushButton, parent=None):
         super().__init__(parent)
         layout_menu_2 = QVBoxLayout()
         layout_menu_2.addWidget(QLabel(Menus.name_ot_menu_3))  # name of the menu
 
+        self.state: MyState = state
         self.bus = bus
         #variables
         self.button_minus = QPushButton('-')
@@ -53,7 +54,7 @@ class Menu3Input(QWidget):
 
     def get_layout_displacement_and_rotation(self) -> tuple[QVBoxLayout, QVBoxLayout]:
         list_of_displacements, list_of_rotations = get_list_of_all_dimensions(
-            number_of_dimensions=MyCoordinates.dimensions)
+            number_of_dimensions=self.state.MyCoordinates.dimensions)
         layout_displacement = get_sub_layout_to_change_coordinate(
             name_of_the_layout=Menus.name_of_the_layout_displacement,
             list_of_dimensions=list_of_displacements,
@@ -61,7 +62,7 @@ class Menu3Input(QWidget):
             slider=self.slider_displacement,
             function_to_the_combobox=self.number_of_displacement_changed,
             function_to_the_slider=self.current_displacement_changed,
-            init_position_of_the_slider=int(MyCoordinates.displacement[0]))
+            init_position_of_the_slider=int(self.state.MyCoordinates.displacement[0]))
         layout_rotation = get_sub_layout_to_change_coordinate(
             name_of_the_layout=Menus.name_of_the_layout_rotation,
             list_of_dimensions=list_of_rotations,
@@ -69,18 +70,18 @@ class Menu3Input(QWidget):
             slider=self.slider_rotation,
             function_to_the_combobox=self.number_of_rotation_changed,
             function_to_the_slider=self.current_rotation_changed,
-            init_position_of_the_slider=int(MyCoordinates.angles[0] * 180 / math.pi))
+            init_position_of_the_slider=int(self.state.MyCoordinates.angles[0] * 180 / math.pi))
         return layout_displacement, layout_rotation
 
     def number_of_displacement_changed(self, number_of_displacement: int = 0) -> None:
-        MyCoordinates.current_displacement = number_of_displacement
-        current_displacement = MyCoordinates.displacement[number_of_displacement]
+        self.state.MyCoordinates.current_displacement = number_of_displacement
+        current_displacement = self.state.MyCoordinates.displacement[number_of_displacement]
         self.slider_displacement.setSliderPosition(int(current_displacement))
 
 
     def number_of_rotation_changed(self, number_of_rotations: int = 0) -> None:
-        MyCoordinates.current_rotation = number_of_rotations
-        current_rotation = MyCoordinates.angles[number_of_rotations]
+        self.state.MyCoordinates.current_rotation = number_of_rotations
+        current_rotation = self.state.MyCoordinates.angles[number_of_rotations]
         self.slider_rotation.setSliderPosition(int(current_rotation*180/math.pi))
 
 
@@ -101,15 +102,15 @@ class Menu3Input(QWidget):
         return layout_dimensions
 
     def minus_dimensions(self):
-        if MyCoordinates.dimensions == 4:
+        if self.state.MyCoordinates.dimensions == 4:
             self.button_minus.setEnabled(False)
-        MyCoordinates.dimensions -= 1
-        self.write_dimensions_in_the_label(new_dimensions=MyCoordinates.dimensions)
+        self.state.MyCoordinates.dimensions -= 1
+        self.write_dimensions_in_the_label(new_dimensions=self.state.MyCoordinates.dimensions)
 
     def plus_dimensions(self):
-        MyCoordinates.dimensions += 1
+        self.state.MyCoordinates.dimensions += 1
         self.button_minus.setEnabled(True)
-        self.write_dimensions_in_the_label(new_dimensions=MyCoordinates.dimensions)
+        self.write_dimensions_in_the_label(new_dimensions=self.state.MyCoordinates.dimensions)
 
 
     def write_dimensions_in_the_label(self, new_dimensions: int):
@@ -128,7 +129,7 @@ class Menu3Input(QWidget):
         # correct global variables
         correct_global_variables_by_change_dimensions(dimensions=new_dimensions,
                                                       list_of_displacements=list_of_displacements,
-                                                      list_of_rotations=list_of_rotations)
+                                                      list_of_rotations=list_of_rotations, state= self.state)
 
     @subscribe
     def shift_the_slider_displacement(self, event: ShiftTheSliderDisplacement) -> None:
@@ -188,13 +189,13 @@ class Menu3Input(QWidget):
         self.bus.publish(event=DrawColorful(colorful=bool(i)))
 
     def current_displacement_changed(self, displacement: int = 0) -> None:
-        MyCoordinates.displacement[MyCoordinates.current_displacement] = displacement
-        self.bus.publish(RecalculateAndDrawAllPrimitives(dxi=MyCoordinates.displacement))
+        self.state.MyCoordinates.displacement[self.state.MyCoordinates.current_displacement] = displacement
+        self.bus.publish(RecalculateAndDrawAllPrimitives(dxi=self.state.MyCoordinates.displacement))
 
     def current_rotation_changed(self, rotations: int = 0) -> None:
         """
         :param rotations: angle in grad -180 +180:
         :return None:
         """
-        MyCoordinates.angles[MyCoordinates.current_rotation] = rotations * math.pi / 180
-        self.bus.publish(RecalculateAndDrawAllPrimitives(angles=MyCoordinates.angles))
+        self.state.MyCoordinates.angles[self.state.MyCoordinates.current_rotation] = rotations * math.pi / 180
+        self.bus.publish(RecalculateAndDrawAllPrimitives(angles=self.state.MyCoordinates.angles))

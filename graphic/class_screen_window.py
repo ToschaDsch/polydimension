@@ -8,7 +8,7 @@ from frontend.event_bus.events import DrawPoint, DrawPointText, DrawLine, DrawCi
     DrawAllPrimitives, RecalculateAndDrawAllPrimitives
 from graphic.functions_for_screen_window import rotate_the_object, shift_the_object, left_release, right_release, \
     start_shift, start_to_rotate
-from variables.geometry_var import CoordinatesScreen
+from variables.class_state import MyState
 from variables.menus import Menus
 
 
@@ -21,13 +21,14 @@ def change_brush_and_pen(painter: QPainter=None, brush: QtGui.QBrush=None, pen: 
 class ScreenWindow(QWidget):
     """the window shows the model and graphic"""
 
-    def __init__(self, bus: EventBus):
+    def __init__(self, bus: EventBus, state: MyState):
         super().__init__()
         self._right_button = False
         self._middle_button = False
         self._ctrl: bool = False  # is ctrl pressed
         self.setMouseTracking(True)
         self.shapes = []
+        self.state = state
         self.bus = bus
         self.bus.register(self)
 
@@ -64,9 +65,9 @@ class ScreenWindow(QWidget):
                 #  the function checks collapse by mouse motion
                 pass
             case QtCore.Qt.MouseButton.RightButton|QtCore.Qt.MouseButton.MiddleButton:
-                rotate_the_object(x=event.x(), y=event.y(), bus=self.bus)
+                rotate_the_object(x=event.x(), y=event.y(), bus=self.bus, state=self.state)
             case QtCore.Qt.MouseButton.LeftButton:
-                shift_the_object(x=event.x(), y=event.y(), bus=self.bus)
+                shift_the_object(x=event.x(), y=event.y(), bus=self.bus, state=self.state)
             case QtCore.Qt.MouseButton.RightButton:
                 pass
             case QtCore.Qt.MouseButton.MiddleButton:
@@ -112,8 +113,8 @@ class ScreenWindow(QWidget):
     def wheelEvent(self, event):
         """MOUSEWHEEL:"""
         ds = int(event.angleDelta().y())
-        CoordinatesScreen.scale +=0.05*ds
-        event = RecalculateAndDrawAllPrimitives(scale=CoordinatesScreen.scale)
+        self.state.CoordinatesScreen.scale +=0.05*ds
+        event = RecalculateAndDrawAllPrimitives(scale=self.state.CoordinatesScreen.scale)
         self.bus.publish(event)
 
     @subscribe

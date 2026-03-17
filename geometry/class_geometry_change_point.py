@@ -9,7 +9,6 @@ from geometry.class_point import Point
 from geometry.class_surface import Surface
 from geometry.class_volume import Volume
 from geometry.geometry_functions import get_rotate_matrix, get_2d_coordinate_with_perspective
-from variables.geometry_var import CoordinatesScreen
 from variables.menus import Menus
 
 
@@ -19,7 +18,7 @@ class  GeometryChangePoint:
     """
     corner_init: float = math.pi * 0.25
 
-    def __init__(self):
+    def __init__(self, init_scale: float):
         self.dimensional: int = 4
         self.angles: np.ndarray = np.array([GeometryChangePoint.corner_init,
                                     GeometryChangePoint.corner_init,
@@ -36,7 +35,7 @@ class  GeometryChangePoint:
                                         int(Menus.display_height / 2),
                                          0])
 
-        self.scale: float = CoordinatesScreen.scale
+        self.scale: float = init_scale
 
         self.dict_of_objects_to_draw: SortedDict = SortedDict()
         self.draw_with_perspective: bool = True
@@ -67,7 +66,7 @@ class  GeometryChangePoint:
         x0_y0: np.ndarray = np.matmul(self.rotation_matrix, coord_0)
         point.coord_only_rotate = np.resize(x0_y0, len(point.coord_0))
         if self.draw_with_perspective:
-            x0_y0 = get_2d_coordinate_with_perspective(x=x0_y0[0], y=x0_y0[1], z=x0_y0[2])
+            x0_y0 = get_2d_coordinate_with_perspective(x=int(x0_y0[0]), y=int(x0_y0[1]), z=int(x0_y0[2]))
         point.coord_n = np.resize(x0_y0, 3) * self.scale + self.x0y0  + np.resize(self.dxi, 3)
 
     def clean_dict_of_draw_objects(self):

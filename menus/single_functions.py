@@ -1,15 +1,14 @@
 import itertools
-import math
 import xml.etree.ElementTree as et_
 from itertools import permutations
 import ast
 
 import numpy as np
-from PySide6.QtWidgets import QComboBox, QSlider, QVBoxLayout, QLabel
+from PySide6.QtCore import QSize
+from PySide6.QtGui import QPixmap, Qt
+from PySide6.QtWidgets import QComboBox, QSlider, QVBoxLayout, QLabel, QPushButton
 
-from frontend.event_bus.event_bus import EventBus
-from frontend.event_bus.events import RecalculateAndDrawAllPrimitives
-from variables.geometry_var import MyCoordinates
+from variables.class_state import MyState
 from variables.menus import Menus
 
 
@@ -30,23 +29,23 @@ def get_list_of_all_dimensions(number_of_dimensions: int = 4) -> tuple[list[str]
 
     return displacements, rotations
 
-def correct_global_variables_by_change_dimensions(dimensions: int = 4,
+def correct_global_variables_by_change_dimensions(state: MyState, dimensions: int = 4,
                                                   list_of_displacements: list[str] = None,
                                                   list_of_rotations: list[str] = None) -> None:
-    MyCoordinates.list_of_displacements = list_of_displacements
-    MyCoordinates.list_of_rotations = list_of_rotations
-    MyCoordinates.current_displacement = 0
-    MyCoordinates.current_rotation = 0
+    state.MyCoordinates.list_of_displacements = list_of_displacements
+    state.MyCoordinates.list_of_rotations = list_of_rotations
+    state.MyCoordinates.current_displacement = 0
+    state.MyCoordinates.current_rotation = 0
 
-    dn = len(MyCoordinates.list_of_rotations) - len(list(MyCoordinates.angles))
-    if MyCoordinates.dimensions > len(MyCoordinates.displacement):  # append new coordinates
-        np.append(MyCoordinates.displacement, 0.0)
+    dn = len(state.MyCoordinates.list_of_rotations) - len(list(state.MyCoordinates.angles))
+    if state.MyCoordinates.dimensions > len(state.MyCoordinates.displacement):  # append new coordinates
+        np.append(state.MyCoordinates.displacement, 0.0)
         for i in range(dn):
-            np.append(MyCoordinates.angles, 0.0)
+            np.append(state.MyCoordinates.angles, 0.0)
     else:           # reduce coordinates
-        np.delete(MyCoordinates.displacement, -1)
+        np.delete(state.MyCoordinates.displacement, -1)
         for i in range(-dn):
-            np.delete(MyCoordinates.angles, -1)
+            np.delete(state.MyCoordinates.angles, -1)
 
 
 
@@ -199,3 +198,25 @@ def only_even_permutations(symbols):
             only_even.append(perm_list)
 
     return only_even
+
+
+def get_button(function_to_the_button, path: str,
+               width: int = Menus.size_of_buttons_menu_3,
+               height: int = Menus.size_of_buttons_menu_3) -> QPushButton:
+    button = QPushButton()
+    button.setFixedWidth(width)
+    button.setFixedHeight(height)
+    button.clicked.connect(function_to_the_button)
+    path = Menus.pictures_menu + path
+    pixmap = QPixmap(path)
+    frame = Menus.frame_menu_3
+    if pixmap.isNull():
+        print('No picture', path)
+    else:
+        new_size = QSize(button.width() - frame, button.height() - frame)
+        scaled = pixmap.scaled(new_size,
+                               Qt.AspectRatioMode.KeepAspectRatio,
+                               Qt.TransformationMode.SmoothTransformation)
+        button.setIcon(scaled)
+        button.setIconSize(QSize(width, Menus.size_of_buttons_menu_3))
+    return button

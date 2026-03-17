@@ -1,7 +1,6 @@
 from functools import partial
 from typing import Callable
 
-from PySide6.QtCore import QSize
 from PySide6.QtGui import QPixmap, Qt
 from PySide6.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QHBoxLayout, QLabel, QPushButton, QStackedLayout, \
     QTableWidget
@@ -11,11 +10,12 @@ from frontend.event_bus.events import DrawAllPrimitives, RecalculateAndDrawAllPr
 from graphic.class_draw import DrawAll
 from graphic.class_screen_window import ScreenWindow
 from menus.menu_lines import MenusLines
-from frontend_classes.class_ClickableWidget import ClickableWidget
+from frontend.frontend_classes.class_ClickableWidget import ClickableWidget
+from menus.single_functions import get_button
 from menus.submenus.menu_3_input import Menu3Input
 from objects.cube_3d import Cube3d
+from variables.class_state import MyState
 from variables.menus import Menus
-from variables.geometry_var import MyCoordinates, CoordinatesScreen
 
 
 class GeneralWindow(QMainWindow):
@@ -31,6 +31,7 @@ class GeneralWindow(QMainWindow):
 
         # variables to calculate
         self.bus = EventBus()
+        self.state = MyState()
         self.bus.register(self)
         # load menus
         #   menu_1 (display and menu)
@@ -39,7 +40,7 @@ class GeneralWindow(QMainWindow):
         h_display = h - 2 * Menus.frame
         Menus.display_width = b_display
         Menus.display_height = h_display
-        self.screen_window = ScreenWindow(bus=self.bus)
+        self.screen_window = ScreenWindow(bus=self.bus, state=self.state)
         self.screen_window.setFixedWidth(Menus.display_width)
         self.screen_window.setFixedHeight(Menus.display_height)
         self.load_display(general_layout=self._general_layout)
@@ -67,18 +68,19 @@ class GeneralWindow(QMainWindow):
         button_back = get_button(function_to_the_button=self.go_back_to_menu_1,
                                  path="back.png", width=Menus.width_of_button_back,
                                  height=Menus.height_of_button_back)
-        widget_layout_3 = Menu3Input(button_back=button_back, bus=self.bus) #self.load_menu_3()
+        widget_layout_3 = Menu3Input(button_back=button_back, bus=self.bus, state=self.state) #self.load_menu_3()
         self._layout_menu.addWidget(widget_layout_3)
         self._layout_menu.setCurrentIndex(0)
 
         # draw the object
         size = 1
         self.my_object = Cube3d(size=1)
-        self.animation = DrawAll(draw_object=self.my_object, initial_dimensions=4, size=size, bus=self.bus)
+        self.animation = DrawAll(draw_object=self.my_object, initial_dimensions=4, size=size,
+                                 bus=self.bus, state=self.state)
         self.setCentralWidget(widget)
-        event = RecalculateAndDrawAllPrimitives(angles=MyCoordinates.angles,
-                                                dxi=MyCoordinates.displacement,
-                                                scale=CoordinatesScreen.scale)
+        event = RecalculateAndDrawAllPrimitives(angles=self.state.MyCoordinates.angles,
+                                                dxi=self.state.MyCoordinates.displacement,
+                                                scale=self.state.CoordinatesScreen.scale)
         self.animation.draw_all(event=event)
 
 
@@ -184,23 +186,3 @@ class GeneralWindow(QMainWindow):
 
 
 
-def get_button(function_to_the_button, path: str,
-               width: int = Menus.size_of_buttons_menu_3,
-               height: int = Menus.size_of_buttons_menu_3) -> QPushButton:
-    button = QPushButton()
-    button.setFixedWidth(width)
-    button.setFixedHeight(height)
-    button.clicked.connect(function_to_the_button)
-    path = Menus.pictures_menu + path
-    pixmap = QPixmap(path)
-    frame = Menus.frame_menu_3
-    if pixmap.isNull():
-        print('No picture', path)
-    else:
-        new_size = QSize(button.width() - frame, button.height() - frame)
-        scaled = pixmap.scaled(new_size,
-                               Qt.AspectRatioMode.KeepAspectRatio,
-                               Qt.TransformationMode.SmoothTransformation)
-        button.setIcon(scaled)
-        button.setIconSize(QSize(width, Menus.size_of_buttons_menu_3))
-    return button
