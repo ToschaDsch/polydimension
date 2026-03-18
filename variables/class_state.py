@@ -26,3 +26,5 @@ class MyState:
         angles_0: np.ndarray = np.array([init_angle, init_angle, 0, 0.0, 0.0, 0.0])
         displacement_0 = np.array([0, 0, 0.0, 0.0, 0])
         x0_y0: list[int] = [0, 0]  # init position of the mouse
+    class VariablesScreen:
+        shapes_is_full: bool = False

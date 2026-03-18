@@ -3,7 +3,7 @@ import numpy as np
 from geometry.class_line import Line
 from geometry.class_point import Point
 from geometry.geometry_functions import find_lines, find_cycles
-from menus.single_functions import mirror_it, only_even_permutations
+from frontend.menus.single_functions import mirror_it, only_even_permutations
 from objects.class_draw_interface import NDimensionalObject, JSONData
 import json
 

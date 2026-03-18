@@ -9,10 +9,10 @@ from frontend.event_bus.event_bus import EventBus
 from frontend.event_bus.events import DrawAllPrimitives, RecalculateAndDrawAllPrimitives
 from graphic.class_draw import DrawAll
 from graphic.class_screen_window import ScreenWindow
-from menus.menu_lines import MenusLines
+from frontend.menus.menu_lines import MenusLines
 from frontend.frontend_classes.class_ClickableWidget import ClickableWidget
-from menus.single_functions import get_button
-from menus.submenus.menu_3_input import Menu3Input
+from frontend.menus.single_functions import get_button
+from frontend.menus.submenus.menu_3_input import Menu3Input
 from objects.cube_3d import Cube3d
 from variables.class_state import MyState
 from variables.menus import Menus

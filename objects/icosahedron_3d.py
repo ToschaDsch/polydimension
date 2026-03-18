@@ -1,12 +1,10 @@
-import itertools
-
 import numpy as np
 
 from geometry.class_line import Line
 from geometry.class_point import Point
 from geometry.class_surface import Surface
 from geometry.geometry_functions import get_center_from_list_of_points, space_between_two_points
-from menus.single_functions import mirror_it
+from frontend.menus.single_functions import mirror_it
 from objects.class_draw_interface import NDimensionalObject
 
 

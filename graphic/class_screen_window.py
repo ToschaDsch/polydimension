@@ -37,7 +37,6 @@ class ScreenWindow(QWidget):
         return
         canvas = self.scaled(Menus.window_width, Menus.window_height)
         self.setPixmap(canvas)
-        self.draw_all()
 
     @subscribe
     def draw_a_point(self, event: DrawPoint):
@@ -79,22 +78,22 @@ class ScreenWindow(QWidget):
     def mouseReleaseEvent(self, event):
         match event.button():
             case QtCore.Qt.MouseButton.LeftButton:
-                left_release(x=event.x(), y=event.y())
+                left_release(x=event.x(), y=event.y(), state=self.state)
             case QtCore.Qt.MouseButton.MiddleButton:
                 pass
                 #middle_release(event, right_button=self._right_button)
                 self._middle_button = False
             case QtCore.Qt.MouseButton.RightButton:
-                right_release(x=event.x(), y=event.y())
+                right_release(x=event.x(), y=event.y(), state=self.state)
 
     def mousePressEvent(self, event):
         match event.buttons():
             case QtCore.Qt.MouseButton.LeftButton:
-                start_shift(x=event.x(), y=event.y())
+                start_shift(x=event.x(), y=event.y(), state=self.state)
             case QtCore.Qt.MouseButton.MiddleButton:
                 pass
             case QtCore.Qt.MouseButton.RightButton:
-                start_to_rotate(x=event.x(), y=event.y())
+                start_to_rotate(x=event.x(), y=event.y(), state=self.state)
 
     def keyPressEvent(self, event):
         match event.key():
@@ -122,9 +121,9 @@ class ScreenWindow(QWidget):
         self.update()
 
     def paintEvent(self, e):
-        painter = QPainter(self)
 
-        for shape in self.shapes:
+        painter = QPainter(self)
+        for i, shape in enumerate(self.shapes):
             if isinstance(shape, DrawPoint):
                 change_brush_and_pen(pen=shape.pen, brush=shape.brush, painter=painter)
                 if shape.radius == 0:
@@ -144,5 +143,6 @@ class ScreenWindow(QWidget):
                 change_brush_and_pen(pen=shape.pen, brush=shape.brush, painter=painter)
                 painter.drawPolygon(shape.polygon)
         self.shapes = []
+        self.state.VariablesScreen.shapes_is_full = False
 
 

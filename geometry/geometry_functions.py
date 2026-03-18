@@ -58,22 +58,22 @@ def rotation_matrix_4d(axis_1: int, axis_2: int, cos_i: float, sin_i: float) -> 
 
 
 
-def get_2d_coordinate_with_perspective(x: float, y: float, z: float, diameter: float=400) -> np.ndarray:
+def get_2d_coordinate_with_perspective(xyz: np.ndarray, diameter: float=400) -> np.ndarray:
     """
     Projects a 3D point (x, y, z) into 2D space,
     with perspective
     """
-    return flat_perspective(x, y, z)
+    return flat_perspective(xyz=xyz)
     return sphere_perspective(x=x, y=y, z=z)
 
-def flat_perspective(x: float, y: float, z: float) -> np.ndarray:
+def flat_perspective(xyz: np.ndarray) -> np.ndarray:
     a = -5
-    z += a
-    if z == 0:
+    xyz[2] += a
+    if xyz[2] == 0:
         return np.array([400, 400, 0])
-    return np.array([a*x/z,
-                     a*y/z,
-                     z-a])
+    return np.array([a*xyz[0]/xyz[2],
+                     a*xyz[1]/xyz[2],
+                     xyz[2]-a])
 
 def sphere_perspective(x: float, y: float, z: float, diameter: float=400) -> np.ndarray:
     max_l = diameter * 10000.0

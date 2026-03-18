@@ -11,7 +11,7 @@ from geometry.class_point import Point
 from geometry.class_surface import Surface
 from geometry.class_volume import Volume
 from geometry.geometry_functions import get_center_from_list_of_points
-from menus.single_functions import open_and_read_a_file, parce_html_with_arrays
+from frontend.menus.single_functions import open_and_read_a_file, parce_html_with_arrays
 from variables.graphics import Transparency, MyColors, default_palette
 from variables.menus import Menus
 

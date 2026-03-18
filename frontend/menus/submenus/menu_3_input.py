@@ -8,7 +8,7 @@ from frontend.event_bus.event_bus import EventBus
 from frontend.event_bus.events import DrawWithPoints, DrawWithPerspective, DrawWithWeb, DrawTransparent, DrawColorful, \
     ShiftTheSliderRotation, ShiftTheSliderDisplacement, RecalculateAndDrawAllPrimitives
 from frontend.frontend_classes.class_ToggleButton import ToggleButton
-from menus.single_functions import correct_global_variables_by_change_dimensions, get_list_of_all_dimensions, \
+from frontend.menus.single_functions import correct_global_variables_by_change_dimensions, get_list_of_all_dimensions, \
     get_sub_layout_to_change_coordinate
 from variables.class_state import MyState
 from variables.menus import Menus
@@ -22,6 +22,7 @@ class Menu3Input(QWidget):
 
         self.state: MyState = state
         self.bus = bus
+        self.bus.register(self)
         #variables
         self.button_minus = QPushButton('-')
         self.label_dimensions = QLabel(Menus.label_dimensions)
@@ -135,6 +136,7 @@ class Menu3Input(QWidget):
     def shift_the_slider_displacement(self, event: ShiftTheSliderDisplacement) -> None:
         self.slider_displacement.setSliderPosition(event.shift)
 
+    @subscribe
     def shift_the_slider_rotation(self, event: ShiftTheSliderRotation) -> None:
         """
         :param event:

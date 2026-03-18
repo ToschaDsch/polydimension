@@ -171,11 +171,14 @@ class DrawAll:
 
     def _draw_on_the_canvas(self):
         self._geometry.clean_dict_of_draw_objects()
-
+        if self.state.VariablesScreen.shapes_is_full:
+            return
         # draw the model
         add_all_draw_objects_to_the_dict(list_of_all_objects=self._list_of_draw_objects,
                                          geometry=self._geometry,
                                          transparency=self._transparency,
                                          show_the_points=self._show_with_points)
+
         draw_from_dict(dick_of_draw_objects=self._geometry.dict_of_objects_to_draw,
                        transparency=self._transparency, bus=self.bus)
+        self.state.VariablesScreen.shapes_is_full = True

@@ -66,7 +66,7 @@ class  GeometryChangePoint:
         x0_y0: np.ndarray = np.matmul(self.rotation_matrix, coord_0)
         point.coord_only_rotate = np.resize(x0_y0, len(point.coord_0))
         if self.draw_with_perspective:
-            x0_y0 = get_2d_coordinate_with_perspective(x=int(x0_y0[0]), y=int(x0_y0[1]), z=int(x0_y0[2]))
+            x0_y0 = get_2d_coordinate_with_perspective(xyz=x0_y0)
         point.coord_n = np.resize(x0_y0, 3) * self.scale + self.x0y0  + np.resize(self.dxi, 3)
 
     def clean_dict_of_draw_objects(self):
