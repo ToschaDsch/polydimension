@@ -10,7 +10,7 @@ import json
 class Cell1204d(NDimensionalObject):
 
     def __init__(self, dimensions: int = 4, colorful: bool = False, size: float=1.0, raw_data: str = None):
-        raw_data_path = "arrays_120_cell.html" # "cell_120.txt" "arrays_120_cell.html"
+        raw_data_path = "cell_120.txt" # "cell_120.txt" "arrays_120_cell.html"
         super().__init__(dimensions=dimensions, colorful=colorful, size=size, raw_data_path=raw_data_path)
         if raw_data_path == "arrays_120_cell.html":
             self.make_geometry()
@@ -76,6 +76,12 @@ class Cell1204d(NDimensionalObject):
         print("*******")
         dict_json_2 = json.dumps(dict_json)
         print("dict_json_2", dict_json_2)
+        with open("demofile.txt", "w") as f:
+            f.write(dict_json_2)
+
+        # open and read the file after the overwriting:
+        with open("demofile.txt") as f:
+            print(f.read())
         return None
         for i, j in number_of_lines:
             self._my_lines.append(Line(point_0=self._my_points[i], point_1=self._my_points[j]))

@@ -183,17 +183,16 @@ def find_cycles(edges: list[tuple[int]], points: list[Point], cycle_size: int=5,
     # -------------------------------------------------
     # Extract 4D coordinates
     # -------------------------------------------------
-    coords = np.array([p.coord_0 for p in points], dtype=np.float64)
+    coords = np.array([list(p.coord_0) for p in points], dtype=np.float64)
 
     # -------------------------------------------------
     # Hyperplane coplanarity check in 4D
     # Rank of difference matrix must be <= 3
     # -------------------------------------------------
-    def is_coplanar(indices) -> bool:
-        if len(indices) <= 3:
-            return True
-        base = coords[indices[0]]
-        diffs = coords[indices[1:]] - base
+    def is_coplanar(indices):
+        pts = coords[list(indices)]  # shape (cycle_size,4)
+        base = pts[0]
+        diffs = pts[1:] - base  # shape (cycle_size-1,4)
         rank = np.linalg.matrix_rank(diffs, tol=eps)
         return rank <= 3
 
@@ -215,12 +214,12 @@ def find_cycles(edges: list[tuple[int]], points: list[Point], cycle_size: int=5,
             # Check cycle closure
             for nxt in graph[current]:
                 if nxt == start:
-
+                    # remove reverse duplicates
+                    if path[1] > path[cycle_size - 1]:
+                        return
                     cycle = tuple(int(x) for x in path)
-
                     if is_coplanar(cycle):
                         cycles.append(cycle)
-
                     break
             return
 
