@@ -21,8 +21,14 @@ def change_brush_and_pen(painter: QPainter=None, brush: QtGui.QBrush=None, pen: 
 class ScreenWindow(QWidget):
     """the window shows the model and graphic"""
 
-    def __init__(self, bus: EventBus, state: MyState):
+    def __init__(self, bus: EventBus, state: MyState, b: int, h: int):
         super().__init__()
+        b_display = b - Menus.b_menu - 2 * Menus.frame
+        h_display = h - 2 * Menus.frame
+        Menus.display_width = b_display
+        Menus.display_height = h_display
+        self.setFixedWidth(Menus.display_width)
+        self.setFixedHeight(Menus.display_height)
         self._right_button = False
         self._middle_button = False
         self._ctrl: bool = False  # is ctrl pressed

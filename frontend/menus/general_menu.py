@@ -33,17 +33,12 @@ class GeneralWindow(QMainWindow):
         self.bus = EventBus()
         self.state = MyState()
         self.bus.register(self)
+
         # load menus
         #   menu_1 (display and menu)
         # display
-        b_display = b - Menus.b_menu - 2 * Menus.frame
-        h_display = h - 2 * Menus.frame
-        Menus.display_width = b_display
-        Menus.display_height = h_display
-        self.screen_window = ScreenWindow(bus=self.bus, state=self.state)
-        self.screen_window.setFixedWidth(Menus.display_width)
-        self.screen_window.setFixedHeight(Menus.display_height)
-        self.load_display(general_layout=self._general_layout)
+        self.screen_window = ScreenWindow(bus=self.bus, state=self.state, b=b, h=h)
+        self._general_layout.addWidget(self.screen_window)
 
         # menu right
         self._layout_menu = QStackedLayout()
@@ -74,7 +69,7 @@ class GeneralWindow(QMainWindow):
 
         # draw the object
         size = 1
-        self.my_object = Cube3d(size=1)
+        self.my_object = Cube3d(size=size)
         self.animation = DrawAll(draw_object=self.my_object, initial_dimensions=4, size=size,
                                  bus=self.bus, state=self.state)
         self.setCentralWidget(widget)
@@ -96,11 +91,6 @@ class GeneralWindow(QMainWindow):
 
         return widget_layout_2
 
-    def load_display(self, general_layout: QHBoxLayout):
-        display_layout = QVBoxLayout()
-        display_layout.addWidget(self.screen_window)
-
-        general_layout.addLayout(display_layout)
 
     def load_menu_1(self) -> QWidget:
         """menu with list of the objects"""
