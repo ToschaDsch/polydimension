@@ -179,10 +179,10 @@ class Menu3Input(QWidget):
         self.bus.publish(event=DrawWithPoints(with_points=bool(i)))
 
     def function_perspective(self, i: int):
-        self.bus.publish(event=DrawWithPerspective(with_perspective=bool(i)))
+        self.bus.publish(event=DrawWithPerspective(with_perspective=bool(not i)))
 
     def function_web(self, i: int):
-        self.bus.publish(event=DrawWithWeb(with_web=bool(i)))
+        self.bus.publish(event=DrawWithWeb(with_web=bool(not i)))
 
     def function_transparent(self, i: int):
         self.bus.publish(event=DrawTransparent(transparent=bool(i)))

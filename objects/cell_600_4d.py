@@ -10,11 +10,10 @@ import json
 class Cell6004d(NDimensionalObject):
 
     def __init__(self, dimensions: int = 4, colorful: bool = False, size: float=1.0, raw_data: str = None):
-        raw_data_path = "cell_600.txt" # "cell_600.txt" "arrays_600_cell.html"
+        raw_data_path = "cell_600.txt"
         super().__init__(dimensions=dimensions, colorful=colorful, size=size, raw_data_path=raw_data_path)
-        if raw_data_path == "arrays_600_cell.html":
-            self.make_geometry()
         self.name_of_the_object = "cell 600 4d"
+        self.correct_all_points(d=1)
 
 
     def make_points(self):

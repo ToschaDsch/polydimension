@@ -8,6 +8,7 @@ class Transparency(Enum):
     transparent = 0
     full = 1
     sceleton = 2
+    
 
 
 @dataclass

@@ -38,6 +38,6 @@ class MenusLines(Enum):
     icosahedron_3d = MenuLine(name="icosahedron_3d", pict="ico_3d.png", info="info_ico_3d.png", dimensions=4, size=1.0, obj=Icosahedron3d)
     ico24_cell_4d = MenuLine(name="24 cell 4d", pict="cell_24_ico.png", info="info_24_cell_4d.png", dimensions=4, size=1.0, obj=Cell244d)
     ico24_cell_snub_4d = MenuLine(name="24 cell snub 4d", pict="cell_24.png", info="info_ico_4d_snub.png", dimensions=4, size=1.0/((1+5**.5)*2)**.5, obj=Cell24Snub4d)
-    cell_600_4d = MenuLine(name="600 cell 4d", pict="ico_600cell.png", info="info_ico_600_cell.png", dimensions=4, size=1.0/2, obj=Cell6004d)
+    cell_600_4d = MenuLine(name="600 cell 4d", pict="ico_600cell.png", info="info_ico_600_cell.png", dimensions=4, size=1.0, obj=Cell6004d)
     dodecahedron_3d = MenuLine(name="dodecahedron 3d", pict="dode_3d.png", info="info_dode_3d.png", dimensions=4, size=1.0, obj=Dodecahedron3d)
-    cell_120_4d = MenuLine(name="120 cell 4d", pict="cell_120.png", info="info_120_cell.png", dimensions=4, size=1.0, obj=Cell1204d)
+    cell_120_4d = MenuLine(name="120 cell 4d", pict="cell_120.png", info="info_120_cell.png", dimensions=4, size=2/3, obj=Cell1204d)

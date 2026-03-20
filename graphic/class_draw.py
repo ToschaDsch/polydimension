@@ -109,11 +109,19 @@ class DrawAll:
 
     @subscribe
     def draw_transparent(self, event: DrawTransparent):
-        self._transparency = event.transparent
+        self.correct_transparency()
         for draw_object in self._list_of_draw_objects:
             draw_object.transparent = self._transparency
         self.draw_all()
 
+    def correct_transparency(self):
+        match self._transparency:
+            case Transparency.transparent:
+                self._transparency = Transparency.full
+            case Transparency.full:
+                self._transparency = Transparency.sceleton
+            case Transparency.sceleton:
+                self._transparency = Transparency.transparent
 
     @staticmethod
     def _take_all_the_points(list_of_draw_objects: list[NDimensionalObject]) -> list[Point]:

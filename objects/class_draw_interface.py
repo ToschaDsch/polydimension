@@ -83,6 +83,9 @@ class NDimensionalObject(ABC):
             list_of_points_i = [self._my_points[i] for i in list_of_points_i]
             self._my_surfaces.append(Surface(list_of_points=list_of_points_i, init_center_of_the_volume=center))
 
+    def correct_all_points(self, d: float = 0):
+        for point in self._my_points:
+            point.coord_0[2] += d
 
     def get_surfaces(self) -> list[Surface]:
         return self._my_surfaces

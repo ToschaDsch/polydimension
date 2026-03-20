@@ -9,7 +9,7 @@ from geometry.class_point import Point
 from geometry.class_source_of_light import SourceOfLight
 from geometry.color_for_surface import give_me_return_color, calculate_normal
 from geometry.geometry_functions import get_center_from_list_of_points
-from variables.graphics import MyColors
+from variables.graphics import MyColors, Transparency
 
 
 class Surface(GeometricObject):
@@ -66,6 +66,7 @@ class Surface(GeometricObject):
     @color.setter
     def color(self, value: QColor):
         self._init_color = value
+        #self.transparent = self._transparent
         self._update_color()
 
     def change_coordinate(self):
@@ -101,7 +102,7 @@ class Surface(GeometricObject):
     @transparent.setter
     def transparent(self, value: bool):
         self._transparent = value
-        alpha: int = MyColors.transparency if value else 256
+        alpha: int = MyColors.transparency if value == Transparency.transparent else 255
         self._init_color.setAlpha(alpha)
         self._color.setAlpha(alpha)
         self.brush: QBrush = QBrush(self._color)
