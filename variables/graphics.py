@@ -61,6 +61,6 @@ default_palette = [(155, 155, 155, MyColors.transparency),
 
 @dataclass
 class InitLight:
-    coordinate: tuple[float] = (10, 25, 50)
+    coordinate: tuple[float] = (40, 25, -10)
     intensity: float = 1
     color: QColor = QColor.yellow

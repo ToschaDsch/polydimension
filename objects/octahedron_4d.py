@@ -3,16 +3,18 @@ from geometry.class_line import Line
 from geometry.class_point import Point
 from objects.class_draw_interface import NDimensionalObject
 from objects.octahedron_3d import Octahedron3d
+from variables.graphics import Transparency
 
 
 class Cell164d(NDimensionalObject):
 
     def __init__(self, dimensions: int=4, colorful: bool = False, size: float=1.0,
                  dimension_shift_number: int=0,
-                 dimension_shift_length: int=0):
+                 dimension_shift_length: int=0,
+                 transparent: Transparency=Transparency.transparent):
         self._dimension_shift_number = dimension_shift_number
         self._dimension_shift_length = dimension_shift_length
-        super().__init__(dimensions=dimensions, colorful=colorful, size=size)
+        super().__init__(dimensions=dimensions, colorful=colorful, size=size, transparent=transparent)
         self.name_of_the_object = "16Cell 4d"
 
 

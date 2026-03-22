@@ -6,7 +6,7 @@ from frontend.event_bus.decorators import subscribe
 from frontend.event_bus.event_bus import EventBus
 from frontend.event_bus.events import DrawPoint, DrawPointText, DrawLine, DrawCircle, DrawPolygon, \
     DrawAllPrimitives, RecalculateAndDrawAllPrimitives
-from graphic.functions_for_screen_window import rotate_the_object, shift_the_object, left_release, right_release, \
+from frontend.graphic.functions_for_screen_window import rotate_the_object, shift_the_object, left_release, right_release, \
     start_shift, start_to_rotate
 from variables.class_state import MyState
 from variables.menus import Menus

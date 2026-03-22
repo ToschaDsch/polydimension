@@ -5,14 +5,16 @@ from geometry.class_point import Point
 from geometry.class_surface import Surface
 from geometry.geometry_functions import get_center_from_list_of_points
 from objects.class_draw_interface import NDimensionalObject
+from variables.graphics import Transparency
 
 
 class Tetrahedron3d(NDimensionalObject):
 
     def __init__(self, dimensions: int=4, colorful: bool = False, size: float = 2,
-                 init_point: list[int]=None):
+                 init_point: list[int]=None,
+                 transparent: Transparency=Transparency.transparent):
         self._init_points = init_point if init_point else [0, 1, 2]
-        super().__init__(dimensions=dimensions, colorful=colorful, size=size)
+        super().__init__(dimensions=dimensions, colorful=colorful, size=size, transparent=transparent)
         self.name_of_the_object = "Tetrahedron 3d"
 
 

@@ -26,7 +26,8 @@ class JSONData:
 class NDimensionalObject(ABC):
     def __init__(self, dimensions: int = 4,
                  size: float = 1,
-                 line_color: QColor=None, colorful: bool = False, raw_data_path: str = None):
+                 line_color: QColor=None, colorful: bool = False, raw_data_path: str = None,
+                 transparent: Transparency = Transparency.transparent):
         self.dimensions = dimensions
         self.draw_with_normal = False            # normal on/ off
         self.points_to_show: list[Point] = []
@@ -35,7 +36,7 @@ class NDimensionalObject(ABC):
         self._my_surfaces: list[Surface] = []
         self._my_volumes: list[Volume] = []
         self._solid: bool = True
-        self._transparent: bool = True
+        self._transparent: bool = Transparency.transparent
         self.line_color: QColor = line_color if line_color else QColor(*MyColors.default_line_color)
         self.size: float = size
         self.name_of_the_object: str = "Noname"
@@ -152,17 +153,17 @@ class NDimensionalObject(ABC):
 
         for i, color_element in enumerate(color_elements):
             if not colorful:
-                color_element.color = QColor(*MyColors.default_surface_color)
-                continue
+                color = MyColors.default_surface_color
             #   if it is colorful
-            if i > len(list_of_colors) - 1:
+            elif i > len(list_of_colors) - 1:
                 #  random color
                 number = np.random.choice(range(256), size=3)
-                color = QColor(*number)
-                color.setAlpha(MyColors.default_surface_color[-1])
+                color = number
             else:
-                color = QColor(*list_of_colors[i])
-            color_element.color = color
+                color = list_of_colors[i]
+            k = 1.2
+            color = map(lambda x: k*x if k*x <= 255 else 255, color)
+            color_element.color = QColor(*color)
 
     @property
     def solid(self)->bool:

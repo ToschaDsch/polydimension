@@ -8,13 +8,15 @@ from geometry.class_point import Point
 from geometry.class_surface import Surface
 from geometry.geometry_functions import get_center_from_list_of_points
 from objects.class_draw_interface import NDimensionalObject
+from variables.graphics import Transparency
 
 
 class Cube3d(NDimensionalObject):
 
     def __init__(self, dimensions: int=4, colorful: bool = False, size: float=1.0,
                  dimension_shift_number: int=0,
-                 dimension_shift_length: int=0):
+                 dimension_shift_length: int=0,
+                 transparent: Transparency=Transparency.transparent):
         self.list_of_point = [[0, 1, 5, 4],
                               [0, 2, 6, 4],
                               [0, 1, 3, 2],
@@ -23,7 +25,7 @@ class Cube3d(NDimensionalObject):
                               [1, 3, 7, 5]]
         self._dimension_shift_number = dimension_shift_number
         self._dimension_shift_length = dimension_shift_length
-        super().__init__(dimensions=dimensions, colorful=colorful, size=size)
+        super().__init__(dimensions=dimensions, colorful=colorful, size=size, transparent=transparent)
         self.name_of_the_object = "Cube 3d"
 
 

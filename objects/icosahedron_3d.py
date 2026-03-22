@@ -6,15 +6,17 @@ from geometry.class_surface import Surface
 from geometry.geometry_functions import get_center_from_list_of_points, space_between_two_points
 from frontend.menus.single_functions import mirror_it
 from objects.class_draw_interface import NDimensionalObject
+from variables.graphics import Transparency
 
 
 class Icosahedron3d(NDimensionalObject):
 
     def __init__(self, dimensions: int=4, colorful: bool = False, size: float = 2.0,
-                 position_for_addition_coordination_4d: int = 3):
+                 position_for_addition_coordination_4d: int = 3,
+                 transparent: Transparency=Transparency.transparent):
         self._position_for_addition_coordination_4d = position_for_addition_coordination_4d
 
-        super().__init__(dimensions=dimensions, colorful=colorful, size=size)
+        super().__init__(dimensions=dimensions, colorful=colorful, size=size, transparent=transparent)
         self.name_of_the_object = "Tetrahedron 3d"
 
 

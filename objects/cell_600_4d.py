@@ -7,11 +7,15 @@ from frontend.menus.single_functions import even_permutations, mirror_it, only_e
 from objects.class_draw_interface import NDimensionalObject
 import json
 
+from variables.graphics import Transparency
+
+
 class Cell6004d(NDimensionalObject):
 
-    def __init__(self, dimensions: int = 4, colorful: bool = False, size: float=1.0, raw_data: str = None):
+    def __init__(self, dimensions: int = 4, colorful: bool = False, size: float=1.0, raw_data: str = None,
+                 transparent: Transparency=Transparency.transparent):
         raw_data_path = "cell_600.txt"
-        super().__init__(dimensions=dimensions, colorful=colorful, size=size, raw_data_path=raw_data_path)
+        super().__init__(dimensions=dimensions, colorful=colorful, size=size, raw_data_path=raw_data_path, transparent=transparent)
         self.name_of_the_object = "cell 600 4d"
         self.correct_all_points(d=1)
 

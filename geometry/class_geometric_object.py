@@ -12,12 +12,12 @@ class GeometricObject(ABC):
         self._width = width if width else 3
         self.brush: QBrush = QBrush(self._color)
         self.pen: QPen = QPen(self.brush, self._width)
-        self._transparent: bool = True
+        self._transparent: Transparency = Transparency.transparent
         self.visible = True
         self.name: str = ""
 
     @property
-    def transparent(self) -> bool:
+    def transparent(self) -> Transparency:
         return self._transparent
 
     @transparent.setter

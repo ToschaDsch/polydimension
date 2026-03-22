@@ -26,6 +26,7 @@ class Surface(GeometricObject):
                  source_of_light: SourceOfLight = None, init_center_of_the_volume: Point = None):
         color = color if color else QColor(*MyColors.default_surface_color)
         super().__init__(color=color, width=width)
+        self._transparent = Transparency.transparent
         self._draw_with_normal = False
         self._list_of_points: list[Point] = list_of_points if list_of_points is not None else []
         self.list_of_lines: list[Line] = []
@@ -66,7 +67,7 @@ class Surface(GeometricObject):
     @color.setter
     def color(self, value: QColor):
         self._init_color = value
-        #self.transparent = self._transparent
+        self.transparent = self._transparent
         self._update_color()
 
     def change_coordinate(self):

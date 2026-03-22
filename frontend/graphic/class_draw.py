@@ -4,11 +4,11 @@ from frontend.event_bus.decorators import subscribe
 from frontend.event_bus.event_bus import EventBus
 from frontend.event_bus.events import DrawWithPoints, DrawWithPerspective, DrawWithWeb, DrawTransparent, DrawColorful, \
     RecalculateAndDrawAllPrimitives
-from graphic.functions_for_class_draw.draw_from_draw_dict import draw_from_dict
+from frontend.graphic.functions_for_class_draw.draw_from_draw_dict import draw_from_dict
 from geometry.class_point import Point
 from  geometry.class_geometry_change_point import GeometryChangePoint
-from graphic.functions_for_class_draw.send_to_draw_dict import add_all_draw_objects_to_the_dict
-from graphic.functions_for_screen_window import get_scale
+from frontend.graphic.functions_for_class_draw.send_to_draw_dict import add_all_draw_objects_to_the_dict
+from frontend.graphic.functions_for_screen_window import get_scale
 from objects.class_axis import Axis
 from objects.class_draw_interface import NDimensionalObject
 from objects.class_web import Line2dWeb
@@ -61,7 +61,8 @@ class DrawAll:
 
     def new_object(self, obj: Callable, dimensions: int=4, size: float=1.0) -> None:
         """remove the old draw object, add the new one"""
-        self._draw_object = obj(dimensions=dimensions, colorful=self._colorful, size=size)
+        self._draw_object = obj(dimensions=dimensions, colorful=self._colorful,
+                                size=size, transparent=self._transparency)
         self._draw_object.change_color(colorful=self._colorful)
         self._list_of_draw_objects: list[NDimensionalObject] = self._get_object_to_draw()
         self._list_of_all_points: list[Point] = self._take_all_the_points(

@@ -7,11 +7,15 @@ from frontend.menus.single_functions import mirror_it, only_even_permutations
 from objects.class_draw_interface import NDimensionalObject, JSONData
 import json
 
+from variables.graphics import Transparency
+
+
 class Cell1204d(NDimensionalObject):
 
-    def __init__(self, dimensions: int = 4, colorful: bool = False, size: float=1.0, raw_data: str = None):
+    def __init__(self, dimensions: int = 4, colorful: bool = False, size: float=1.0, raw_data: str = None,
+                 transparent: Transparency=Transparency.transparent):
         raw_data_path = "cell_120.txt" # "cell_120.txt"
-        super().__init__(dimensions=dimensions, colorful=colorful, size=size, raw_data_path=raw_data_path)
+        super().__init__(dimensions=dimensions, colorful=colorful, size=size, raw_data_path=raw_data_path, transparent=transparent)
 
         self.name_of_the_object = "cell 120 4d"
         self.correct_all_points(d=self.size*(1 + 5**.5) * 0.5-0.3)
