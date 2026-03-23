@@ -13,13 +13,70 @@ class ReturnColor:
     i_see_it: bool
     distance: float
 
-def give_me_return_color(points: list[Point],
-                         color: QColor,
+def to_vec3(v: np.ndarray) -> np.ndarray:
+    """Convert 4D → 3D by dropping w"""
+    return v[:3]
+
+
+def normalize(v) -> np.ndarray:
+    norm = np.linalg.norm(v)
+    if norm == 0:
+        return v
+    return v / norm
+
+def give_me_return_color(center: Point,
+                         normal,
+                         base_color: QColor,
+                         lamp: SourceOfLight, ) -> ReturnColor:
+    return compute_surface_color(center=center, normal=normal, base_color=base_color, lamp=lamp)
+    return give_me_return_color_my_variant(center=center, normal=normal, base_color=base_color, lamp=lamp)
+
+def compute_surface_color(center: Point,
+                          normal,
+                          base_color: QColor,
+                          lamp: SourceOfLight,):
+    """
+    Accepts 4D or 3D numpy arrays
+    """
+    light_point = lamp.coordinate
+    camera_point = np.array([0,0,100])
+
+    # --- convert to 3D ---
+    points = to_vec3(center.coord_n)
+    normal = to_vec3(normal)
+    camera_point = to_vec3(camera_point)
+    light_point = to_vec3(light_point.coord_n)
+
+    # --- normalize ---
+    normal = normalize(normal)
+    to_camera = normalize(camera_point)
+
+    # --- back-face culling ---
+    i_see_it = False if np.dot(normal, to_camera) <= 0 else True
+
+    # --- lighting ---
+    light_dir = normalize(light_point - points)
+    diffuse = abs(np.dot(normal, light_dir))
+    ambient = 0.5
+    # val add = (1f - Properties.DISPERSION_OF_LIGHT) + abs(angle0) * Properties.DISPERSION_OF_LIGHT
+    intensity = ambient + (1 - ambient) * diffuse
+
+    rgb = np.array([base_color.red(), base_color.green(), base_color.blue()])
+    shaded = np.clip(rgb * intensity, 0, 255).astype(int)
+    color = QColor(*shaded)
+    color.setAlpha(base_color.alpha())
+
+    return ReturnColor(color=color, i_see_it=i_see_it, distance=0)
+
+
+
+def give_me_return_color_my_variant(center: Point,
+                         base_color: QColor,
                          normal: np.ndarray,
                          lamp: SourceOfLight) -> ReturnColor:
     """it works only in 3d
     the function send the surface in 3d and find the light end can it be seen"""
-    vector_of_distance, square_of_distance = calculate_vector_and_square_of_distance(points=points)
+    vector_of_distance, square_of_distance = calculate_vector_and_square_of_distance(center=center)
     distance3d: float = 0.0
 
     vector_from_lamp, distance_from_lamp = calculate_lamp(vector_of_distance=vector_of_distance,
@@ -33,7 +90,7 @@ def give_me_return_color(points: list[Point],
 
     vector_from_lamp = np.resize(normalize_me_in_3d(vector_from_lamp), (len(normal),))
     angle = cos_between_two_vectors(normal, vector_from_lamp)
-    new_color = make_color(angle0=angle, distance=distance3d, color=color)
+    new_color = make_color(angle0=angle, distance=distance3d, color=base_color)
     return ReturnColor(color=new_color, i_see_it=i_see_it, distance=square_of_distance)
 
 
@@ -50,20 +107,14 @@ def vector_product_with_center(v1: np.ndarray, v2: np.ndarray, vector_center: np
     else:
         return np.cross(v2, v1)
 
-def calculate_vector_and_square_of_distance(points: list[Point]) -> tuple[np.ndarray, float]:
+def calculate_vector_and_square_of_distance(center: Point) -> tuple[np.ndarray, float]:
     """
     the function calculates a vector to the center of the surface and average square of distance to the surface
     from center of coordinate
     """
-    new_size = 3
-    vector_distance: np.ndarray = np.empty((new_size,))
     square_of_length = 0.0
-    for point in points:
-        vector_distance += np.resize(point.coord_only_rotate, (new_size,))  # x
-    vector_distance = vector_distance / len(points)
-    for i in range(new_size):
-        square_of_length += vector_distance[i] * vector_distance[i]
-    return vector_distance, square_of_length
+
+    return center.coord_n, square_of_length
 
 def calculate_normal(points: list[Point], vector_center: np.ndarray) -> np.ndarray:
     """
@@ -111,7 +162,7 @@ def cos_between_two_vectors(normal: np.ndarray, vector_of_distance: np.ndarray) 
 
 def make_color(angle0: float, distance: float, color: QColor) -> QColor:
     if color is None:
-        return QColor(100,100,0)
+        return QColor(*[100,100,0])
     dispersion_of_light = 0.5
     # val add = (1f - Properties.DISPERSION_OF_LIGHT) + abs(angle0) * Properties.DISPERSION_OF_LIGHT
     add = (1.0 - dispersion_of_light) + abs(angle0) * dispersion_of_light

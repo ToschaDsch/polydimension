@@ -52,8 +52,8 @@ class Surface(GeometricObject):
             self.list_of_points_change_coordinate = self._list_of_points + [self.normal, self.center]
 
     def _update_color(self):
-        return_color = give_me_return_color(points=self._list_of_points,
-                                            color=self._init_color, lamp=self._source_of_light,
+        return_color = give_me_return_color(center=self.center,
+                                            base_color=self._init_color, lamp=self._source_of_light,
                                             normal=self.normal.coord_only_rotate)
         self._color = return_color.color
         self.visible = return_color.i_see_it
