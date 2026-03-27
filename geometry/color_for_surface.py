@@ -38,31 +38,33 @@ def compute_surface_color(center: Point,
     """
     Accepts 4D or 3D numpy arrays
     """
-    light_point = lamp.coordinate
-    camera_point = np.array([0,0,100])
+    light_point = lamp.coordinate.coord_0
+    camera_point = np.array([0,0,100])    # it needs to be normalized
 
     # --- convert to 3D ---
     points = to_vec3(center.coord_n)
     normal = to_vec3(normal)
-    camera_point = to_vec3(camera_point)
-    light_point = to_vec3(light_point.coord_n)
 
-    # --- normalize ---
-    normal = normalize(normal)
-    to_camera = normalize(camera_point)
+    # --- normalize -- normal- it is already normalized
+    to_camera = normalize(camera_point - points)
+    light_dir = normalize(light_point - points)
 
     # --- back-face culling ---
-    i_see_it = False if np.dot(normal, to_camera) <= 0 else True
+    i_see_it = np.sum(normal * to_camera, axis=0) > 0
+
+    # --- diffuse ---
+    diffuse = np.maximum(0.0, np.sum(normal * light_dir, axis=0))
 
     # --- lighting ---
-    light_dir = normalize(light_point - points)
-    diffuse = abs(np.dot(normal, light_dir))
-    ambient = 0.5
-    # val add = (1f - Properties.DISPERSION_OF_LIGHT) + abs(angle0) * Properties.DISPERSION_OF_LIGHT
+    ambient = 0.8
     intensity = ambient + (1 - ambient) * diffuse
 
-    rgb = np.array([base_color.red(), base_color.green(), base_color.blue()])
-    shaded = np.clip(rgb * intensity, 0, 255).astype(int)
+    # --- apply color ---
+    shaded = np.array([base_color.red(), base_color.green(), base_color.blue()]) * intensity
+
+    # --- clamp + hide invisible ---
+    shaded[~i_see_it] = 50
+    shaded = np.clip(shaded, 0, 255).astype(np.uint8)
     color = QColor(*shaded)
     color.setAlpha(base_color.alpha())
 
@@ -127,13 +129,8 @@ def calculate_normal(points: list[Point], vector_center: np.ndarray) -> np.ndarr
         np.subtract(points[2].coord_n, points[1].coord_n),
         (3,))  # dx //vector v2 (point 2 - point 1)
     normal = vector_product_with_center(v1=v1, v2=v2,
-                                        vector_center=np.resize(vector_center, (3,))
-                                        )
-
-    length = np.sqrt(normal.dot(normal))
-
-    a = 1.0 / length if length != 0.0 else 1.0
-    return normal*a
+                                        vector_center=np.resize(vector_center, (3,)))
+    return normalize(normal)
 
 def calculate_lamp(vector_of_distance: np.ndarray, lamp_coord: np.ndarray) -> tuple[np.ndarray, float]:
     """

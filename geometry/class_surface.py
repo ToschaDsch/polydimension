@@ -55,6 +55,7 @@ class Surface(GeometricObject):
         return_color = give_me_return_color(center=self.center,
                                             base_color=self._init_color, lamp=self._source_of_light,
                                             normal=self.normal.coord_only_rotate)
+
         self._color = return_color.color
         self.visible = return_color.i_see_it
         self.brush: QBrush = QBrush(self._color)
