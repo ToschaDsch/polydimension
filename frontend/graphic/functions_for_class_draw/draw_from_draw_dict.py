@@ -2,7 +2,6 @@ from PySide6.QtCore import QPoint
 from PySide6.QtGui import QPolygon
 from sortedcontainers import SortedDict
 
-import geometry.class_point
 from frontend.event_bus.event_bus import EventBus
 from frontend.event_bus.events import DrawAllPrimitives, DrawPolygon, DrawPointText, DrawLine, DrawPoint
 from geometry.class_line import Line
@@ -12,33 +11,34 @@ from geometry.class_surface import Surface
 from geometry.class_volume import Volume
 from variables.graphics import Transparency
 
+DRAW_DISPATCH = {
+    Point: lambda obj, bus: draw_a_point(point=obj, radius=obj.radius, bus=bus),
+    TextDraw: lambda obj, bus: draw_a_text(
+        x0_y0=(-obj.self_object[0].coord_n[0],
+               obj.self_object[0].coord_n[1]),
+        text=obj,
+        bus=bus
+    ),
+    Line: lambda obj, bus: draw_a_line(line=obj, bus=bus),
+    Surface: lambda obj, bus: draw_a_surface(surface=obj, bus=bus),
+    Volume: lambda obj, bus: draw_a_volume(volume=obj, bus=bus),
+}
 
-def draw_from_dict(
-        bus: EventBus, dick_of_draw_objects: SortedDict,
+def draw_from_dict(bus: EventBus, dick_of_draw_objects: SortedDict,
                     transparency: Transparency = Transparency.transparent):
     """it is general function of the module.
     the function becomes objects from dict show.
     in the dict all objects are sorted in z direction.
     the function makes parameters and sends the objects to draw"""
-    for key, draw_object in dick_of_draw_objects.items():
-        match type(draw_object):
-            case geometry.class_point.Point:
-                draw_a_point(point=draw_object, radius=draw_object.radius, bus=bus)
-            case geometry.class_text.TextDraw:
-                coord_n = draw_object.self_object[0].coord_n
-                x_y = (-coord_n[0],
-                       coord_n[1])
-                draw_a_text(x0_y0=x_y, text=draw_object, bus=bus)
-            case geometry.class_line.Line:
-                draw_a_line(line=draw_object, bus=bus)
-            case geometry.class_surface.Surface:
-                if transparency == Transparency.full and draw_object.visible is False:
-                    continue
-                draw_a_surface(surface=draw_object, bus=bus)
-            case geometry.class_volume.Volume:
-                draw_a_volume(volume=draw_object, bus=bus)
-            case _:
-                print('object is not found')
+    for _, obj in dick_of_draw_objects.items():
+        if isinstance(obj, Surface):
+            if transparency == Transparency.full and not obj.visible:
+                continue
+        func = DRAW_DISPATCH.get(type(obj))
+        if func:
+            func(obj, bus)
+        else:
+            print("object is not found")
     bus.publish(DrawAllPrimitives())
 
 

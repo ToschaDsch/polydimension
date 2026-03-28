@@ -1,5 +1,7 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import Enum
+
+import numpy as np
 from PySide6.QtGui import QColor
 
 
@@ -27,7 +29,7 @@ class PenThicknessToDraw:
 
 @dataclass
 class MyColors:
-    transparency: int = 50
+    transparency: int = 100
     color: tuple = (50, 50, 50)
     web: tuple = (40, 0, 255)
     general_screen: tuple[int] = (100, 100, 255)
@@ -61,6 +63,6 @@ default_palette = [(155, 155, 155, MyColors.transparency),
 
 @dataclass
 class InitLight:
-    coordinate: tuple[float] = (40, 25, 100)
+    coordinate: list[float] = (10.0, 10.0, 10.0)
     intensity: float = 1
     color: QColor = QColor.yellow

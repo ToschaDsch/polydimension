@@ -1,6 +1,6 @@
 from typing import Literal, Callable
 
-from frontend.event_bus.decorators import subscribe
+from frontend.event_bus.decorators import subscribe, timer
 from frontend.event_bus.event_bus import EventBus
 from frontend.event_bus.events import DrawWithPoints, DrawWithPerspective, DrawWithWeb, DrawTransparent, DrawColorful, \
     RecalculateAndDrawAllPrimitives
@@ -59,6 +59,7 @@ class DrawAll:
         self.bus.register(self)
         self.init_points()      # set new center
 
+
     def new_object(self, obj: Callable, dimensions: int=4, size: float=1.0) -> None:
         """remove the old draw object, add the new one"""
         self._draw_object = obj(dimensions=dimensions, colorful=self._colorful,
@@ -69,6 +70,9 @@ class DrawAll:
             list_of_draw_objects=self._list_of_draw_objects)  # take all the points of the objects
         # and draw it
         self._geometry.calculate_new_coordinates_for_the_list_of_points(points=self._list_of_all_points)
+        #   update lighting for all surfaces
+        for draw_object in self._list_of_draw_objects:
+            draw_object.update_lighting_for_all_surfaces()
         self.draw_all()
 
     def _get_object_to_draw(self) -> list[NDimensionalObject]:
@@ -144,6 +148,7 @@ class DrawAll:
             self.state.CoordinatesScreen.scale = new_scale
             self._geometry.scale=new_scale
 
+    @timer
     @subscribe
     def draw_all(self, event: RecalculateAndDrawAllPrimitives=None):
         if event is None:
@@ -169,15 +174,17 @@ class DrawAll:
 
     def change_isometry(self, angles:np.ndarray=None, dxi:np.ndarray=None, scale: float=None):
         if angles is None and dxi is None and scale is None:
-            return None
+            return
         #   calculate new coordinates
         self._geometry.calculate_new_coordinates_for_the_list_of_points(angles=angles,dx=dxi,
                                                                         points=self._list_of_all_points,
                                                                         scale=scale)
-        #   update lighting for all surfaces
+        self.update_lighting_for_all_surfaces()
+
+
+    def update_lighting_for_all_surfaces(self):
         for draw_object in self._list_of_draw_objects:
             draw_object.update_lighting_for_all_surfaces()
-        return None
 
 
     def _draw_on_the_canvas(self):

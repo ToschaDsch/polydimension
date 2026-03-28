@@ -67,13 +67,18 @@ def get_2d_coordinate_with_perspective(xyz: np.ndarray, diameter: float=400) -> 
     return sphere_perspective(x=x, y=y, z=z)
 
 def flat_perspective(xyz: np.ndarray) -> np.ndarray:
-    a = -5
-    xyz[2] += a
-    if xyz[2] == 0:
-        return np.array([400, 400, 0])
-    return np.array([a*xyz[0]/xyz[2],
-                     a*xyz[1]/xyz[2],
-                     xyz[2]-a])
+    a = -5.0
+    x, y, z, w = xyz  # unpack once
+    z_shifted = z + a
+    # avoid division instability
+    if abs(z_shifted) < 1e-9:
+        return np.array([400.0, 400.0, 0.0])
+    factor = a / z_shifted
+    return np.array([
+        x * factor,
+        y * factor,
+        z_shifted - a
+    ])
 
 def sphere_perspective(x: float, y: float, z: float, diameter: float=400) -> np.ndarray:
     max_l = diameter * 10000.0

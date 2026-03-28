@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 
 import numpy as np
 from PySide6.QtGui import QColor, QBrush, QPen
@@ -44,9 +43,11 @@ class Surface(GeometricObject):
 
         # add normal line
         point_1 = Point(coordinates=(self.center.coord_0 + self.normal.coord_0))    #end of normal line
-        self.normal_line = Line(point_0=self.center, point_1=point_1, name="normal", width=8, color=QColor(0,0,0))
+        self.normal_line = Line(point_0=Point(coordinates=np.array([0,0,0,0])), point_1=self.normal, name="normal", width=8, color=QColor(0, 0, 0))
+        #self.normal_line = Line(point_0=self.center, point_1=point_1, name="normal", width=8, color=QColor(0,0,0))
         if self._draw_with_normal:
             self.list_of_points_change_coordinate = self._list_of_points + [self.center, point_1, self.normal]
+            print("append normal")
             self.list_of_lines.append(self.normal_line)
         else:
             self.list_of_points_change_coordinate = self._list_of_points + [self.normal, self.center]

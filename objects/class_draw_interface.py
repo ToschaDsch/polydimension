@@ -48,6 +48,7 @@ class NDimensionalObject(ABC):
         self.change_color(colorful=colorful)
         self.z_min = self.get_z_min()
         self._send_normals_from_surfaces()
+        self.update_lighting_for_all_surfaces()
 
     def load_from_json(self, raw_data_path: str):
         path = Menus.raw_data_path + "//" + raw_data_path
