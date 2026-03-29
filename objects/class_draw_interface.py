@@ -30,6 +30,7 @@ class NDimensionalObject(ABC):
                  line_color: QColor=None, colorful: bool = False, raw_data_path: str = None,
                  transparent: Transparency = Transparency.transparent):
         self.bus = bus
+        self.colorful = colorful
         self.dimensions = dimensions
         self.draw_with_normal = False            # normal on/ off
         self.points_to_show: list[Point] = []
@@ -47,11 +48,13 @@ class NDimensionalObject(ABC):
             self.make_geometry()    # name the property self
         else:
             self.load_from_json(raw_data_path)  # load property form file
-        self.change_color(colorful=colorful)
+
         self.z_min = self.get_z_min()
-        self._send_normals_from_surfaces()
         self.update_lighting_for_all_surfaces()
         self.send_all_volumes_to_surfaces()
+        self._normals: list[Line] = []
+        self._send_normals_from_surfaces()
+        self.change_color(colorful=colorful)
 
     def send_all_volumes_to_surfaces(self):
         if len(self._my_volumes) == 0:
@@ -121,10 +124,9 @@ class NDimensionalObject(ABC):
 
     def _send_normals_from_surfaces(self):
         for surface in self._my_surfaces:
-            if self.draw_with_normal:
-                self._my_lines.append(surface.normal_line)
-                self._my_points.append(surface.normal_line.point_0)
-                self._my_points.append(surface.normal_line.point_1)
+            self._normals.append(surface.normal_line)
+            self._my_points.append(surface.normal_line.point_0)
+            self._my_points.append(surface.normal_line.point_1)
             self._my_points.append(surface.normal)
             self._my_points.append(surface.center)
 
@@ -181,15 +183,20 @@ class NDimensionalObject(ABC):
 
     def get_geometric_objects(self, transparency: Transparency = Transparency.transparent) \
             -> list[Line] | list[Surface] | list[Volume] | None:
+        if self.draw_with_normal:
+            lines = self._my_lines + self._normals
+        else:
+            lines = self._my_lines
         if not self._solid:
-            return self._my_lines
+            return lines
         match transparency:
             case Transparency.full:
                 return self._my_surfaces
             case Transparency.sceleton:
-                return self._my_lines
+                if self.draw_with_normal:
+                    return lines
             case Transparency.transparent:
-                return self._my_surfaces + self._my_lines
+                return self._my_surfaces + lines
 
     def __str__(self):
         return (f"i'm {self.name_of_the_object}, \n"

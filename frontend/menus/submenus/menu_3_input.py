@@ -6,7 +6,7 @@ from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QComboB
 from frontend.event_bus.decorators import subscribe
 from frontend.event_bus.event_bus import EventBus
 from frontend.event_bus.events import DrawWithPoints, DrawWithPerspective, DrawWithWeb, DrawTransparent, DrawColorful, \
-    ShiftTheSliderRotation, ShiftTheSliderDisplacement, RecalculateAndDrawAllPrimitives
+    ShiftTheSliderRotation, ShiftTheSliderDisplacement, RecalculateAndDrawAllPrimitives, DrawWithNormals
 from frontend.frontend_classes.class_ToggleButton import ToggleButton
 from frontend.menus.single_functions import correct_global_variables_by_change_dimensions, get_list_of_all_dimensions, \
     get_sub_layout_to_change_coordinate
@@ -171,9 +171,17 @@ class Menu3Input(QWidget):
                                           list_of_paths_for_images=["with_points.png",
                                                                     "with_perspective.png"])
         menu_with_icons_1.addWidget(button_with_points)
+        button_with_normals = ToggleButton(function=self.function_show_with_normals,
+                                          list_of_paths_for_images=["with_normals.png",
+                                                                    "with_perspective.png"])
+        menu_with_icons_1.addWidget(button_with_normals)
+
         menu_with_icons.addLayout(menu_with_icons_0)
         menu_with_icons.addLayout(menu_with_icons_1)
         return menu_with_icons
+
+    def function_show_with_normals(self, i: int):
+        self.bus.publish(event=DrawWithNormals(with_normals=bool(i)))
 
     def function_show_with_points(self, i: int):
         self.bus.publish(event=DrawWithPoints(with_points=bool(i)))

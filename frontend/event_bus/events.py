@@ -75,6 +75,10 @@ class DrawWithPoints(DrawRegime):
     with_points: bool = False
 
 @dataclass
+class DrawWithNormals(DrawRegime):
+    with_normals: bool = False
+
+@dataclass
 class DrawWithPerspective(DrawRegime):
     with_perspective: bool = True
 

@@ -57,9 +57,10 @@ class Cell164d(NDimensionalObject):
                        [0, 2, 3],
                        [0, 1, 2])
         for list_of_init_spaces in init_spaces:
-            octa_i = Octahedron3d(dimensions=4, init_point=list_of_init_spaces, bus=self.bus)
+            octa_i = Octahedron3d(dimensions=4, init_point=list_of_init_spaces, bus=self.bus, size=self.size)
             volume_i = self._get_a_volume_surfaces_and_points_form_another_object(obj=octa_i)
             self._my_volumes.append(volume_i)
+        self.change_color(colorful=self.colorful)
 
 
 

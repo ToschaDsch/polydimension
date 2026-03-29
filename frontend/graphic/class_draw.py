@@ -3,7 +3,7 @@ from typing import Literal, Callable
 from frontend.event_bus.decorators import subscribe, timer
 from frontend.event_bus.event_bus import EventBus
 from frontend.event_bus.events import DrawWithPoints, DrawWithPerspective, DrawWithWeb, DrawTransparent, DrawColorful, \
-    RecalculateAndDrawAllPrimitives
+    RecalculateAndDrawAllPrimitives, DrawWithNormals
 from frontend.graphic.functions_for_class_draw.draw_from_draw_dict import draw_from_dict
 from geometry.class_point import Point
 from  geometry.class_geometry_change_point import GeometryChangePoint
@@ -86,9 +86,14 @@ class DrawAll:
         self.draw_all()
 
     @subscribe
+    def draw_with_normals(self, event: DrawWithNormals):
+        self._draw_object.draw_with_normal = event.with_normals
+        self.draw_all()
+
+    @subscribe
     def colorful(self, event: DrawColorful):
-        self._draw_object.change_color(colorful=event.colorful)
         self._colorful = event.colorful
+        self._draw_object.change_color(colorful=event.colorful)
         self.draw_all()
 
     @subscribe
@@ -166,7 +171,6 @@ class DrawAll:
                           screen_height=Menus.window_height,
                           screen_width=Menus.window_width)
         self.state.CoordinatesScreen.scale = scale
-
         return scale
 
 

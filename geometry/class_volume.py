@@ -25,14 +25,7 @@ class Volume(GeometricObject):
 
 
 
-    def get_center(self) -> Point:
-        return self.center
 
-    def get_all_points(self) -> list[Point]:
-        return self.list_of_points
-
-    def get_color(self) -> QColor:
-        return self.color
 
     def __init__(self, bus: EventBus, list_of_points: list[Point] = None,
                  list_of_lines: list[Line] = None,
@@ -43,7 +36,7 @@ class Volume(GeometricObject):
         self.list_of_points: list[Point] = list_of_points if list_of_points is not None else []
         self.list_of_lines: list[Line] = list_of_lines if list_of_lines is not None else []
         self.list_of_surfaces: list[Surface] = list_of_surfaces if list_of_surfaces is not None else []
-        self.color = QColor(*MyColors.default_volume_color) if color is None else color
+        self._color = QColor(*MyColors.default_volume_color) if color is None else color
         points_for_center = self._get_list_of_points_for_center()
         self.center: Point = Point(coordinates=get_center_from_list_of_points(list_of_points=points_for_center), bus=self.bus)
 
@@ -63,7 +56,7 @@ class Volume(GeometricObject):
 
     @property
     def color(self) -> QColor:
-        return self.color
+        return self._color
 
     @color.setter
     def color(self, color: QColor):

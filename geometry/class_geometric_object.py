@@ -38,15 +38,6 @@ class GeometricObject(ABC):
         self.pen: QPen = QPen(self.brush, self.width)
 
 
-    @abstractmethod
-    def get_all_points(self) -> list[Point]:
-        pass
-
-    @abstractmethod
-    def get_center(self) -> Point:
-        pass
-
-
     @property
     def color(self) -> QColor:
         return self._color
