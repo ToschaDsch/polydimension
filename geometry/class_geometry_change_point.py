@@ -77,6 +77,8 @@ class  GeometryChangePoint:
         # perspective transform (if needed)
         if self.draw_with_perspective:
             x0_y0 = get_2d_coordinate_with_perspective(xyz=x0_y0)
+        else:
+            x0_y0=x0_y0[:3]
         # final transform (avoid resize)
         point.coord_n = x0_y0 * self.scale + self.x0y0 + self.dxi
 

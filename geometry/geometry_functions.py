@@ -4,10 +4,10 @@ import numpy as np
 from geometry.class_point import Point
 
 
-def get_center_from_list_of_points(list_of_points: list[Point]) -> Point:
+def get_center_from_list_of_points(list_of_points: list[Point]) -> np.ndarray:
     array_1 = np.array([x.coord_0 for x in list_of_points])
     coordinate_of_the_center = np.sum(array_1, axis=0)/len(list_of_points)
-    return Point(coordinates=coordinate_of_the_center)
+    return coordinate_of_the_center
 
 def get_rotate_matrix(sin: list[float], cos: list[float], dimensional: int = 3) -> np.ndarray:
     """
@@ -138,7 +138,7 @@ def find_lines(points: list[Point], length: float = 1.0) -> list[set[int]]:
 import numpy as np
 
 
-def find_cycles(edges: list[tuple[int]], points: list[Point], cycle_size: int=5, eps=1e-9):
+def find_cycles(edges: list[list[int]], points: list[Point], cycle_size: int=5, eps=1e-9):
     """
     Find simple cycles of given size where vertices lie in a common 3D hyperplane in 4D space.
 

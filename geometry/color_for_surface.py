@@ -4,7 +4,6 @@ import numpy as np
 from PySide6.QtGui import QColor
 
 from geometry.class_point import Point
-from geometry.class_source_of_light import SourceOfLight
 
 
 @dataclass
@@ -27,16 +26,16 @@ def normalize(v) -> np.ndarray:
 def give_me_return_color(center: Point,
                          normal,
                          base_color: QColor,
-                         lamp: SourceOfLight, ) -> ReturnColor:
+                         lamp: np.ndarray, ) -> ReturnColor:
     return give_me_return_color_my_variant(center=center, normal=normal, base_color=base_color, lamp=lamp)
 
 def give_me_return_color_my_variant(center: Point,
                          base_color: QColor,
                          normal: np.ndarray,
-                         lamp: SourceOfLight) -> ReturnColor:
+                         lamp: np.ndarray) -> ReturnColor:
     """it works only in 3d
     the function send the surface in 3d and find the light end can it be seen"""
-    light_point = lamp.coordinate.coord_0
+    light_point = lamp
     camera_point = np.array([0.0, 0.0, -100.0], dtype=np.float32)  # it needs to be normalized
 
     # --- convert to 3D ---

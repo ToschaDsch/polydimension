@@ -1,7 +1,6 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from enum import Enum
 
-import numpy as np
 from PySide6.QtGui import QColor
 
 
@@ -63,6 +62,6 @@ default_palette = [(155, 155, 155, MyColors.transparency),
 
 @dataclass
 class InitLight:
-    coordinate: list[float] = (10.0, 10.0, 10.0)
+    coordinate: tuple[float] = (10.0, 10.0, 10.0)
     intensity: float = 1
     color: QColor = QColor.yellow

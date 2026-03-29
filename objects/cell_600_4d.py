@@ -1,5 +1,6 @@
 import numpy as np
 
+from frontend.event_bus.event_bus import EventBus
 from geometry.class_line import Line
 from geometry.class_point import Point
 from geometry.geometry_functions import find_lines, find_cycles
@@ -12,10 +13,11 @@ from variables.graphics import Transparency
 
 class Cell6004d(NDimensionalObject):
 
-    def __init__(self, dimensions: int = 4, colorful: bool = False, size: float=1.0, raw_data: str = None,
+    def __init__(self, bus: EventBus, dimensions: int = 4, colorful: bool = False, size: float=1.0, raw_data: str = None,
                  transparent: Transparency=Transparency.transparent):
         raw_data_path = "cell_600.txt"
-        super().__init__(dimensions=dimensions, colorful=colorful, size=size, raw_data_path=raw_data_path, transparent=transparent)
+        super().__init__(dimensions=dimensions, colorful=colorful, size=size, raw_data_path=raw_data_path,
+                         transparent=transparent, bus=bus)
         self.name_of_the_object = "cell 600 4d"
         self.correct_all_points(d=1)
 
@@ -46,7 +48,7 @@ class Cell6004d(NDimensionalObject):
         #print("json_", json_)
 
         for i in init_coordinate:
-            self._my_points.append(Point(coordinates=np.array(i)))
+            self._my_points.append(Point(coordinates=np.array(i), bus=self.bus))
         self.json_data.points = init_coordinate
 
 
@@ -94,11 +96,11 @@ class Cell6004d(NDimensionalObject):
     def make_lines(self):
         length = 0.618*self.size*2
         number_of_lines = find_lines(points=self._my_points, length=length)
-        number_of_lines_2: list[tuple[int, int]] = [list(x) for x in number_of_lines]
+        number_of_lines_2: list[list[int]] = [list(x) for x in number_of_lines]
         numbers_of_surfaces = find_cycles(edges=number_of_lines_2, cycle_size=3, points=self._my_points)
         print("snub_lines", len(number_of_lines))
         for i, j in number_of_lines:
-            self._my_lines.append(Line(point_0=self._my_points[i], point_1=self._my_points[j]))
+            self._my_lines.append(Line(point_0=self._my_points[i], point_1=self._my_points[j], bus=self.bus))
         self.json_data.lines = [list(x) for x in number_of_lines]
         print("numbers_of_surfaces", len(numbers_of_surfaces))
         self.json_data.surfaces = [list(x) for x in numbers_of_surfaces]

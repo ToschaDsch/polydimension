@@ -1,5 +1,6 @@
 import numpy as np
 
+from frontend.event_bus.event_bus import EventBus
 from geometry.class_line import Line
 from geometry.class_point import Point
 from geometry.class_surface import Surface
@@ -11,12 +12,12 @@ from variables.graphics import Transparency
 
 class Icosahedron3d(NDimensionalObject):
 
-    def __init__(self, dimensions: int=4, colorful: bool = False, size: float = 2.0,
+    def __init__(self, bus: EventBus, dimensions: int=4, colorful: bool = False, size: float = 2.0,
                  position_for_addition_coordination_4d: int = 3,
                  transparent: Transparency=Transparency.transparent):
         self._position_for_addition_coordination_4d = position_for_addition_coordination_4d
 
-        super().__init__(dimensions=dimensions, colorful=colorful, size=size, transparent=transparent)
+        super().__init__(dimensions=dimensions, colorful=colorful, size=size, transparent=transparent, bus=bus)
         self.name_of_the_object = "Tetrahedron 3d"
 
 
@@ -37,7 +38,7 @@ class Icosahedron3d(NDimensionalObject):
             coord_i.insert(self._position_for_addition_coordination_4d, 0.0)
 
         for coord_i in init_coordinate:
-            self._my_points.append(Point(coordinates=np.array(coord_i)))
+            self._my_points.append(Point(coordinates=np.array(coord_i), bus=self.bus))
 
         for point in self._my_points:       # take the object to the bottom
             point.coord_0[2] = point.coord_0[2] - a + c
@@ -59,12 +60,12 @@ class Icosahedron3d(NDimensionalObject):
                         temporal_set.append(new_set)
         for pair_of_points in temporal_set:
             point_0, point_1 = pair_of_points
-            self._my_lines.append(Line(point_0=point_0, point_1=point_1))
+            self._my_lines.append(Line(point_0=point_0, point_1=point_1, bus=self.bus))
 
     def make_surfaces(self):
         """the function make 3D coordinates of icos surfaces
         """
-        center = get_center_from_list_of_points(self._my_points)
+        center = Point(coordinates=get_center_from_list_of_points(self._my_points), bus=self.bus)
         points_for_surfaces: list[set[Point]] = []
         for i in range(len(self._my_lines)):
             for j in range(i + 1, len(self._my_lines)):
@@ -79,7 +80,7 @@ class Icosahedron3d(NDimensionalObject):
                         points_for_surfaces.append(set_of_points)
 
         for set_of_points in points_for_surfaces:
-            self._my_surfaces.append(Surface(list_of_points=list(set_of_points), init_center_of_the_volume=center))
+            self._my_surfaces.append(Surface(list_of_points=list(set_of_points), init_center_of_the_volume=center, bus=self.bus))
 
 
 

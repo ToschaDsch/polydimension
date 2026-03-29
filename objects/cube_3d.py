@@ -1,8 +1,8 @@
 import itertools
-import math
 
 import numpy as np
 
+from frontend.event_bus.event_bus import EventBus
 from geometry.class_line import Line
 from geometry.class_point import Point
 from geometry.class_surface import Surface
@@ -13,7 +13,7 @@ from variables.graphics import Transparency
 
 class Cube3d(NDimensionalObject):
 
-    def __init__(self, dimensions: int=4, colorful: bool = False, size: float=1.0,
+    def __init__(self, bus: EventBus, dimensions: int=4, colorful: bool = False, size: float=1.0,
                  dimension_shift_number: int=0,
                  dimension_shift_length: int=0,
                  transparent: Transparency=Transparency.transparent):
@@ -25,7 +25,7 @@ class Cube3d(NDimensionalObject):
                               [1, 3, 7, 5]]
         self._dimension_shift_number = dimension_shift_number
         self._dimension_shift_length = dimension_shift_length
-        super().__init__(dimensions=dimensions, colorful=colorful, size=size, transparent=transparent)
+        super().__init__(dimensions=dimensions, colorful=colorful, size=size, transparent=transparent, bus=bus)
         self.name_of_the_object = "Cube 3d"
 
 
@@ -37,7 +37,7 @@ class Cube3d(NDimensionalObject):
         for coordinate in init_list_of_coordinates:
             new_coordinate = coordinate.copy()
             new_coordinate.resize( (self.dimensions, ))
-            self._my_points.append(Point(coordinates=new_coordinate))
+            self._my_points.append(Point(coordinates=new_coordinate, bus=self.bus))
         if self._dimension_shift_length:    # shift all the points for a cube in 4d
             self.dimensions+=1
             for point in self._my_points:
@@ -55,15 +55,15 @@ class Cube3d(NDimensionalObject):
                 if 1.99*self.size < abs(sum(delta_point)) < 2.01*self.size:
                     set_delta = set(delta_point)
                     if set_delta in ({0, 2*self.size}, {0, -2*self.size}):
-                        self._my_lines.append(Line(point_i, point_j, width=2))
+                        self._my_lines.append(Line(point_0=point_i, point_1=point_j, width=2, bus=self.bus))
 
 
     def make_surfaces(self):
-        center = get_center_from_list_of_points(self._my_points)
+        center = Point(coordinates=get_center_from_list_of_points(self._my_points), bus=self.bus)
         for numbers_of_points in self.list_of_point:
             points_for_surface_i = [self._my_points[i] for i in numbers_of_points]
             self._my_surfaces.append(Surface(list_of_points=points_for_surface_i,
-                                             init_center_of_the_volume=center))
+                                             init_center_of_the_volume=center, bus=self.bus))
 
     def make_volumes(self):
         pass

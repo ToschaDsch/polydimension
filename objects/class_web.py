@@ -1,5 +1,6 @@
 from PySide6.QtGui import QColor
 
+from frontend.event_bus.event_bus import EventBus
 from geometry.class_line import Line
 from geometry.class_point import Point
 from objects.class_draw_interface import NDimensionalObject
@@ -16,13 +17,13 @@ class Line2dWeb(NDimensionalObject):
     def make_volumes(self):
         pass
 
-    def __init__(self, a: int, n: int, z: float=-1):
+    def __init__(self, bus: EventBus, a: int, n: int, z: float=-1):
         self.a = a/n  # size of a cell
         self.n = n  # numbers of the cells
         self.z = z
         self._list_of_points: list[list[Point]] = []    # 2d array to make lines
         default_color = QColor(*MyColors.web)
-        super().__init__(line_color=default_color)
+        super().__init__(line_color=default_color, bus=bus)
         print(self)
         self._solid = False
 
@@ -42,7 +43,7 @@ class Line2dWeb(NDimensionalObject):
                 coordinate.extend([0 for _ in range(self.dimensions-len(coordinate))])
 
                 coordinate = np.array(coordinate)
-                point_i = Point(coordinates=coordinate)
+                point_i = Point(coordinates=coordinate, bus=self.bus)
                 line_of_points.append(point_i)
             self._list_of_points.append(line_of_points)
             self._my_points.extend(line_of_points)
@@ -53,7 +54,7 @@ class Line2dWeb(NDimensionalObject):
                 line_i = Line(
                     point_0 = self._list_of_points[i][j],
                     point_1 = self._list_of_points[i+1][j],
-                    color=self.line_color
+                    color=self.line_color, bus=self.bus
                 )
                 self._my_lines.append(line_i)
 
@@ -62,7 +63,7 @@ class Line2dWeb(NDimensionalObject):
                 line_i = Line(
                     point_0=self._list_of_points[j][i],
                     point_1=self._list_of_points[j][i+1],
-                    color=self.line_color
+                    color=self.line_color, bus=self.bus
                 )
                 self._my_lines.append(line_i)
 

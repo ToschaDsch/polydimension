@@ -1,17 +1,18 @@
 import numpy as np
 from PySide6.QtGui import QColor
 
+from frontend.event_bus.event_bus import EventBus
 from geometry.class_line import Line
 from geometry.class_point import Point
 from objects.class_draw_interface import NDimensionalObject
 
 
 class Axis(NDimensionalObject):
-    def __init__(self, dimension: int):
+    def __init__(self, bus: EventBus, dimension: int):
         self.dimension = dimension
         self.k1: float = 1.2
         self.k2: float = 0.2
-        super().__init__()
+        super().__init__(bus=bus)
         self._solid = False
         self.name_of_the_object = "Axis"
 
@@ -22,7 +23,7 @@ class Axis(NDimensionalObject):
         for i in range(0, len(self.my_points)-2, 2):
             axes_i = Line(point_0=self.my_points[i],
                             point_1=self.my_points[i+1],
-                          color=colors[int(i/2)])
+                          color=colors[int(i/2)], bus=self.bus)
             self._my_lines.append(axes_i)
 
 
@@ -37,8 +38,8 @@ class Axis(NDimensionalObject):
             coord_i1[i] = self.size*self.k1
             coord_i2 = init_coordinate.copy()
             coord_i2[i] = -self.size*self.k2
-            list_of_the_points.append(Point(coordinates=coord_i1))
-            list_of_the_points.append(Point(coordinates=coord_i2))
+            list_of_the_points.append(Point(coordinates=coord_i1, bus=self.bus))
+            list_of_the_points.append(Point(coordinates=coord_i2, bus=self.bus))
         self._my_points = list_of_the_points
 
     @property

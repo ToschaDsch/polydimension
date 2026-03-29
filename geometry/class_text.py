@@ -1,14 +1,29 @@
 from PySide6.QtGui import QColor
+
+from frontend.event_bus.event_bus import EventBus
+from frontend.event_bus.events import DrawPointText
+
 from geometry.class_geometric_object import GeometricObject
 from geometry.class_point import Point
-from variables.graphics import MyColors
+from variables.graphics import MyColors, Transparency
 
 
 class TextDraw(GeometricObject):
-    def __init__(self, point_0: Point, text: str):
+    @property
+    def transparent(self) -> Transparency:
+        return Transparency.full
+
+    def draw_me(self):
+        coord_n = self.center.coord_n
+        x_y = [int(-coord_n[0]),
+               int(coord_n[1])]
+        self.bus.publish(DrawPointText(x0_y0=x_y, text=self.text))
+
+    def __init__(self, bus: EventBus, point_0: Point, text: str):
         super().__init__()
+        self.bus=bus
         self.point_0 = point_0
-        self.center = Point(coordinates=point_0.coord_0)
+        self.center = Point(coordinates=point_0.coord_0, bus=self.bus)
         self.color = QColor(*MyColors.default_line_color)
         self.text: str = text
 

@@ -6,12 +6,13 @@ from dataclasses import dataclass
 import numpy as np
 from PySide6.QtGui import QColor
 
+from frontend.event_bus.event_bus import EventBus
 from geometry.class_line import Line
 from geometry.class_point import Point
 from geometry.class_surface import Surface
 from geometry.class_volume import Volume
 from geometry.geometry_functions import get_center_from_list_of_points
-from frontend.menus.single_functions import open_and_read_a_file, parce_html_with_arrays
+from frontend.menus.single_functions import open_and_read_a_file
 from variables.graphics import Transparency, MyColors, default_palette
 from variables.menus import Menus
 
@@ -24,10 +25,11 @@ class JSONData:
     volumes: list[int] = None
 
 class NDimensionalObject(ABC):
-    def __init__(self, dimensions: int = 4,
+    def __init__(self, bus: EventBus, dimensions: int = 4,
                  size: float = 1,
                  line_color: QColor=None, colorful: bool = False, raw_data_path: str = None,
                  transparent: Transparency = Transparency.transparent):
+        self.bus = bus
         self.dimensions = dimensions
         self.draw_with_normal = False            # normal on/ off
         self.points_to_show: list[Point] = []
@@ -36,7 +38,7 @@ class NDimensionalObject(ABC):
         self._my_surfaces: list[Surface] = []
         self._my_volumes: list[Volume] = []
         self._solid: bool = True
-        self._transparent: bool = Transparency.transparent
+        self._transparent: Transparency = Transparency.transparent
         self.line_color: QColor = line_color if line_color else QColor(*MyColors.default_line_color)
         self.size: float = size
         self.name_of_the_object: str = "Noname"
@@ -58,13 +60,7 @@ class NDimensionalObject(ABC):
         if typ_of_file == "txt":
             details_of_the_objects = json.loads(raw_data)
         elif typ_of_file == "html":
-            return None
-            result = parce_html_with_arrays(raw_str=path)
-            self.json_data = JSONData(points=[],
-                                      lines=result["lines_120_cell"],
-                                      surfaces=result["surfaces_120_cell"],
-                                      volumes=[], )
-            return None
+            return
         else:
             print("cant read the file")
         self.json_data = JSONData(points=details_of_the_objects["points"],
@@ -72,18 +68,17 @@ class NDimensionalObject(ABC):
                                   surfaces=details_of_the_objects["surfaces"],
                                   volumes=details_of_the_objects["volumes"],)
         self.make_geometry_from_json()
-        return None
 
     def make_geometry_from_json(self):
         for coord in self.json_data.points:
-            self._my_points.append(Point(coordinates=self.size*np.array(coord)))
+            self._my_points.append(Point(coordinates=self.size*np.array(coord), bus=self.bus))
         self.points_to_show = self._my_points.copy()
-        center = get_center_from_list_of_points(list_of_points=self._my_points)
+        center = Point(coordinates=get_center_from_list_of_points(list_of_points=self._my_points), bus=self.bus)
         for i, j in self.json_data.lines:
-            self._my_lines.append(Line(point_0=self._my_points[i], point_1=self._my_points[j]))
+            self._my_lines.append(Line(point_0=self._my_points[i], point_1=self._my_points[j], bus=self.bus))
         for list_of_points_i in self.json_data.surfaces:
             list_of_points_i = [self._my_points[i] for i in list_of_points_i]
-            self._my_surfaces.append(Surface(list_of_points=list_of_points_i, init_center_of_the_volume=center))
+            self._my_surfaces.append(Surface(list_of_points=list_of_points_i, init_center_of_the_volume=center, bus=self.bus))
 
     def correct_all_points(self, d: float = 0):
         for point in self._my_points:
@@ -188,9 +183,6 @@ class NDimensionalObject(ABC):
                 return self._my_lines
             case Transparency.transparent:
                 return objects_with_area + self._my_lines
-            case _:
-                print("there is no case for transparency")
-                return None
 
     def __str__(self):
         list_of_points: list[str] = [str(x) for x in self._my_points]
@@ -220,4 +212,4 @@ class NDimensionalObject(ABC):
                         index = surface.list_of_points.index(point_i)
                         surface.list_of_points[index] = point_j
                         continue
-        return Volume(list_of_points=None, list_of_lines=None, list_of_surfaces=list_of_surfaces)
+        return Volume(list_of_points=None, list_of_lines=None, list_of_surfaces=list_of_surfaces, bus=self.bus)

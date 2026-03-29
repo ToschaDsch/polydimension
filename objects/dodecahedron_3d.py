@@ -2,6 +2,7 @@ from itertools import combinations
 
 import numpy as np
 
+from frontend.event_bus.event_bus import EventBus
 from geometry import geometry_functions
 from geometry.class_line import Line
 from geometry.class_point import Point
@@ -14,11 +15,11 @@ from variables.graphics import Transparency
 
 class Dodecahedron3d(NDimensionalObject):
 
-    def __init__(self, dimensions: int=4, colorful: bool = False, size: float=1.0,
+    def __init__(self, bus: EventBus, dimensions: int=4, colorful: bool = False, size: float=1.0,
                  init_point: list[int]=None,
                  transparent: Transparency=Transparency.transparent):
         self._init_points = init_point if init_point else [0, 1, 2]
-        super().__init__(dimensions=dimensions, colorful=colorful, size=size, transparent=transparent)
+        super().__init__(dimensions=dimensions, colorful=colorful, size=size, transparent=transparent, bus=bus)
         self.name_of_the_object = "Dodecahedron 3d"
 
 
@@ -34,7 +35,7 @@ class Dodecahedron3d(NDimensionalObject):
             point = np.array(point
                              )
             point.resize( (self.dimensions, ))
-            self._my_points.append(Point(coordinates=np.array(point)))
+            self._my_points.append(Point(coordinates=np.array(point), bus=self.bus))
         for point in self._my_points:
             point.coord_0[2] +=c*a-a
         self.points_to_show = self._my_points.copy()
@@ -51,7 +52,7 @@ class Dodecahedron3d(NDimensionalObject):
                 point_1=p1)
 
             if abs(length_sq - target_length_sq) <= tolerance:
-                self._my_lines.append(Line(point_0=p0, point_1=p1, width=2))
+                self._my_lines.append(Line(point_0=p0, point_1=p1, width=2, bus=self.bus))
 
     def make_surfaces(self):
         number_of_points = []
@@ -68,9 +69,9 @@ class Dodecahedron3d(NDimensionalObject):
                 if result:
                     number_of_points.append(result)
 
-        center = get_center_from_list_of_points(self._my_points)
+        center = Point(coordinates=get_center_from_list_of_points(self._my_points), bus=self.bus)
         for list_of_points_i in number_of_points:
-            self._my_surfaces.append(Surface(list_of_points=list_of_points_i, init_center_of_the_volume=center))
+            self._my_surfaces.append(Surface(list_of_points=list_of_points_i, init_center_of_the_volume=center, bus=self.bus))
 
     def make_volumes(self):
         pass

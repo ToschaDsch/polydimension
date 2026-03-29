@@ -69,7 +69,7 @@ class GeneralWindow(QMainWindow):
 
         # draw the object
         size = 1
-        self.my_object = Cube3d(size=size)
+        self.my_object = Cube3d(size=size, bus=self.bus)
         self.animation = DrawAll(draw_object=self.my_object, initial_dimensions=4, size=size,
                                  bus=self.bus, state=self.state)
         self.setCentralWidget(widget)

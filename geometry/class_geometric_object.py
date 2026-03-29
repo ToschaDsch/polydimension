@@ -16,6 +16,10 @@ class GeometricObject(ABC):
         self.visible = True
         self.name: str = ""
 
+    @abstractmethod
+    def draw_me(self):
+        pass
+
     @property
     def transparent(self) -> Transparency:
         return self._transparent

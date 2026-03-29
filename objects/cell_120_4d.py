@@ -1,6 +1,6 @@
 import numpy as np
 
-from geometry.class_line import Line
+from frontend.event_bus.event_bus import EventBus
 from geometry.class_point import Point
 from geometry.geometry_functions import find_lines, find_cycles
 from frontend.menus.single_functions import mirror_it, only_even_permutations
@@ -12,10 +12,10 @@ from variables.graphics import Transparency
 
 class Cell1204d(NDimensionalObject):
 
-    def __init__(self, dimensions: int = 4, colorful: bool = False, size: float=1.0, raw_data: str = None,
+    def __init__(self, bus: EventBus, dimensions: int = 4, colorful: bool = False, size: float=1.0, raw_data: str = None,
                  transparent: Transparency=Transparency.transparent):
         raw_data_path = "cell_120.txt" # "cell_120.txt"
-        super().__init__(dimensions=dimensions, colorful=colorful, size=size, raw_data_path=raw_data_path, transparent=transparent)
+        super().__init__(dimensions=dimensions, colorful=colorful, size=size, raw_data_path=raw_data_path, transparent=transparent, bus=bus)
 
         self.name_of_the_object = "cell 120 4d"
         self.correct_all_points(d=self.size*(1 + 5**.5) * 0.5-0.3)
@@ -54,7 +54,7 @@ class Cell1204d(NDimensionalObject):
         for i in range(0, 4):
             init_coordinate = mirror_it(list_0=init_coordinate, axis=i)
         for i in init_coordinate:
-            self._my_points.append(Point(coordinates=np.array(i)))
+            self._my_points.append(Point(coordinates=np.array(i), bus=self.bus))
 
         self.json_data = JSONData(points=init_coordinate,
                                     lines = [],
@@ -81,25 +81,8 @@ class Cell1204d(NDimensionalObject):
         dict_json_2 = json.dumps(dict_json)
         print("dict_json_2", dict_json_2)
 
-        #with open("demofile.txt", "w") as f:
-         #   f.write(dict_json_2)
-
-        # open and read the file after the overwriting:
-        #with open("demofile.txt") as f:
-         #   print(f.read())
-        return None
-        for i, j in number_of_lines:
-            self._my_lines.append(Line(point_0=self._my_points[i], point_1=self._my_points[j]))
-        self.json_data.lines = [list(x) for x in number_of_lines]
-
-
-
-
     def make_surfaces(self):
         pass
-
-
-
 
     def make_volumes(self):
         """the function make a cube in 3d, shifts it in one of dimension in 4d and get the surfaces of it"""

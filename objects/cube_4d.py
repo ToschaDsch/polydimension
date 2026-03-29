@@ -1,6 +1,8 @@
 import itertools
+
 import numpy as np
 
+from frontend.event_bus.event_bus import EventBus
 from geometry.class_line import Line
 from geometry.class_point import Point
 from objects.class_draw_interface import NDimensionalObject
@@ -10,9 +12,9 @@ from variables.graphics import Transparency
 
 class Cube4d(NDimensionalObject):
 
-    def __init__(self, dimensions: int = 4, colorful: bool = False, size: float=1.0,
+    def __init__(self, bus: EventBus, dimensions: int = 4, colorful: bool = False, size: float=1.0,
                  transparent: Transparency=Transparency.transparent):
-        super().__init__(dimensions=dimensions, colorful=colorful, size=size, transparent=transparent)
+        super().__init__(dimensions=dimensions, colorful=colorful, size=size, transparent=transparent, bus=bus)
         self.name_of_the_object = "Cube 4d"
 
 
@@ -23,7 +25,7 @@ class Cube4d(NDimensionalObject):
         init_list_of_coordinates = np.array([np.array(x) for x in itertools.product(initial_set,repeat=4)])
         for coordinate in init_list_of_coordinates:
             new_coordinate = np.resize(coordinate, self.dimensions)
-            self._my_points.append(Point(coordinates=new_coordinate))
+            self._my_points.append(Point(coordinates=new_coordinate, bus=self.bus))
         self.points_to_show = self._my_points.copy()
 
 
@@ -36,7 +38,7 @@ class Cube4d(NDimensionalObject):
                 if sum(delta_point) == 2*self.size:
                     set_delta = set(delta_point)
                     if set_delta in ({0, 2*self.size}, {0, -2*self.size}):
-                        self._my_lines.append(Line(point_i, point_j, width=2))
+                        self._my_lines.append(Line(point_0=point_i, point_1=point_j, width=2, bus=self.bus))
 
 
     def make_surfaces(self):
@@ -46,6 +48,6 @@ class Cube4d(NDimensionalObject):
         """the function make a cube in 3d, shifts it in one of dimension in 4d and get the surfaces of it"""
         for i in range(4):
             for j in (1, -1):
-                cube_i = Cube3d(dimensions=3, dimension_shift_number=i, dimension_shift_length=j)
+                cube_i = Cube3d(dimensions=3, dimension_shift_number=i, dimension_shift_length=j, bus=self.bus)
                 volume_i = self._get_a_volume_surfaces_and_points_form_another_object(obj=cube_i)
                 self._my_volumes.append(volume_i)

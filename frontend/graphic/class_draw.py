@@ -36,13 +36,14 @@ class DrawAll:
         # general variables
         self._length_axes = 4
         self.state: MyState = state
+        self.bus = bus
 
         # a class to change coordinates of the objects
         self._geometry: GeometryChangePoint = GeometryChangePoint(init_scale=self.state.CoordinatesScreen.scale)
         self._draw_object: NDimensionalObject = draw_object
 
-        self._web_object: NDimensionalObject = Line2dWeb(a=self._length_axes, n=n_web, z=-size)
-        self._axis_object: Axis = Axis(dimension=initial_dimensions)
+        self._web_object: NDimensionalObject = Line2dWeb(a=self._length_axes, n=n_web, z=-size, bus=self.bus)
+        self._axis_object: Axis = Axis(dimension=initial_dimensions, bus=self.bus)
         self._web = True
         self._list_of_draw_objects: list[NDimensionalObject] = self._get_object_to_draw()
         self._list_of_all_points: list[Point] = self._take_all_the_points(
@@ -54,8 +55,6 @@ class DrawAll:
         self._show_with_points: bool = False
         self._transparency: Literal[Transparency.transparent] = Transparency.transparent
 
-
-        self.bus = bus
         self.bus.register(self)
         self.init_points()      # set new center
 
@@ -63,7 +62,7 @@ class DrawAll:
     def new_object(self, obj: Callable, dimensions: int=4, size: float=1.0) -> None:
         """remove the old draw object, add the new one"""
         self._draw_object = obj(dimensions=dimensions, colorful=self._colorful,
-                                size=size, transparent=self._transparency)
+                                size=size, transparent=self._transparency, bus=self.bus)
         self._draw_object.change_color(colorful=self._colorful)
         self._list_of_draw_objects: list[NDimensionalObject] = self._get_object_to_draw()
         self._list_of_all_points: list[Point] = self._take_all_the_points(
@@ -152,9 +151,9 @@ class DrawAll:
     @subscribe
     def draw_all(self, event: RecalculateAndDrawAllPrimitives=None):
         if event is None:
-            angles: np.ndarray = None
-            dxi: np.ndarray = None
-            scale: float = None
+            angles: None|np.ndarray = None
+            dxi: None|np.ndarray = None
+            scale: None|float = None
         else:
             angles: np.ndarray = event.angles
             dxi: np.ndarray = event.dxi

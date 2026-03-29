@@ -1,14 +1,25 @@
 from PySide6.QtGui import QColor
 
+from frontend.event_bus.event_bus import EventBus
 from geometry.class_geometric_object import GeometricObject
 from geometry.class_line import Line
 from geometry.class_point import Point
 from geometry.class_surface import Surface
 from geometry.geometry_functions import get_center_from_list_of_points
-from variables.graphics import MyColors
+from variables.graphics import MyColors, Transparency
 
 
 class Volume(GeometricObject):
+    def draw_me(self):
+        for surface in self.list_of_surfaces:
+            surface.draw_me()
+
+    @property
+    def transparent(self) -> Transparency:
+        return self._transparent
+
+
+
     def get_center(self) -> Point:
         return self.center
 
@@ -18,17 +29,18 @@ class Volume(GeometricObject):
     def get_color(self) -> QColor:
         return self.color
 
-    def __init__(self, list_of_points: list[Point] = None,
+    def __init__(self, bus: EventBus, list_of_points: list[Point] = None,
                  list_of_lines: list[Line] = None,
                  list_of_surfaces: list[Surface] = None,
                  color: QColor = None):
         super().__init__()
+        self.bus = bus
         self.list_of_points: list[Point] = list_of_points if list_of_points is not None else []
         self.list_of_lines: list[Line] = list_of_lines if list_of_lines is not None else []
         self.list_of_surfaces: list[Surface] = list_of_surfaces if list_of_surfaces is not None else []
         self.color = QColor(*MyColors.default_volume_color) if color is None else color
         points_for_center = self._get_list_of_points_for_center()
-        self.center: Point = get_center_from_list_of_points(list_of_points=points_for_center)
+        self.center: Point = Point(coordinates=get_center_from_list_of_points(list_of_points=points_for_center), bus=self.bus)
 
     def _get_list_of_points_for_center(self) -> list[Point]:
         if self.list_of_points:
