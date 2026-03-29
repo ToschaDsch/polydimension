@@ -1,3 +1,4 @@
+import numpy as np
 from PySide6.QtGui import QColor
 
 from frontend.event_bus.event_bus import EventBus
@@ -9,6 +10,10 @@ from variables.graphics import MyColors, Transparency
 
 
 class TextDraw(GeometricObject):
+    @property
+    def z(self) -> np.ndarray:
+        return self.point_0.coord_n[2]
+
     @property
     def transparent(self) -> Transparency:
         return Transparency.full

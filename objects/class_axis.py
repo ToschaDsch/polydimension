@@ -15,6 +15,7 @@ class Axis(NDimensionalObject):
         super().__init__(bus=bus)
         self._solid = False
         self.name_of_the_object = "Axis"
+        print(self)
 
     def make_lines(self):
         colors = [QColor(255, 0,0),

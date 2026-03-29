@@ -10,7 +10,7 @@ class Cell24Snub4d(NDimensionalObject):
         raw_data_path = "cell_24_snub.txt"
         super().__init__(dimensions=dimensions, colorful=colorful, size=size, raw_data_path=raw_data_path, transparent=transparent, bus=bus)
         self.name_of_the_object = "cell 24 snub 4d"
-
+        print(self)
 
     def make_points(self):
         pass

@@ -20,7 +20,7 @@ class Cell6004d(NDimensionalObject):
                          transparent=transparent, bus=bus)
         self.name_of_the_object = "cell 600 4d"
         self.correct_all_points(d=1)
-
+        print(self)
 
     def make_points(self):
         """the function makes all vertex coordinates for the object"""

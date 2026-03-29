@@ -11,6 +11,10 @@ import numpy as np
 class Line(GeometricObject):
 
     @property
+    def z(self) -> np.ndarray:
+        return 0.5 * (self.point_0.coord_n[2] + self.point_1.coord_n[2])
+
+    @property
     def transparent(self) -> Transparency:
         return Transparency.full
 

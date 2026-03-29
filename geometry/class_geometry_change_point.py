@@ -3,12 +3,9 @@ import math
 import numpy as np
 from sortedcontainers import SortedDict
 
-from frontend.event_bus.decorators import timer
 from geometry.class_geometric_object import GeometricObject
-from geometry.class_line import Line
 from geometry.class_point import Point
 from geometry.class_surface import Surface
-from geometry.class_volume import Volume
 from geometry.geometry_functions import get_rotate_matrix, get_2d_coordinate_with_perspective
 from variables.menus import Menus
 
@@ -41,7 +38,7 @@ class  GeometryChangePoint:
         self.dict_of_objects_to_draw: SortedDict = SortedDict()
         self.draw_with_perspective: bool = True
 
-    @timer
+
     def _change_corners(self):
         self.sin: list[float] = [math.sin(x) for x in self.angles]
         self.cos: list[float] = [math.cos(x) for x in self.angles]
@@ -49,7 +46,6 @@ class  GeometryChangePoint:
         self.rotation_matrix: np.ndarray = get_rotate_matrix(sin=self.sin,
                                                              cos=self.cos,
                                                              dimensional=self.dimensional)
-
 
     def calculate_new_coordinates_for_the_list_of_points(self, angles: np.ndarray=None, dx: np.ndarray=None,
                                                          points: list[Point]=None, scale: float=None):
@@ -62,7 +58,6 @@ class  GeometryChangePoint:
         self._change_corners()
         self.dict_of_objects_to_draw.clear() #clear the dict
         self.rotate_all_points(points)
-
 
     def rotate_all_points(self, points: list[Point]):
         for point in points:
@@ -86,33 +81,9 @@ class  GeometryChangePoint:
         self.dict_of_objects_to_draw.clear()
 
     def add_the_draw_element_to_sorted_dict(self, draw_object: GeometricObject|Point):
-        if isinstance(draw_object, Point):
-            z = draw_object.coord_n[2]
-        elif isinstance(draw_object, Line):
-            z = 0.5 * (draw_object.point_0.coord_n[2] +
-                       draw_object.point_1.coord_n[2])
-        elif isinstance(draw_object, (Surface, Volume)):
-            center = draw_object.get_center()
-            z = center.coord_n[2]
-            if isinstance(draw_object, Volume):
-                surfaces = get_all_unic_surfaces_from_a_volume(
-                    draw_object.list_of_surfaces
-                )
-                for surface in surfaces:
-                    self.add_the_draw_element_to_sorted_dict(surface)
+        self._add_an_object_to_the_dict(draw_object=draw_object, z=draw_object.z)
 
-        else:
-            z = 0.0
-        self._add_an_object_to_the_dict(draw_object=draw_object, z=z)
-
-
-    def _add_an_object_to_the_dict(self, z: float, draw_object: GeometricObject|Point):
+    def _add_an_object_to_the_dict(self, z: np.ndarray, draw_object: GeometricObject|Point):
         while z in self.dict_of_objects_to_draw:
             z += 1e-7
         self.dict_of_objects_to_draw[z] = draw_object
-
-def get_all_unic_surfaces_from_a_volume(list_of_surfaces: list[Surface]) -> list[Surface]:
-    surfaces = []
-    for surface in list_of_surfaces:
-        pass
-    return list_of_surfaces

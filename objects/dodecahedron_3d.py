@@ -21,7 +21,7 @@ class Dodecahedron3d(NDimensionalObject):
         self._init_points = init_point if init_point else [0, 1, 2]
         super().__init__(dimensions=dimensions, colorful=colorful, size=size, transparent=transparent, bus=bus)
         self.name_of_the_object = "Dodecahedron 3d"
-
+        print(self)
 
     def make_points(self):
         a, c = self.size, (1 + 5**.5) * 0.5

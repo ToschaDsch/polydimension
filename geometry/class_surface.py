@@ -15,14 +15,21 @@ from variables.graphics import MyColors, Transparency
 
 
 class Surface(GeometricObject):
+    @property
+    def z(self) -> np.ndarray:
+        return self.center.coord_n[2]
+
     def draw_me(self):
-        polygon = QPolygon()
-        for point_i in self.list_of_points:
-            coord = point_i.coord_n
-            polygon.append(QPoint(int(coord[0]), int(coord[1])))
-        self.bus.publish(DrawPolygon(brush=self.brush,
-                                polygon=polygon,
-                                pen=self.pen))
+        polygon = QPolygon([
+            QPoint(int(p.coord_n[0]), int(p.coord_n[1]))
+            for p in self.list_of_points
+        ])
+
+        self.bus.publish(DrawPolygon(
+            brush=self.brush,
+            polygon=polygon,
+            pen=self.pen
+        ))
 
     def get_center(self) -> Point:
         return self.center
@@ -59,7 +66,6 @@ class Surface(GeometricObject):
 
         self.normal_line = Line(point_0=self.center,
                                 point_1=point_1, name="normal", width=8, color=QColor(0, 0, 0), bus=self.bus)
-        #self.normal_line = Line(point_0=self.center, point_1=point_1, name="normal", width=8, color=QColor(0,0,0))
         if self._draw_with_normal:
             self.list_of_points_change_coordinate = self._list_of_points + [self.center, point_1, self.normal]
             print("append normal")
@@ -73,7 +79,6 @@ class Surface(GeometricObject):
                                             normal=self.normal.coord_only_rotate)
 
         self._color = return_color.color
-        self.visible = return_color.i_see_it
         self.brush: QBrush = QBrush(self._color)
         self.pen: QPen = QPen(self.brush, self.width)
 

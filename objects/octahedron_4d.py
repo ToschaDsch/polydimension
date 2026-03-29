@@ -17,7 +17,7 @@ class Cell164d(NDimensionalObject):
         self._dimension_shift_length = dimension_shift_length
         super().__init__(dimensions=dimensions, colorful=colorful, size=size, transparent=transparent, bus=bus)
         self.name_of_the_object = "16Cell 4d"
-
+        print(self)
 
     def make_points(self):
         init_coordinate = []

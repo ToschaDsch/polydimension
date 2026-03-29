@@ -51,6 +51,15 @@ class NDimensionalObject(ABC):
         self.z_min = self.get_z_min()
         self._send_normals_from_surfaces()
         self.update_lighting_for_all_surfaces()
+        self.send_all_volumes_to_surfaces()
+
+    def send_all_volumes_to_surfaces(self):
+        if len(self._my_volumes) == 0:
+            return
+        self._my_surfaces = []
+        for volume in self._my_volumes:
+            for surface in volume.list_of_surfaces:
+                self._my_surfaces.append(surface)
 
     def load_from_json(self, raw_data_path: str):
         path = Menus.raw_data_path + "//" + raw_data_path
@@ -130,6 +139,7 @@ class NDimensionalObject(ABC):
     @abstractmethod
     def make_surfaces(self):
         pass
+
     @abstractmethod
     def make_volumes(self):
         pass
@@ -173,27 +183,21 @@ class NDimensionalObject(ABC):
             -> list[Line] | list[Surface] | list[Volume] | None:
         if not self._solid:
             return self._my_lines
-
-        objects_with_area = self._my_volumes if len(self._my_volumes) else self._my_surfaces
-
         match transparency:
             case Transparency.full:
-                return objects_with_area
+                return self._my_surfaces
             case Transparency.sceleton:
                 return self._my_lines
             case Transparency.transparent:
-                return objects_with_area + self._my_lines
+                return self._my_surfaces + self._my_lines
 
     def __str__(self):
-        list_of_points: list[str] = [str(x) for x in self._my_points]
-        list_of_lines: list[str] = [str(x) for x in self._my_lines]
-        list_of_surfaces: list[str] = [str(x) for x in self._my_surfaces]
         return (f"i'm {self.name_of_the_object}, \n"
                 f"I have {self.dimensions} dimensions\n"
-                f"my points: {len(list_of_points)} {list_of_points}\n"
-                f"my lines: {len(list_of_lines)} {list_of_lines}\n"
-                f"my surfaces: {list_of_surfaces}\n"
-                f"my volumes: {self._my_volumes}\n")
+                f"my points: {len(self.points_to_show)}\n"
+                f"my lines: {len(self._my_lines)}\n"
+                f"my surfaces: {len(self._my_surfaces)}\n"
+                f"my volumes: {len(self._my_volumes)}\n")
 
     def update_lighting_for_all_surfaces(self):
         for surface in self._my_surfaces:
@@ -203,7 +207,9 @@ class NDimensionalObject(ABC):
         """the function get an NDimensionalObject object,
         take all surfaces of it, send all important points to self._my_points"""
         list_of_surfaces = obj.get_surfaces()
+        set_of_points: set[Point] = set()
         for surface in list_of_surfaces:
+            set_of_points.update(set(surface.list_of_points))
             for point_i in surface.list_of_points:
                 if point_i in self._my_points:
                     continue
@@ -212,4 +218,18 @@ class NDimensionalObject(ABC):
                         index = surface.list_of_points.index(point_i)
                         surface.list_of_points[index] = point_j
                         continue
-        return Volume(list_of_points=None, list_of_lines=None, list_of_surfaces=list_of_surfaces, bus=self.bus)
+        return Volume(list_of_points=list(set_of_points), list_of_lines=None, list_of_surfaces=list_of_surfaces, bus=self.bus)
+
+
+    def lists_of_surfaces_list_of_volumes(self, list_of_surfaces: list[list[Surface]]) ->list[Volume]:
+        list_of_volumes = []
+        for list_of_surf_i in list_of_surfaces:
+            list_of_volumes.append(self.list_of_surfaces_to_a_Volume(list_of_surf_i))
+        return list_of_volumes
+
+    def list_of_surfaces_to_a_Volume(self, list_of_surfaces: list[Surface]) -> Volume:
+            set_of_points: set[Point] = set()
+            for surface in list_of_surfaces:
+                set_of_points.update(set(surface.list_of_points))
+            points = list(set_of_points)
+            return Volume(bus=self.bus, list_of_surfaces=list_of_surfaces, list_of_points=points)

@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+import numpy as np
 from PySide6.QtGui import QColor, QBrush, QPen
 
 from geometry.class_point import Point
@@ -13,11 +14,15 @@ class GeometricObject(ABC):
         self.brush: QBrush = QBrush(self._color)
         self.pen: QPen = QPen(self.brush, self._width)
         self._transparent: Transparency = Transparency.transparent
-        self.visible = True
         self.name: str = ""
 
     @abstractmethod
     def draw_me(self):
+        pass
+
+    @property
+    @abstractmethod
+    def z(self) -> np.ndarray:
         pass
 
     @property

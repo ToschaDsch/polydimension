@@ -1,3 +1,4 @@
+import numpy as np
 from PySide6.QtGui import QColor
 
 from frontend.event_bus.event_bus import EventBus
@@ -10,6 +11,10 @@ from variables.graphics import MyColors, Transparency
 
 
 class Volume(GeometricObject):
+    @property
+    def z(self) -> np.ndarray:
+        return self.center.coord_n[2]
+
     def draw_me(self):
         for surface in self.list_of_surfaces:
             surface.draw_me()
@@ -41,6 +46,12 @@ class Volume(GeometricObject):
         self.color = QColor(*MyColors.default_volume_color) if color is None else color
         points_for_center = self._get_list_of_points_for_center()
         self.center: Point = Point(coordinates=get_center_from_list_of_points(list_of_points=points_for_center), bus=self.bus)
+
+
+    def correct_center_of_surfaces(self):
+        for surface in self.list_of_surfaces:
+            surface.center = self.center
+            surface.change_coordinate()
 
     def _get_list_of_points_for_center(self) -> list[Point]:
         if self.list_of_points:

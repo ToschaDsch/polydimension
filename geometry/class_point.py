@@ -24,6 +24,10 @@ class Point:
                               brush=self.brush, pen=self.pen))
 
     @property
+    def z(self) -> np.ndarray:
+        return self.coord_n[2]
+
+    @property
     def radius(self) -> int:
         return int(self._width)
 

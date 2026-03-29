@@ -1,5 +1,8 @@
 import math
+from collections import defaultdict
 from itertools import combinations
+from typing import Any
+
 import numpy as np
 from geometry.class_point import Point
 
@@ -200,22 +203,18 @@ def find_cycles(edges: list[list[int]], points: list[Point], cycle_size: int=5, 
         diffs = pts[1:] - base  # shape (cycle_size-1,4)
         rank = np.linalg.matrix_rank(diffs, tol=eps)
         return rank <= 3
-
     # -------------------------------------------------
     # DFS cycle search
     # -------------------------------------------------
     visited = np.zeros(n_points, dtype=np.bool_)
     path = np.empty(cycle_size, dtype=np.int32)
-
     cycles = []
 
     def dfs(start, current, depth):
         """
         Depth-first search recursive traversal.
         """
-
         if depth == cycle_size:
-
             # Check cycle closure
             for nxt in graph[current]:
                 if nxt == start:
@@ -227,33 +226,64 @@ def find_cycles(edges: list[list[int]], points: list[Point], cycle_size: int=5, 
                         cycles.append(cycle)
                     break
             return
-
         for nxt in graph[current]:
-
             if visited[nxt]:
                 continue
-
             # Canonical ordering to avoid duplicate cycles
             if nxt < start:
                 continue
-
             visited[nxt] = True
             path[depth] = nxt
-
             dfs(start, nxt, depth + 1)
-
             visited[nxt] = False
-
     # -------------------------------------------------
     # Main loop
     # -------------------------------------------------
     for start in range(n_points):
-
         visited[start] = True
         path[0] = start
-
         dfs(start, start, 1)
-
         visited[start] = False
-
     return cycles
+
+def point_to_key(p, tol=1e-8):
+    # round
+    return tuple(np.round(p, decimals=8))
+
+def extract_volumes_fast(surfaces: list[Any]) -> set[set[Any]]:
+    face_set = set()
+    adjacency = defaultdict(set)
+
+    # 1. preparation
+    for s in surfaces:
+        pts = [point_to_key(p.coord_0) for p in s.list_of_points]
+        face = frozenset(pts)
+        face_set.add(face)
+
+        for p in pts:
+            adjacency[p].update(pts)
+    volumes = set()
+
+    # 2. take a face and find 4 point
+    # general loop
+    for face in face_set:
+        pts = list(face)
+
+        # candidates = adjacency
+        candidates = set(adjacency[pts[0]])
+        for p in pts[1:]:
+            candidates &= adjacency[p]
+
+        for p4 in candidates:
+            if p4 in face:
+                continue
+
+            tetra = set(pts + [p4])
+
+            faces = [
+                frozenset(f) for f in combinations(tetra, 3)
+            ]
+
+            if all(f in face_set for f in faces):
+                volumes.add(frozenset(tetra))
+    return volumes

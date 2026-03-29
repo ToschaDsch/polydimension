@@ -19,7 +19,7 @@ class Cell1204d(NDimensionalObject):
 
         self.name_of_the_object = "cell 120 4d"
         self.correct_all_points(d=self.size*(1 + 5**.5) * 0.5-0.3)
-
+        print(self)
 
     def make_points(self):
         """make points"""

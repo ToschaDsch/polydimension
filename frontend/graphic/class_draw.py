@@ -147,7 +147,6 @@ class DrawAll:
             self.state.CoordinatesScreen.scale = new_scale
             self._geometry.scale=new_scale
 
-    @timer
     @subscribe
     def draw_all(self, event: RecalculateAndDrawAllPrimitives=None):
         if event is None:

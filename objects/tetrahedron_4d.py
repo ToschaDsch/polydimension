@@ -16,7 +16,7 @@ class Tetrahedron4d(NDimensionalObject):
         self._init_points = init_point if init_point else [0, 1, 2]
         super().__init__(dimensions=dimensions, colorful=colorful, size=size, transparent=transparent, bus=bus)
         self.name_of_the_object = "16Cell 4d"
-
+        print(self)
 
     def make_points(self):
         w, h = self.dimensions, self.dimensions

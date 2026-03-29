@@ -19,7 +19,7 @@ class Icosahedron3d(NDimensionalObject):
 
         super().__init__(dimensions=dimensions, colorful=colorful, size=size, transparent=transparent, bus=bus)
         self.name_of_the_object = "Tetrahedron 3d"
-
+        print(self)
 
     def make_points(self):
         """ the function makes all vertex coordinates for the wedge"""
