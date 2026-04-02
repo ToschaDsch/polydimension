@@ -9,13 +9,14 @@ from variables.graphics import Transparency
 
 class Cell164d(NDimensionalObject):
 
-    def __init__(self, bus: EventBus, dimensions: int=4, colorful: bool = False, size: float=1.0,
+    def __init__(self, bus: EventBus, dimensions: int=4, dz: float = 0, colorful: bool = False, size: float=1.0,
                  dimension_shift_number: int=0,
                  dimension_shift_length: int=0,
                  transparent: Transparency=Transparency.transparent):
         self._dimension_shift_number = dimension_shift_number
         self._dimension_shift_length = dimension_shift_length
-        super().__init__(dimensions=dimensions, colorful=colorful, size=size, transparent=transparent, bus=bus)
+        super().__init__(dimensions=dimensions, dz=dz,
+                         colorful=colorful, size=size, transparent=transparent, bus=bus)
         self.name_of_the_object = "16Cell 4d"
         print(self)
 

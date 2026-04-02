@@ -165,13 +165,13 @@ class GeneralWindow(QMainWindow):
         button_with_ico = ClickableWidget(text=line.value.name, image_path=path)
         button_with_ico.setFixedWidth(Menus.width_of_buttons_menu_1)
         button_with_ico.clicked.connect(partial(self.click_on_the_list_of_the_objects, line.value.dimensions,
-                                                line.value.obj, line.value.size))
+                                                line.value.obj, line.value.size, line.value.dz))
 
         return button_with_ico
 
-    def click_on_the_list_of_the_objects(self, dimensions: int, obj: Callable, size: float):
+    def click_on_the_list_of_the_objects(self, dimensions: int, obj: Callable, size: float, dz: float=0):
         self._layout_menu.setCurrentIndex(2)
-        self.animation.new_object(obj=obj, dimensions=dimensions, size=size)
+        self.animation.new_object(obj=obj, dimensions=dimensions, size=size, dz=dz)
         self.screen_window.draw_all(event=DrawAllPrimitives())
 
 

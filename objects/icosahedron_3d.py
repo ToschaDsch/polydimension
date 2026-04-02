@@ -12,12 +12,14 @@ from variables.graphics import Transparency
 
 class Icosahedron3d(NDimensionalObject):
 
-    def __init__(self, bus: EventBus, dimensions: int=4, colorful: bool = False, size: float = 2.0,
+    def __init__(self, bus: EventBus, dimensions: int=4, dz: float = 0,
+                 colorful: bool = False, size: float = 2.0,
                  position_for_addition_coordination_4d: int = 3,
                  transparent: Transparency=Transparency.transparent):
         self._position_for_addition_coordination_4d = position_for_addition_coordination_4d
 
-        super().__init__(dimensions=dimensions, colorful=colorful, size=size, transparent=transparent, bus=bus)
+        super().__init__(dimensions=dimensions, dz=dz,
+                         colorful=colorful, size=size, transparent=transparent, bus=bus)
         self.name_of_the_object = "Tetrahedron 3d"
         print(self)
 
@@ -39,9 +41,6 @@ class Icosahedron3d(NDimensionalObject):
 
         for coord_i in init_coordinate:
             self._my_points.append(Point(coordinates=np.array(coord_i), bus=self.bus))
-
-        for point in self._my_points:       # take the object to the bottom
-            point.coord_0[2] = point.coord_0[2] - a + c
         self.points_to_show = self._my_points.copy()
 
 

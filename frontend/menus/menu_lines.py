@@ -19,25 +19,27 @@ class MenuLine:
     def __init__(self, name: str, pict: str,
                  dimensions: int = 3,
                  info: str = None,
-                 obj: Callable = None, size: float=1.0):
+                 obj: Callable = None, size: float=1.0, dz: float=0):
         self.name = name
         self.pict = pict
         self.info = info
         self.dimensions = dimensions
         self.obj = obj
         self.size = size
+        self.dz: float = dz
 
-
+size = 1
+c = (1 + 5**.5) * 0.5
 class MenusLines(Enum):
-    cube_3d = MenuLine(name="cube 3d", pict="with_perspective.png", info="info_cube_3d.png", dimensions=4, obj=Cube3d, size=1.0)
-    cube_4d = MenuLine(name="cube 4d", pict="cube_4d.png", info="info_cube_4d.png", dimensions=4, obj=Cube4d, size=1.0)
-    octahedron_3d = MenuLine(name="octahedron 3d", pict="octahedron_3d.png", info="info_octahedron.png", dimensions=4, obj=Octahedron3d, size=1.5)
-    e16cell_4d = MenuLine(name="16-cell 4d", pict="ico16cell.png", info="info_16cell.png", dimensions=4, obj=Cell164d, size=1.5)
-    tetrahedron_3d = MenuLine(name="tetrahedron 3d", pict="tetrahedron_3d.png", info="info_tetrahedron.png", dimensions=4, obj=Tetrahedron3d, size=2.0)
-    tetrahedron_4d = MenuLine(name="tetrahedron 4d", pict="tetrahedron_4d.png", info="info_tetrahedron_4d.png", dimensions=4, obj=Tetrahedron4d, size=2.0)
-    icosahedron_3d = MenuLine(name="icosahedron_3d", pict="ico_3d.png", info="info_ico_3d.png", dimensions=4, size=1.0, obj=Icosahedron3d)
-    ico24_cell_4d = MenuLine(name="24 cell 4d", pict="cell_24_ico.png", info="info_24_cell_4d.png", dimensions=4, size=1.0, obj=Cell244d)
-    ico24_cell_snub_4d = MenuLine(name="24 cell snub 4d", pict="cell_24.png", info="info_ico_4d_snub.png", dimensions=4, size=1.0/((1+5**.5)*2)**.5, obj=Cell24Snub4d)
-    cell_600_4d = MenuLine(name="600 cell 4d", pict="ico_600cell.png", info="info_ico_600_cell.png", dimensions=4, size=1.0, obj=Cell6004d)
-    dodecahedron_3d = MenuLine(name="dodecahedron 3d", pict="dode_3d.png", info="info_dode_3d.png", dimensions=4, size=1.0, obj=Dodecahedron3d)
-    cell_120_4d = MenuLine(name="120 cell 4d", pict="cell_120.png", info="info_120_cell.png", dimensions=4, size=2/3, obj=Cell1204d)
+    cube_3d = MenuLine(name="cube 3d", pict="with_perspective.png", info="info_cube_3d.png", dimensions=4, obj=Cube3d, size=size, dz=0)
+    cube_4d = MenuLine(name="cube 4d", pict="cube_4d.png", info="info_cube_4d.png", dimensions=4, obj=Cube4d, size=size, dz=0)
+    octahedron_3d = MenuLine(name="octahedron 3d", pict="octahedron_3d.png", info="info_octahedron.png", dimensions=4, obj=Octahedron3d, size=1.5, dz=.5*size)
+    e16cell_4d = MenuLine(name="16-cell 4d", pict="ico16cell.png", info="info_16cell.png", dimensions=4, obj=Cell164d, size=1.5*size, dz=.5*size)
+    tetrahedron_3d = MenuLine(name="tetrahedron 3d", pict="tetrahedron_3d.png", info="info_tetrahedron.png", dimensions=4, obj=Tetrahedron3d, size=2*size, dz=-size/2)
+    tetrahedron_4d = MenuLine(name="tetrahedron 4d", pict="tetrahedron_4d.png", info="info_tetrahedron_4d.png", dimensions=4, obj=Tetrahedron4d, size=2.0*size, dz=-size/2)
+    icosahedron_3d = MenuLine(name="icosahedron_3d", pict="ico_3d.png", info="info_ico_3d.png", dimensions=4, size=size, obj=Icosahedron3d, dz=-size+c)
+    ico24_cell_4d = MenuLine(name="24 cell 4d", pict="cell_24_ico.png", info="info_24_cell_4d.png", dimensions=4, size=size, obj=Cell244d, dz=0)
+    ico24_cell_snub_4d = MenuLine(name="24 cell snub 4d", pict="cell_24.png", info="info_ico_4d_snub.png", dimensions=4, size=size/((1+5**.5)*2)**.5, obj=Cell24Snub4d)
+    cell_600_4d = MenuLine(name="600 cell 4d", pict="ico_600cell.png", info="info_ico_600_cell.png", dimensions=4, size=size, obj=Cell6004d, dz=size)
+    dodecahedron_3d = MenuLine(name="dodecahedron 3d", pict="dode_3d.png", info="info_dode_3d.png", dimensions=4, size=size, obj=Dodecahedron3d, dz=(c-1)*size)
+    cell_120_4d = MenuLine(name="120 cell 4d", pict="cell_120.png", info="info_120_cell.png", dimensions=4, size=2/3*size, obj=Cell1204d, dz=(c)*size)

@@ -26,10 +26,11 @@ class JSONData:
 
 class NDimensionalObject(ABC):
     def __init__(self, bus: EventBus, dimensions: int = 4,
-                 size: float = 1,
+                 size: float = 1, dz = 0,
                  line_color: QColor=None, colorful: bool = False, raw_data_path: str = None,
                  transparent: Transparency = Transparency.transparent):
         self.bus = bus
+        self.dz = dz
         self.colorful = colorful
         self.dimensions = dimensions
         self.draw_with_normal = False            # normal on/ off
@@ -84,6 +85,7 @@ class NDimensionalObject(ABC):
     def make_geometry_from_json(self):
         for coord in self.json_data.points:
             self._my_points.append(Point(coordinates=self.size*np.array(coord), bus=self.bus))
+        self.correct_all_points()
         self.points_to_show = self._my_points.copy()
         center = Point(coordinates=get_center_from_list_of_points(list_of_points=self._my_points), bus=self.bus)
         for i, j in self.json_data.lines:
@@ -92,9 +94,10 @@ class NDimensionalObject(ABC):
             list_of_points_i = [self._my_points[i] for i in list_of_points_i]
             self._my_surfaces.append(Surface(list_of_points=list_of_points_i, init_center_of_the_volume=center, bus=self.bus))
 
-    def correct_all_points(self, d: float = 0):
+    def correct_all_points(self):
+        print("correcting all points for", self.name_of_the_object, self.dz)
         for point in self._my_points:
-            point.coord_0[2] += d
+            point.coord_0[2] += self.dz
 
     def get_surfaces(self) -> list[Surface]:
         return self._my_surfaces
@@ -118,6 +121,7 @@ class NDimensionalObject(ABC):
 
     def make_geometry(self):
         self.make_points()
+        self.correct_all_points()
         self.make_lines()
         self.make_surfaces()
         self.make_volumes()

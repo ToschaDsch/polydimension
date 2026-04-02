@@ -13,7 +13,8 @@ from variables.graphics import Transparency
 
 class Cube3d(NDimensionalObject):
 
-    def __init__(self, bus: EventBus, dimensions: int=4, colorful: bool = False, size: float=1.0,
+    def __init__(self, bus: EventBus, dz: float = 0,
+                 dimensions: int=4, colorful: bool = False, size: float=1.0,
                  dimension_shift_number: int=0,
                  dimension_shift_length: int=0,
                  transparent: Transparency=Transparency.transparent):
@@ -25,7 +26,7 @@ class Cube3d(NDimensionalObject):
                               [1, 3, 7, 5]]
         self._dimension_shift_number = dimension_shift_number
         self._dimension_shift_length = dimension_shift_length
-        super().__init__(dimensions=dimensions, colorful=colorful, size=size, transparent=transparent, bus=bus)
+        super().__init__(dimensions=dimensions, colorful=colorful, size=size, transparent=transparent, bus=bus, dz=dz)
         self.name_of_the_object = "Cube 3d"
         print(self)
 

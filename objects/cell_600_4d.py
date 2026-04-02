@@ -13,13 +13,14 @@ from variables.graphics import Transparency
 
 class Cell6004d(NDimensionalObject):
 
-    def __init__(self, bus: EventBus, dimensions: int = 4, colorful: bool = False, size: float=1.0, raw_data: str = None,
+    def __init__(self, bus: EventBus, dimensions: int = 4, dz: float  = 0,
+                 colorful: bool = False, size: float=1.0, raw_data: str = None,
                  transparent: Transparency=Transparency.transparent):
         raw_data_path = "cell_600.txt"
-        super().__init__(dimensions=dimensions, colorful=colorful, size=size, raw_data_path=raw_data_path,
+        super().__init__(dimensions=dimensions, dz=dz,
+                         colorful=colorful, size=size, raw_data_path=raw_data_path,
                          transparent=transparent, bus=bus)
         self.name_of_the_object = "cell 600 4d"
-        self.correct_all_points(d=1)
         print(self)
 
     def make_points(self):

@@ -12,11 +12,12 @@ from variables.graphics import Transparency
 
 class Octahedron3d(NDimensionalObject):
 
-    def __init__(self, bus: EventBus, dimensions: int=4, colorful: bool = False, size: float=1.0,
+    def __init__(self, bus: EventBus, dimensions: int=4, dz: float = 0,
+                 colorful: bool = False, size: float=1.0,
                  init_point: list[int]=None,
                  transparent: Transparency=Transparency.transparent):
         self._init_points = init_point if init_point else [0, 1, 2]
-        super().__init__(dimensions=dimensions, colorful=colorful, size=size, transparent=transparent, bus=bus)
+        super().__init__(dimensions=dimensions, dz=dz, colorful=colorful, size=size, transparent=transparent, bus=bus)
         self.name_of_the_object = "Octahedron 3d"
         print(self)
 
@@ -28,8 +29,6 @@ class Octahedron3d(NDimensionalObject):
             init_coordinate[i + 3][self._init_points[i]] = -self.size
         for coord_i in init_coordinate:
             self._my_points.append(Point(coordinates=np.array(coord_i), bus=self.bus))
-        for point in self._my_points:
-            point.coord_0[2] = point.coord_0[2] + 0.5
         self.points_to_show = self._my_points.copy()
 
 

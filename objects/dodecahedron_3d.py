@@ -15,11 +15,13 @@ from variables.graphics import Transparency
 
 class Dodecahedron3d(NDimensionalObject):
 
-    def __init__(self, bus: EventBus, dimensions: int=4, colorful: bool = False, size: float=1.0,
+    def __init__(self, bus: EventBus, dimensions: int=4, dz: float=0,
+                 colorful: bool = False, size: float=1.0,
                  init_point: list[int]=None,
                  transparent: Transparency=Transparency.transparent):
         self._init_points = init_point if init_point else [0, 1, 2]
-        super().__init__(dimensions=dimensions, colorful=colorful, size=size, transparent=transparent, bus=bus)
+        super().__init__(dimensions=dimensions, dz=dz,
+                         colorful=colorful, size=size, transparent=transparent, bus=bus)
         self.name_of_the_object = "Dodecahedron 3d"
         print(self)
 
@@ -36,8 +38,6 @@ class Dodecahedron3d(NDimensionalObject):
                              )
             point.resize( (self.dimensions, ))
             self._my_points.append(Point(coordinates=np.array(point), bus=self.bus))
-        for point in self._my_points:
-            point.coord_0[2] +=c*a-a
         self.points_to_show = self._my_points.copy()
 
     def make_lines(self):

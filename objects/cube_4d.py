@@ -12,9 +12,11 @@ from variables.graphics import Transparency
 
 class Cube4d(NDimensionalObject):
 
-    def __init__(self, bus: EventBus, dimensions: int = 4, colorful: bool = False, size: float=1.0,
+    def __init__(self, bus: EventBus, dz: int = 0,
+                 dimensions: int = 4, colorful: bool = False, size: float=1.0,
                  transparent: Transparency=Transparency.transparent):
-        super().__init__(dimensions=dimensions, colorful=colorful, size=size, transparent=transparent, bus=bus)
+        super().__init__(dimensions=dimensions, colorful=colorful, size=size,
+                         transparent=transparent, bus=bus, dz=dz)
         self.name_of_the_object = "Cube 4d"
         print(self)
 
