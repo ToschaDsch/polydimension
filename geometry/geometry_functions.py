@@ -1,10 +1,10 @@
 import math
 from collections import defaultdict, deque
 from itertools import combinations
-from typing import Any
 
 import numpy as np
 from geometry.class_point import Point
+from rich.progress import track
 
 
 def get_center_from_list_of_points(list_of_points: list[Point]) -> np.ndarray[np.float64]:
@@ -306,59 +306,157 @@ def build_face_adjacency(face_map):
                 adjacency[faces[j]].add(faces[i])
     return adjacency
 
+def build_face_adjacency(face_map):
+    edge_map = defaultdict(list)
 
-def extract_dodecahedrons(list_of_surfaces: list[Any]) -> list[Any]:
+    for face in face_map:
+        for edge in combinations(face, 2):
+            edge_map[frozenset(edge)].append(face)
 
-    def point_key(p):
-        return tuple(np.round(p.coord_0, 8))
+    adjacency = {f: set() for f in face_map}
 
-    # 1. collect faces
+    for faces in edge_map.values():
+        for f1 in faces:
+            for f2 in faces:
+                if f1 != f2:
+                    adjacency[f1].add(f2)
+
+    return adjacency
+
+def extract_cells_120(list_of_surfaces):
     face_map = {}
+    vertex_to_faces = defaultdict(set)
+
+    # --- собираем грани ---
     for i, s in enumerate(list_of_surfaces):
         pts = [point_key(p) for p in s.list_of_points]
+
         if len(pts) != 5:
-            continue  # only 5 points faces
-        face_map[frozenset(pts)] = i
-
-    # 2. adjacency
-    adjacency = build_face_adjacency(face_map)
-
-    visited = set()
-    volumes = []
-
-    # 3. find components
-    for face in face_map:
-        if face in visited:
             continue
 
-        queue = deque([face])
-        component = set()
+        f = frozenset(pts)
+        face_map[f] = i
 
-        while queue:
-            f = queue.popleft()
-            if f in component:
+        for p in pts:
+            vertex_to_faces[p].add(f)
+
+    faces = list(face_map.keys())
+    volumes = set()
+
+    # --- перебираем стартовую грань ---
+    for f0 in faces:
+        vertices = set(f0)
+
+        # кандидаты = все грани, которые касаются этих вершин
+        candidate_faces = set()
+        for v in f0:
+            candidate_faces |= vertex_to_faces[v]
+
+        # расширяем кандидатов
+        expanded = set(candidate_faces)
+        for f in candidate_faces:
+            for v in f:
+                expanded |= vertex_to_faces[v]
+
+        # теперь пробуем комбинации
+        for combo in combinations(expanded, 12):
+            combo = set(combo)
+
+            # --- быстрый фильтр ---
+            all_vertices = set()
+            for f in combo:
+                all_vertices |= f
+
+            if len(all_vertices) != 20:
                 continue
 
-            component.add(f)
-            for neigh in adjacency[f]:
-                if neigh not in component:
-                    queue.append(neigh)
-
-        visited |= component
-
-        # 4. check 5 points face
-        if len(component) == 12:
+            # --- проверка вершины ---
             ok = True
-            for f in component:
-                # counts the neighbourhoods in the component
-                neigh_inside = adjacency[f] & component
-                if len(neigh_inside) != 5:
+            for v in all_vertices:
+                count = sum(1 for f in combo if v in f)
+                if count != 3:
                     ok = False
                     break
 
-            if ok:
-                volumes.append(
-                    tuple(sorted(face_map[f] for f in component))
-                )
+            if not ok:
+                continue
 
-    return volumes
+            volumes.add(
+                tuple(sorted(face_map[f] for f in combo))
+            )
+            print(len(volumes))
+
+    return list(volumes)
+
+
+def build_adjacency(faces):
+    edge_map = defaultdict(list)
+
+    for f in faces:
+        for e in combinations(f, 2):
+            edge_map[frozenset(e)].append(f)
+
+    adjacency = {f: set() for f in faces}
+
+    for edge_faces in edge_map.values():
+        for f1 in edge_faces:
+            for f2 in edge_faces:
+                if f1 != f2:
+                    adjacency[f1].add(f2)
+
+    return adjacency
+
+
+def point_key(p):
+    return tuple(np.round(p.coord_0, 8))
+
+
+def extract_dodecahedra_fast(list_of_surfaces):
+    # --- 1. грани ---
+    face_map = {}
+
+    for i, s in enumerate(list_of_surfaces):
+        pts = [point_key(p) for p in s.list_of_points]
+        if len(pts) != 5:
+            continue
+        face_map[frozenset(pts)] = i
+
+    faces = list(face_map.keys())
+
+    # --- 2. adjacency ---
+    adjacency = build_adjacency(faces)
+
+    volumes = set()
+
+    # --- 3. ищем додекаэдры ---
+    for f0 in track(faces):
+        neigh1 = adjacency[f0]
+
+        # кандидаты = сама грань + соседи + соседи соседей
+        candidate = set([f0]) | neigh1
+        for f in neigh1:
+            candidate |= adjacency[f]
+
+        # теперь важно: candidate обычно ~30-40 граней
+        if len(candidate) < 12:
+            continue
+
+        # --- перебор только внутри локальной области ---
+        for combo in combinations(candidate, 12):
+            combo = set(combo)
+
+            # каждая грань должна иметь 5 соседей внутри
+            ok = True
+            for f in combo:
+                if len(adjacency[f] & combo) != 5:
+                    ok = False
+                    break
+
+            if not ok:
+                continue
+
+            volumes.add(
+                tuple(sorted(face_map[f] for f in combo))
+            )
+
+    return list(volumes)

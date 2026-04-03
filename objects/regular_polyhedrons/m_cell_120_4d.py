@@ -2,12 +2,10 @@ import numpy as np
 
 from frontend.event_bus.event_bus import EventBus
 from geometry.class_point import Point
-from geometry.geometry_functions import find_lines, find_cycles, extract_dodecahedrons
+from geometry.geometry_functions import find_lines, find_cycles, extract_dodecahedra_fast
 from frontend.menus.single_functions import mirror_it, only_even_permutations
 from objects.class_draw_interface import NDimensionalObject, JSONData
 import json
-
-from variables.graphics import Transparency
 
 
 class Cell1204d(NDimensionalObject):
@@ -23,7 +21,7 @@ class Cell1204d(NDimensionalObject):
         self.find_all_volumes()
 
     def find_all_volumes(self):
-        volumes = extract_dodecahedrons(list_of_surfaces=self._my_surfaces)
+        volumes = extract_dodecahedra_fast(list_of_surfaces=self._my_surfaces)
         print("120cell volumes")
         print(len(volumes))
         volumes = [list(a) for a in volumes]
