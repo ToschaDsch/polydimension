@@ -28,7 +28,7 @@ class Octahedron3d(NDimensionalObject):
             init_coordinate[i][self._init_points[i]] = self.size
             init_coordinate[i + 3][self._init_points[i]] = -self.size
         for coord_i in init_coordinate:
-            self._my_points.append(Point(coordinates=np.array(coord_i), bus=self.bus))
+            self._my_points.append(Point(coordinates=np.array(coord_i, dtype=np.float64), bus=self.bus))
         self.points_to_show = self._my_points.copy()
 
 

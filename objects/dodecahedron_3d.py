@@ -33,30 +33,31 @@ class Dodecahedron3d(NDimensionalObject):
                            [a,a,a]]
         for i in range(3):
             init_coordinate = mirror_it(init_coordinate, axis=i)
+
+
         for point in init_coordinate:
-            point = np.array(point
-                             )
+            point = np.array(point)
             point.resize( (self.dimensions, ))
-            self._my_points.append(Point(coordinates=np.array(point), bus=self.bus))
+            self._my_points.append(Point(coordinates=np.array(point, dtype=np.float64), bus=self.bus))
+
         self.points_to_show = self._my_points.copy()
 
     def make_lines(self):
         a, c = self.size, (1 + 5 ** .5) * 0.5
-        target_length_sq =  2*a/c #a * a * (5**0.5 - 1)**2
+        target_length = 2*a/c
 
-        tolerance = 0.01 * target_length_sq
+        tolerance = 0.02 * target_length
 
         for p0, p1 in combinations(self._my_points, 2):
-            length_sq = geometry_functions.space_between_two_points(
+            length = geometry_functions.space_between_two_points(
                 point_0=p0,
                 point_1=p1)
 
-            if abs(length_sq - target_length_sq) <= tolerance:
+            if abs(length - target_length) <= tolerance:
                 self._my_lines.append(Line(point_0=p0, point_1=p1, width=2, bus=self.bus))
 
     def make_surfaces(self):
         number_of_points = []
-
         # iterate over all 5-line combinations
         for indices in combinations(range(len(self._my_lines)), 5):
             list_of_lines = [self._my_lines[i] for i in indices]
@@ -65,7 +66,7 @@ class Dodecahedron3d(NDimensionalObject):
             points = {line.point_0 for line in list_of_lines} | {line.point_1 for line in list_of_lines}
 
             if len(points) == 5:
-                result = convex_hull(list(points))
+                result = convex_hull(points0=list(points))
                 if result:
                     number_of_points.append(result)
 
@@ -89,17 +90,17 @@ def cross(o: Point, a: Point, b: Point, order: str='xy'):
 
 
 
-def convex_hull(points: list[Point], order: str = "xy") -> list[Point]:
+def convex_hull(points0: list[Point], order: str = "xy") -> list[Point]:
     """Monotone chain convex hull"""
 
-    if len(points) <= 1:
-        return points
+    if len(points0) <= 1:
+        return points0
 
     # we use only x1, x2 coordinate
     if order == "xy":
-        points = sorted(points, key=lambda p: (p.coord_0[0], p.coord_0[1]))
+        points = sorted(points0, key=lambda p: (p.coord_0[0], p.coord_0[1]))
     else:   #yz
-        points = sorted(points, key=lambda p: (p.coord_0[1], p.coord_0[2]))
+        points = sorted(points0, key=lambda p: (p.coord_0[1], p.coord_0[2]))
 
     EPS = 1e-9
 
@@ -121,4 +122,4 @@ def convex_hull(points: list[Point], order: str = "xy") -> list[Point]:
     result = lower[:-1] + upper[:-1]
     if len(result) == 5:
         return result
-    return convex_hull(points=points, order="yz")
+    return convex_hull(points0=points, order="yz")

@@ -27,7 +27,7 @@ class Cube4d(NDimensionalObject):
         init_list_of_coordinates = np.array([np.array(x) for x in itertools.product(initial_set,repeat=4)])
         for coordinate in init_list_of_coordinates:
             new_coordinate = np.resize(coordinate, self.dimensions)
-            self._my_points.append(Point(coordinates=new_coordinate, bus=self.bus))
+            self._my_points.append(Point(coordinates=np.array(new_coordinate, dtype=np.float64), bus=self.bus))
         self.points_to_show = self._my_points.copy()
 
 

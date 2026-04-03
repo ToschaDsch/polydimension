@@ -26,10 +26,10 @@ class Tetrahedron4d(NDimensionalObject):
         for i in range(0, self.dimensions):
             init_coordinate[i][i] = self.size
 
-        point_0 = np.array([0 for _ in range(self.dimensions)])
+        point_0 = np.array([0 for _ in range(self.dimensions)], dtype=np.float64)
         self._my_points.append(Point(coordinates=point_0, bus=self.bus))
         for coord_i in init_coordinate:
-            self._my_points.append(Point(coordinates=np.array(coord_i), bus=self.bus))
+            self._my_points.append(Point(coordinates=np.array(coord_i, dtype=np.float64), bus=self.bus))
         self.points_to_show = self._my_points.copy()
 
 

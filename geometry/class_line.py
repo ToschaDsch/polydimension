@@ -26,14 +26,15 @@ class Line(GeometricObject):
         self.bus.publish(DrawLine(x1=x1, y1=y1, x2=x2, y2=y2,
                              brush=self.brush, pen=self.pen))
 
-    def __init__(self, bus: EventBus, point_0: Point, point_1: Point, color: QColor=None, width: int=1, name: str=None):
-        super().__init__(color=color, width=width)
+    def __init__(self, bus: EventBus, point_0: Point, point_1: Point, color: QColor=None,
+                 width: int=1, name: str=None, style: str = None):
+        super().__init__(color=color, width=width, style=style)
         self.bus = bus
         self.point_0 = point_0
         self.point_1 = point_1
         coord_0 = self.point_0.coord_0
         coord_1 = self.point_1.coord_0
-        coord_center: np.ndarray = np.median([coord_0, coord_1], axis=0)
+        coord_center: np.ndarray[np.float64] = np.median([coord_0, coord_1], axis=0)
         self.center = Point(coordinates=coord_center, bus=self.bus)
         self.color: QColor = color if color else QColor(*MyColors.default_line_color)
         self.dimension: int = point_0.dimension

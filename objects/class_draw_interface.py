@@ -84,7 +84,7 @@ class NDimensionalObject(ABC):
 
     def make_geometry_from_json(self):
         for coord in self.json_data.points:
-            self._my_points.append(Point(coordinates=self.size*np.array(coord), bus=self.bus))
+            self._my_points.append(Point(coordinates=self.size*np.array(coord, dtype=np.float64), bus=self.bus))
         self.correct_all_points()
         self.points_to_show = self._my_points.copy()
         center = Point(coordinates=get_center_from_list_of_points(list_of_points=self._my_points), bus=self.bus)
@@ -95,9 +95,11 @@ class NDimensionalObject(ABC):
             self._my_surfaces.append(Surface(list_of_points=list_of_points_i, init_center_of_the_volume=center, bus=self.bus))
 
     def correct_all_points(self):
-        print("correcting all points for", self.name_of_the_object, self.dz)
-        for point in self._my_points:
-            point.coord_0[2] += self.dz
+        dz = np.zeros(self.dimensions, dtype=np.float64)
+        print(dz[2])
+        dz[2] = self.dz
+        for i, point in enumerate(self._my_points):
+            point.coord_0 += dz
 
     def get_surfaces(self) -> list[Surface]:
         return self._my_surfaces

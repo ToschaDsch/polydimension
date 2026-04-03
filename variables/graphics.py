@@ -36,6 +36,7 @@ class MyColors:
     default_line_color: tuple = (50, 50, 100)
     default_surface_color: tuple = (200, 100, 100, transparency)
     default_volume_color: tuple = (100, 100, 100)
+    normal_line_color: tuple = (0, 255, 0)
 
 
 default_palette = [(155, 155, 155, MyColors.transparency),

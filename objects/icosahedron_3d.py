@@ -40,7 +40,7 @@ class Icosahedron3d(NDimensionalObject):
             coord_i.insert(self._position_for_addition_coordination_4d, 0.0)
 
         for coord_i in init_coordinate:
-            self._my_points.append(Point(coordinates=np.array(coord_i), bus=self.bus))
+            self._my_points.append(Point(coordinates=np.array(coord_i, dtype=np.float64), bus=self.bus))
         self.points_to_show = self._my_points.copy()
 
 

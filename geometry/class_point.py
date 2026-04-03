@@ -7,10 +7,10 @@ from variables.graphics import MyColors
 
 
 class Point:
-    def __init__(self, bus: EventBus, coordinates: np.ndarray = None, color:QColor=None, width: int=6):
-        self._coordinates: np.ndarray = coordinates if coordinates is not None else np.array([0.0, 0.0, 0.0, 0.0])
-        self.coord_n: np.ndarray = self._coordinates
-        self.coord_only_rotate: np.ndarray = self._coordinates
+    def __init__(self, bus: EventBus, coordinates: np.ndarray[np.float64] = None, color:QColor=None, width: int=6):
+        self._coordinates: np.ndarray[np.float64] = coordinates if coordinates is not None else np.array([0.0, 0.0, 0.0, 0.0], dtype=np.float64)
+        self.coord_n: np.ndarray[np.float64] = self._coordinates
+        self.coord_only_rotate: np.ndarray[np.float64] = self._coordinates
         self._dimension: int = len(self._coordinates)
         self._color = color if color else QColor(*MyColors.default_point_color)
         self._width = width
@@ -24,22 +24,19 @@ class Point:
                               brush=self.brush, pen=self.pen))
 
     @property
-    def z(self) -> np.ndarray:
+    def z(self) -> np.ndarray[np.float64]:
         return self.coord_n[2]
 
     @property
     def radius(self) -> int:
         return int(self._width)
 
-    def get_center(self):
-        return self
-
     @property
     def color(self):
         return self._color
 
     @color.setter
-    def color(self, value):
+    def color(self, value: QColor):
         self._color = value
         self.brush: QBrush = QBrush(self._color)
         self.pen: QPen = QPen(self.brush, self.width)
@@ -49,16 +46,16 @@ class Point:
         return self._width
 
     @width.setter
-    def width(self, value):
+    def width(self, value: int):
         self._width = value
         self.pen: QPen = QPen(self.brush, self.width)
 
     @property
-    def coord_0(self) -> np.ndarray:
+    def coord_0(self) -> np.ndarray[np.float64]:
         return self._coordinates
 
     @coord_0.setter
-    def coord_0(self, coordinates:  np.ndarray):
+    def coord_0(self, coordinates:  np.ndarray[np.float64]):
         self._coordinates = coordinates
 
     @property

@@ -1,5 +1,5 @@
 from PySide6 import QtGui, QtCore
-from PySide6.QtGui import QPainter
+from PySide6.QtGui import QPainter, QPen, Qt
 from PySide6.QtWidgets import QWidget
 
 from frontend.event_bus.decorators import subscribe
@@ -13,6 +13,8 @@ from variables.menus import Menus
 
 
 def change_brush_and_pen(painter: QPainter=None, brush: QtGui.QBrush=None, pen: QtGui.QPen=None):
+    if pen.style() == Qt.PenStyle.DashLine:
+        print("ooo")
     if brush and pen:
         painter.setBrush(brush)
         painter.setPen(pen)

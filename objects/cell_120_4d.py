@@ -55,7 +55,7 @@ class Cell1204d(NDimensionalObject):
         for i in range(0, 4):
             init_coordinate = mirror_it(list_0=init_coordinate, axis=i)
         for i in init_coordinate:
-            self._my_points.append(Point(coordinates=np.array(i), bus=self.bus))
+            self._my_points.append(Point(coordinates=np.array(i, dtype=np.float64), bus=self.bus))
 
         self.json_data = JSONData(points=init_coordinate,
                                     lines = [],

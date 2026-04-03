@@ -55,15 +55,18 @@ class Surface(GeometricObject):
                                             vector_center=self.center.coord_0 - self.init_center_of_the_volume.coord_0)
         self._init_color = color
         self._source_of_light: np.ndarray = source_of_light if source_of_light else np.array(SourceOfLight.coordinate)
+        coord_for_normal: np.ndarray[np.float64] = np.resize(normal, (len(self.center.coord_0),))
         self.normal: Point = Point(
-            coordinates=np.resize(normal, (len(self.center.coord_0),)),bus=self.bus)  # if it more as 3d space
+            coordinates=coord_for_normal,bus=self.bus)  # if it more as 3d space
         self._update_color()
 
         # add normal line
-        point_1 = Point(coordinates=(self.center.coord_0 + self.normal.coord_0),bus=self.bus)    #end of normal line
+        coord_for_normal: np.ndarray[np.float64] = self.center.coord_0 + 0.5*self.normal.coord_0
+        point_1 = Point(coordinates=coord_for_normal,bus=self.bus)    #end of normal line
 
         self.normal_line = Line(point_0=self.center,
-                                point_1=point_1, name="normal", width=4, color=QColor(0, 255, 0), bus=self.bus)
+                                point_1=point_1, name="normal", width=2, style="dash_line",
+                                color=QColor(*MyColors.normal_line_color), bus=self.bus)
         self.list_of_points_change_coordinate = self._list_of_points + [self.center, point_1, self.normal]
 
     def _update_color(self):

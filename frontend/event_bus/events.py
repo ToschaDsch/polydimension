@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Callable
 
 import numpy as np
 from PySide6.QtGui import QPen, QBrush, QPolygon
@@ -104,3 +105,17 @@ class ShiftTheSliderDisplacement(EventsForMenuInput):
 @dataclass
 class ShiftTheSliderRotation(EventsForMenuInput):
     angle: int = 0
+
+class Menus:
+    pass
+
+@dataclass
+class GoToInfo(Menus):
+    path: str
+
+@dataclass
+class ClickOnTheListOfTheObjects(Menus):
+    dimensions: int
+    obj: Callable
+    size: float
+    dz: float=0

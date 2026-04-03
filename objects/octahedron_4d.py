@@ -1,3 +1,5 @@
+import numpy as np
+
 from frontend.event_bus.event_bus import EventBus
 from geometry import geometry_functions
 from geometry.class_line import Line
@@ -29,7 +31,7 @@ class Cell164d(NDimensionalObject):
                 list_i[i] = a_i
                 init_coordinate.append(list_i)
         for coord_i in init_coordinate:
-            self._my_points.append(Point(coordinates=coord_i, bus=self.bus))
+            self._my_points.append(Point(coordinates=np.array(coord_i, dtype=np.float64), bus=self.bus))
         self.points_to_show = self._my_points.copy()
 
 

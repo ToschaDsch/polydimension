@@ -1,18 +1,16 @@
-from functools import partial
-from typing import Callable
 
 from PySide6.QtGui import QPixmap, Qt
-from PySide6.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QHBoxLayout, QLabel, QPushButton, QStackedLayout, \
-    QTableWidget
+from PySide6.QtWidgets import QMainWindow, QVBoxLayout, QWidget, QHBoxLayout, QLabel, QStackedLayout
 
+from frontend.event_bus.decorators import subscribe
 from frontend.event_bus.event_bus import EventBus
-from frontend.event_bus.events import DrawAllPrimitives, RecalculateAndDrawAllPrimitives
+from frontend.event_bus.events import RecalculateAndDrawAllPrimitives, GoToInfo, DrawAllPrimitives, \
+    ClickOnTheListOfTheObjects
 from frontend.graphic.class_draw import DrawAll
 from frontend.graphic.class_screen_window import ScreenWindow
-from frontend.menus.menu_lines import MenusLines
-from frontend.frontend_classes.class_ClickableWidget import ClickableWidget
 from frontend.menus.single_functions import get_button
 from frontend.menus.submenus.menu_3_input import Menu3Input
+from frontend.menus.submenus.menu_with_objects import MenuWithObjects
 from objects.cube_3d import Cube3d
 from variables.class_state import MyState
 from variables.menus import Menus
@@ -42,11 +40,10 @@ class GeneralWindow(QMainWindow):
 
         # menu right
         self._layout_menu = QStackedLayout()
+        self._general_layout.addLayout(self._layout_menu)
 
         # menu 1 list of objects
-        self.table_of_the_elements = QTableWidget()
-        widget_layout_1 = self.load_menu_1()
-        self._general_layout.addLayout(self._layout_menu)
+        widget_layout_1 = MenuWithObjects(state=self.state, bus=self.bus)
         self._layout_menu.addWidget(widget_layout_1)
 
         widget = QWidget()
@@ -91,20 +88,10 @@ class GeneralWindow(QMainWindow):
 
         return widget_layout_2
 
-
-    def load_menu_1(self) -> QWidget:
-        """menu with list of the objects"""
-        layout_menu_1 = QVBoxLayout()
-        label_name = QLabel(Menus.name_of_the_program)
-        layout_menu_1.addWidget(label_name)
-        self.load_objects(layout_menu=layout_menu_1)
-        widget_layout_1 = QWidget()
-        widget_layout_1.setLayout(layout_menu_1)
-        return widget_layout_1
-
-    def go_to_info(self, path: str):
+    @subscribe
+    def go_to_info(self, event: GoToInfo):
         # load new picture info
-        path = Menus.pictures_info + path
+        path = Menus.pictures_info + event.path
         pixmap_info = QPixmap(path)
         if pixmap_info.isNull():
             self._label_info.setText('No picture')
@@ -116,63 +103,20 @@ class GeneralWindow(QMainWindow):
             self._label_info.setPixmap(scaled)
 
         self._layout_menu.setCurrentIndex(1)
+        self.bus.publish(event=RecalculateAndDrawAllPrimitives())
 
     def go_back_to_menu_1(self):
         self._layout_menu.setCurrentIndex(0)
+        self.animation.draw_all()
 
-    def load_objects(self, layout_menu: QVBoxLayout):
-        layout_menu.addWidget(self.table_of_the_elements)
-        self.table_of_the_elements.setRowCount(len(MenusLines))
-
-        self.table_of_the_elements.setColumnCount(2)  # pict, name clickable, info
-        self.table_of_the_elements.setFixedWidth(Menus.table_1_width)
-        self.table_of_the_elements.setColumnWidth(0, Menus.width_of_buttons_menu_1)
-        self.table_of_the_elements.setColumnWidth(1, Menus.size_of_pictures_in_the_list)
-
-        for i, line in enumerate(MenusLines):
-            # load picture
-            button_i: ClickableWidget = self.get_the_button_for_an_object(line=line)
-            self.table_of_the_elements.setCellWidget(i, 0, button_i)
-            # info
-            info_button_i = self.get_info_button(path_for_info=line.value.info)
-            self.table_of_the_elements.setCellWidget(i, 1, info_button_i)
-            self.table_of_the_elements.setRowHeight(i, Menus.size_of_pictures_in_the_list)
-
-    def info_button_action(self, path_to_the_picture: str):
-        self.go_to_info(path=path_to_the_picture)
-
-    def get_info_button(self, path_for_info: str) -> QPushButton:
-        path_info_symbol = Menus.pictures_menu + "info.png"
-        pixmap_info = QPixmap(path_info_symbol)
-
-        info_button = QPushButton()
-        info_button.setFixedWidth(Menus.size_of_pictures_in_the_list)
-        info_button.setFixedHeight(Menus.size_of_pictures_in_the_list)
-        if pixmap_info.isNull():
-            info_button.setText('No picture')
-            print('No picture', path_info_symbol)
-        else:
-            scaled = pixmap_info.scaled(info_button.size(),
-                                        Qt.AspectRatioMode.KeepAspectRatio,
-                                        Qt.TransformationMode.SmoothTransformation)
-            info_button.setIcon(scaled)
-        info_button.clicked.connect(partial(self.info_button_action, path_for_info))
-
-        return info_button
-
-    def get_the_button_for_an_object(self, line: MenusLines) -> ClickableWidget:
-        path = Menus.pictures_preview + line.value.pict
-        button_with_ico = ClickableWidget(text=line.value.name, image_path=path)
-        button_with_ico.setFixedWidth(Menus.width_of_buttons_menu_1)
-        button_with_ico.clicked.connect(partial(self.click_on_the_list_of_the_objects, line.value.dimensions,
-                                                line.value.obj, line.value.size, line.value.dz))
-
-        return button_with_ico
-
-    def click_on_the_list_of_the_objects(self, dimensions: int, obj: Callable, size: float, dz: float=0):
+    @subscribe
+    def click_on_the_list_of_the_objects(self, event: ClickOnTheListOfTheObjects):
         self._layout_menu.setCurrentIndex(2)
-        self.animation.new_object(obj=obj, dimensions=dimensions, size=size, dz=dz)
+        self.animation.new_object(obj=event.obj, dimensions=event.dimensions, size=event.size, dz=event.dz)
         self.screen_window.draw_all(event=DrawAllPrimitives())
+
+
+
 
 
 

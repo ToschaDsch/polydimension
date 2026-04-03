@@ -27,7 +27,7 @@ class Menus:
     table_1_width: int = b_menu - 2*frame
     #   menu 1
     size_of_pictures_in_the_list: int = 40
-    width_of_buttons_menu_1: int = table_1_width - size_of_pictures_in_the_list - 20
+    width_of_buttons_menu_1: int = table_1_width - size_of_pictures_in_the_list - 3*frame
 
     #   menu 2 info
     info_height: int = 800

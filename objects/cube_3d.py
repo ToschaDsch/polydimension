@@ -38,7 +38,7 @@ class Cube3d(NDimensionalObject):
         for coordinate in init_list_of_coordinates:
             new_coordinate = coordinate.copy()
             new_coordinate.resize( (self.dimensions, ))
-            self._my_points.append(Point(coordinates=new_coordinate, bus=self.bus))
+            self._my_points.append(Point(coordinates=np.array(new_coordinate, dtype=np.float64), bus=self.bus))
         if self._dimension_shift_length:    # shift all the points for a cube in 4d
             self.dimensions+=1
             for point in self._my_points:
