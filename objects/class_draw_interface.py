@@ -199,8 +199,7 @@ class NDimensionalObject(ABC):
             case Transparency.full:
                 return self._my_surfaces
             case Transparency.sceleton:
-                if self.draw_with_normal:
-                    return lines
+                return lines
             case Transparency.transparent:
                 return self._my_surfaces + lines
 

@@ -28,7 +28,7 @@ class PenThicknessToDraw:
 
 @dataclass
 class MyColors:
-    transparency: int = 100
+    transparency: int = 50
     color: tuple = (50, 50, 50)
     web: tuple = (40, 0, 255)
     general_screen: tuple[int] = (100, 100, 255)
