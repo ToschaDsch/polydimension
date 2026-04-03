@@ -30,14 +30,6 @@ class Surface(GeometricObject):
             pen=self.pen
         ))
 
-    def get_center(self) -> Point:
-        return self.center
-
-    def get_all_points(self) -> list[Point]:
-        return self.list_of_points_change_coordinate
-
-    def get_color(self) -> QColor:
-        return self.color
 
     def __init__(self, bus: EventBus, list_of_points: list[Point] = None, color: QColor = None, width: int = None,
                  source_of_light: SourceOfLight = None, init_center_of_the_volume: Point = None):
@@ -121,7 +113,7 @@ class Surface(GeometricObject):
     @transparent.setter
     def transparent(self, value: Transparency):
         self._transparent = value
-        self._update_color()
+        self._update_transparency()
 
 
     def _update_transparency(self):

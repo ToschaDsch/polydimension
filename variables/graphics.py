@@ -39,30 +39,30 @@ class MyColors:
     normal_line_color: tuple = (0, 255, 0)
 
 
-default_palette = [(155, 155, 155, MyColors.transparency),
-                   (155, 0, 0, MyColors.transparency),
+default_palette = [(155, 235, 255, MyColors.transparency),
+                   (255, 0, 0, MyColors.transparency),
                    (0, 155, 0, MyColors.transparency),
-                   (0, 0, 155, MyColors.transparency),
-                   (155, 155, 0, MyColors.transparency),
-                   (0, 155, 155, MyColors.transparency),
+                   (0, 0, 235, MyColors.transparency),
+                   (185, 155, 0, MyColors.transparency),
+                   (0, 185, 185, MyColors.transparency),
                    (155, 0, 155, MyColors.transparency),
                    (192, 192, 192, MyColors.transparency),
-                   (128, 128, 128, MyColors.transparency),
+                   (228, 128, 228, MyColors.transparency),
                    (128, 0, 0, MyColors.transparency),
-                   (128, 128, 0, MyColors.transparency),
+                   (128, 228, 0, MyColors.transparency),
                    (0, 128, 0, MyColors.transparency),
-                   (128, 0, 128, MyColors.transparency),
+                   (228, 0, 228, MyColors.transparency),
                    (0, 128, 128, MyColors.transparency),
                    (0, 0, 128, MyColors.transparency),
                    (0, 128, 150, MyColors.transparency),
-                   (128, 128, 150, MyColors.transparency),
+                   (128, 228, 150, MyColors.transparency),
                    (150, 125, 15, MyColors.transparency),
                    (12, 158, 54, MyColors.transparency),
-                   (125, 35, 78, MyColors.transparency),
-                   (1, 85, 65, MyColors.transparency)]
+                   (125, 135, 178, MyColors.transparency),
+                   (1, 85, 265, MyColors.transparency)]
 
 @dataclass
 class InitLight:
-    coordinate: tuple[float] = (10.0, 10.0, 10.0)
+    coordinate: tuple[float] = (10.0, 10.0, 100.0)
     intensity: float = 1
     color: QColor = QColor.yellow

@@ -121,8 +121,7 @@ class DrawAll:
     @subscribe
     def draw_transparent(self, event: DrawTransparent):
         self.correct_transparency()
-        for draw_object in self._list_of_draw_objects:
-            draw_object.transparent = self._transparency
+        self._draw_object.transparent = self._transparency
         self.draw_all()
 
     def correct_transparency(self):

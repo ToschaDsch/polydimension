@@ -35,6 +35,7 @@ class SchiftAndRotate(QWidget):
             layout.addLayout(menus_input)
 
         self.setLayout(layout)
+        self.bus.register(self)
 
 
     def get_layout_displacement_and_rotation(self) -> tuple[QVBoxLayout, QVBoxLayout]:

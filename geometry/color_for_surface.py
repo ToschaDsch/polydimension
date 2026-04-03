@@ -56,7 +56,7 @@ def give_me_return_color_my_variant(center: Point,
     angle = np.dot(normal, light_dir)
 
     # --- lighting ---
-    ambient = 0.8
+    ambient = 0.6
     intensity = ambient + (1 - ambient) * angle
 
     # --- apply color ---
