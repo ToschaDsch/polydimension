@@ -63,7 +63,7 @@ class DrawAll:
         """remove the old draw object, add the new one"""
         with_normal = self._draw_object.draw_with_normal
         self._draw_object = obj(dimensions=dimensions, colorful=self._colorful, dz=dz,
-                                size=size, transparent=self._transparency, bus=self.bus)
+                                size=size, bus=self.bus)
         self._draw_object.draw_with_normal = with_normal
         self._draw_object.change_color(colorful=self._colorful)
         self._list_of_draw_objects: list[NDimensionalObject] = self._get_object_to_draw()

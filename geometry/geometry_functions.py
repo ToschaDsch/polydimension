@@ -1,5 +1,5 @@
 import math
-from collections import defaultdict
+from collections import defaultdict, deque
 from itertools import combinations
 from typing import Any
 
@@ -252,6 +252,7 @@ def point_key(p):
 
 
 def extract_volumes_fast(list_of_surfaces):
+    """only for 3 points faces and 4 points volumes"""
     face_map = {}  # face -> index of the face
     adjacency = defaultdict(set)
 
@@ -292,3 +293,72 @@ def extract_volumes_fast(list_of_surfaces):
                 volumes.add(face_indices)
 
     return list(volumes)
+
+
+def build_face_adjacency(face_map):
+    faces = list(face_map.keys())
+    adjacency = {f: set() for f in faces}
+
+    for i in range(len(faces)):
+        for j in range(i + 1, len(faces)):
+            if len(faces[i] & faces[j]) == 2:
+                adjacency[faces[i]].add(faces[j])
+                adjacency[faces[j]].add(faces[i])
+    return adjacency
+
+
+def extract_dodecahedrons(list_of_surfaces: list[Any]) -> list[Any]:
+
+    def point_key(p):
+        return tuple(np.round(p.coord_0, 8))
+
+    # 1. collect faces
+    face_map = {}
+    for i, s in enumerate(list_of_surfaces):
+        pts = [point_key(p) for p in s.list_of_points]
+        if len(pts) != 5:
+            continue  # only 5 points faces
+        face_map[frozenset(pts)] = i
+
+    # 2. adjacency
+    adjacency = build_face_adjacency(face_map)
+
+    visited = set()
+    volumes = []
+
+    # 3. find components
+    for face in face_map:
+        if face in visited:
+            continue
+
+        queue = deque([face])
+        component = set()
+
+        while queue:
+            f = queue.popleft()
+            if f in component:
+                continue
+
+            component.add(f)
+            for neigh in adjacency[f]:
+                if neigh not in component:
+                    queue.append(neigh)
+
+        visited |= component
+
+        # 4. check 5 points face
+        if len(component) == 12:
+            ok = True
+            for f in component:
+                # counts the neighbourhoods in the component
+                neigh_inside = adjacency[f] & component
+                if len(neigh_inside) != 5:
+                    ok = False
+                    break
+
+            if ok:
+                volumes.append(
+                    tuple(sorted(face_map[f] for f in component))
+                )
+
+    return volumes

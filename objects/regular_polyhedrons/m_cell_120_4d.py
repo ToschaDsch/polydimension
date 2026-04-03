@@ -2,7 +2,7 @@ import numpy as np
 
 from frontend.event_bus.event_bus import EventBus
 from geometry.class_point import Point
-from geometry.geometry_functions import find_lines, find_cycles
+from geometry.geometry_functions import find_lines, find_cycles, extract_dodecahedrons
 from frontend.menus.single_functions import mirror_it, only_even_permutations
 from objects.class_draw_interface import NDimensionalObject, JSONData
 import json
@@ -20,6 +20,19 @@ class Cell1204d(NDimensionalObject):
 
         self.name_of_the_object = "cell 120 4d"
         print(self)
+        self.find_all_volumes()
+
+    def find_all_volumes(self):
+        volumes = extract_dodecahedrons(list_of_surfaces=self._my_surfaces)
+        print("120cell volumes")
+        print(len(volumes))
+        volumes = [list(a) for a in volumes]
+        self.json_data.volumes = volumes
+        dict_to_save = {"points": self.json_data.points,
+                        "edges": self.json_data.lines,
+                        "surfaces": self.json_data.surfaces,
+                        "volumes": self.json_data.volumes}
+
 
     def make_points(self):
         """make points"""
