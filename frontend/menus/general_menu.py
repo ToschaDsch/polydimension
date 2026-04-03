@@ -11,7 +11,7 @@ from frontend.graphic.class_screen_window import ScreenWindow
 from frontend.menus.single_functions import get_button
 from frontend.menus.submenus.menu_3_input import Menu3Input
 from frontend.menus.submenus.menu_1_table_with_objects import MenuWithObjects
-from objects.cube_3d import Cube3d
+from objects.regular_polyhedrons.a_cube_3d import Cube3d
 from variables.class_state import MyState
 from variables.menus import Menus
 

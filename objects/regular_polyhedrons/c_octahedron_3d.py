@@ -17,7 +17,7 @@ class Octahedron3d(NDimensionalObject):
                  init_point: list[int]=None,
                  transparent: Transparency=Transparency.transparent):
         self._init_points = init_point if init_point else [0, 1, 2]
-        super().__init__(dimensions=dimensions, dz=dz, colorful=colorful, size=size, transparent=transparent, bus=bus)
+        super().__init__(dimensions=dimensions, dz=dz, colorful=colorful, size=size, bus=bus)
         self.name_of_the_object = "Octahedron 3d"
         print(self)
 

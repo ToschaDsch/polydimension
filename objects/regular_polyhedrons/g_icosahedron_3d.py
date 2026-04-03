@@ -19,7 +19,7 @@ class Icosahedron3d(NDimensionalObject):
         self._position_for_addition_coordination_4d = position_for_addition_coordination_4d
 
         super().__init__(dimensions=dimensions, dz=dz,
-                         colorful=colorful, size=size, transparent=transparent, bus=bus)
+                         colorful=colorful, size=size, bus=bus)
         self.name_of_the_object = "Tetrahedron 3d"
         print(self)
 

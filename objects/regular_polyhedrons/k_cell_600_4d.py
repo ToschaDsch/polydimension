@@ -3,8 +3,8 @@ import numpy as np
 from frontend.event_bus.event_bus import EventBus
 from geometry.class_line import Line
 from geometry.class_point import Point
-from geometry.geometry_functions import find_lines, find_cycles
-from frontend.menus.single_functions import even_permutations, mirror_it, only_even_permutations
+from geometry.geometry_functions import find_lines, find_cycles, extract_volumes_fast
+from frontend.menus.single_functions import even_permutations, mirror_it, only_even_permutations, save_json_file
 from objects.class_draw_interface import NDimensionalObject
 import json
 
@@ -19,9 +19,23 @@ class Cell6004d(NDimensionalObject):
         raw_data_path = "cell_600.txt"
         super().__init__(dimensions=dimensions, dz=dz,
                          colorful=colorful, size=size, raw_data_path=raw_data_path,
-                         transparent=transparent, bus=bus)
+                         bus=bus)
         self.name_of_the_object = "cell 600 4d"
         print(self)
+        #self.find_all_volumes()
+
+    def find_all_volumes(self):
+        volumes = extract_volumes_fast(list_of_surfaces=self._my_surfaces)
+        print("600cell volumes")
+        print(len(volumes))
+        volumes = [list(a) for a in volumes]
+        self.json_data.volumes = volumes
+        dict_to_save = {"points":self.json_data.points,
+                        "edges":self.json_data.lines,
+                        "surfaces": self.json_data.surfaces,
+                        "volumes": self.json_data.volumes}
+        save_json_file(path="cell_600.json", data=dict_to_save)
+
 
     def make_points(self):
         """the function makes all vertex coordinates for the object"""
@@ -49,7 +63,7 @@ class Cell6004d(NDimensionalObject):
         #print("json_", json_)
 
         for i in init_coordinate:
-            self._my_points.append(Point(coordinates=np.array(i), bus=self.bus))
+            self._my_points.append(Point(coordinates=np.array(i, dtype=np.float64), bus=self.bus))
         self.json_data.points = init_coordinate
 
 

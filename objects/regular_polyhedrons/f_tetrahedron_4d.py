@@ -4,7 +4,7 @@ from frontend.event_bus.event_bus import EventBus
 from geometry.class_line import Line
 from geometry.class_point import Point
 from objects.class_draw_interface import NDimensionalObject
-from objects.tetrahedron_3d import Tetrahedron3d
+from objects.regular_polyhedrons.e_tetrahedron_3d import Tetrahedron3d
 from variables.graphics import Transparency
 
 
@@ -16,7 +16,7 @@ class Tetrahedron4d(NDimensionalObject):
                  transparent: Transparency=Transparency.transparent):
         self._init_points = init_point if init_point else [0, 1, 2]
         super().__init__(dimensions=dimensions, dz=dz,
-                         colorful=colorful, size=size, transparent=transparent, bus=bus)
+                         colorful=colorful, size=size, bus=bus)
         self.name_of_the_object = "16Cell 4d"
         print(self)
 

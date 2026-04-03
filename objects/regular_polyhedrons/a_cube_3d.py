@@ -26,7 +26,7 @@ class Cube3d(NDimensionalObject):
                               [1, 3, 7, 5]]
         self._dimension_shift_number = dimension_shift_number
         self._dimension_shift_length = dimension_shift_length
-        super().__init__(dimensions=dimensions, colorful=colorful, size=size, transparent=transparent, bus=bus, dz=dz)
+        super().__init__(dimensions=dimensions, colorful=colorful, size=size, bus=bus, dz=dz)
         self.name_of_the_object = "Cube 3d"
         print(self)
 

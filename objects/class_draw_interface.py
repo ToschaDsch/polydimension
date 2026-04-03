@@ -22,13 +22,12 @@ class JSONData:
     points: list[float|int] = None
     lines: list[list[int]] = None
     surfaces: list[list[int]] = None
-    volumes: list[int] = None
+    volumes: list[list[int]] = None
 
 class NDimensionalObject(ABC):
     def __init__(self, bus: EventBus, dimensions: int = 4,
                  size: float = 1, dz = 0,
-                 line_color: QColor=None, colorful: bool = False, raw_data_path: str = None,
-                 transparent: Transparency = Transparency.transparent):
+                 line_color: QColor=None, colorful: bool = False, raw_data_path: str = None):
         self.bus = bus
         self.dz = dz
         self.colorful = colorful
@@ -93,6 +92,10 @@ class NDimensionalObject(ABC):
         for list_of_points_i in self.json_data.surfaces:
             list_of_points_i = [self._my_points[i] for i in list_of_points_i]
             self._my_surfaces.append(Surface(list_of_points=list_of_points_i, init_center_of_the_volume=center, bus=self.bus))
+        for list_of_surfaces_i in self.json_data.volumes:
+            list_of_surfaces_i = [self._my_surfaces[i] for i in list_of_surfaces_i]
+            self._my_volumes.append(Volume(list_of_surfaces=list_of_surfaces_i, bus=self.bus))
+
 
     def correct_all_points(self):
         dz = np.zeros(self.dimensions, dtype=np.float64)
@@ -204,16 +207,18 @@ class NDimensionalObject(ABC):
                 return self._my_surfaces + lines
 
     def __str__(self):
+        len_volumes = len(self._my_volumes) if len(self._my_volumes) else 1
         return (f"i'm {self.name_of_the_object}, \n"
                 f"I have {self.dimensions} dimensions\n"
                 f"my points: {len(self.points_to_show)}\n"
                 f"my lines: {len(self._my_lines)}\n"
                 f"my surfaces: {len(self._my_surfaces)}\n"
-                f"my volumes: {len(self._my_volumes)}\n")
+                f"my volumes: {len_volumes}\n")
 
     def update_lighting_for_all_surfaces(self):
         for surface in self._my_surfaces:
             surface.change_coordinate()
+
 
     def _get_a_volume_surfaces_and_points_form_another_object(self, obj) -> Volume:
         """the function get an NDimensionalObject object,

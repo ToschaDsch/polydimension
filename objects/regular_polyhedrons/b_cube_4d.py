@@ -6,7 +6,7 @@ from frontend.event_bus.event_bus import EventBus
 from geometry.class_line import Line
 from geometry.class_point import Point
 from objects.class_draw_interface import NDimensionalObject
-from objects.cube_3d import Cube3d
+from objects.regular_polyhedrons.a_cube_3d import Cube3d
 from variables.graphics import Transparency
 
 
@@ -16,7 +16,7 @@ class Cube4d(NDimensionalObject):
                  dimensions: int = 4, colorful: bool = False, size: float=1.0,
                  transparent: Transparency=Transparency.transparent):
         super().__init__(dimensions=dimensions, colorful=colorful, size=size,
-                         transparent=transparent, bus=bus, dz=dz)
+                         bus=bus, dz=dz)
         self.name_of_the_object = "Cube 4d"
         print(self)
 

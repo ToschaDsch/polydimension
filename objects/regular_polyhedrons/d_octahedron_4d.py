@@ -5,7 +5,7 @@ from geometry import geometry_functions
 from geometry.class_line import Line
 from geometry.class_point import Point
 from objects.class_draw_interface import NDimensionalObject
-from objects.octahedron_3d import Octahedron3d
+from objects.regular_polyhedrons.c_octahedron_3d import Octahedron3d
 from variables.graphics import Transparency
 
 
@@ -18,7 +18,7 @@ class Cell164d(NDimensionalObject):
         self._dimension_shift_number = dimension_shift_number
         self._dimension_shift_length = dimension_shift_length
         super().__init__(dimensions=dimensions, dz=dz,
-                         colorful=colorful, size=size, transparent=transparent, bus=bus)
+                         colorful=colorful, size=size, bus=bus)
         self.name_of_the_object = "16Cell 4d"
         print(self)
 

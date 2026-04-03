@@ -246,30 +246,32 @@ def find_cycles(edges: list[list[int]], points: list[Point], cycle_size: int=5, 
         visited[start] = False
     return cycles
 
-def point_to_key(p, tol=1e-8):
-    # round
-    return tuple(np.round(p, decimals=8))
 
-def extract_volumes_fast(surfaces: list[Any]) -> set[set[Any]]:
-    face_set = set()
+def point_key(p):
+    return tuple(np.round(p.coord_0, 8))
+
+
+def extract_volumes_fast(list_of_surfaces):
+    face_map = {}  # face -> index of the face
     adjacency = defaultdict(set)
 
     # 1. preparation
-    for s in surfaces:
-        pts = [point_to_key(p.coord_0) for p in s.list_of_points]
+    for i, surface in enumerate(list_of_surfaces):
+        pts = [point_key(p) for p in surface.list_of_points]
         face = frozenset(pts)
-        face_set.add(face)
+
+        face_map[face] = i
 
         for p in pts:
             adjacency[p].update(pts)
+
     volumes = set()
 
-    # 2. take a face and find 4 point
-    # general loop
-    for face in face_set:
+    # 2. find all volumes
+    for face, idx in face_map.items():
         pts = list(face)
 
-        # candidates = adjacency
+        # candidates for 4 points
         candidates = set(adjacency[pts[0]])
         for p in pts[1:]:
             candidates &= adjacency[p]
@@ -278,12 +280,15 @@ def extract_volumes_fast(surfaces: list[Any]) -> set[set[Any]]:
             if p4 in face:
                 continue
 
-            tetra = set(pts + [p4])
+            tetra_points = set(pts + [p4])
 
             faces = [
-                frozenset(f) for f in combinations(tetra, 3)
+                frozenset(f) for f in combinations(tetra_points, 3)
             ]
 
-            if all(f in face_set for f in faces):
-                volumes.add(frozenset(tetra))
-    return volumes
+            if all(f in face_map for f in faces):
+                # save index of the face
+                face_indices = tuple(sorted(face_map[f] for f in faces))
+                volumes.add(face_indices)
+
+    return list(volumes)

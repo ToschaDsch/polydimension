@@ -10,7 +10,7 @@ class Cell244d(NDimensionalObject):
                  transparent: Transparency=Transparency.transparent):
         raw_data_path = "cell_24.txt"
         super().__init__(dimensions=dimensions, dz=dz,
-                         colorful=colorful, size=size, raw_data_path=raw_data_path, transparent=transparent, bus=bus)
+                         colorful=colorful, size=size, raw_data_path=raw_data_path, bus=bus)
         self.name_of_the_object = "24 cell 4d"
         print(self)
 

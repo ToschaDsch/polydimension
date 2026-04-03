@@ -1,4 +1,5 @@
 import itertools
+import json
 import xml.etree.ElementTree as et_
 from itertools import permutations
 import ast
@@ -94,6 +95,10 @@ def open_and_read_a_file(path: str) -> str:
     with open(path, "r") as file:
         return file.read()
 
+def save_json_file(path: str, data: dict) -> None:
+    with open(path, "w") as file:
+        json.dump(data, file)
+
 def parce_html_with_arrays(raw_str: str) -> dict[str, list[list[int]]]:
     # Parse XML
     tree = et_.parse(raw_str)
@@ -112,7 +117,8 @@ def parce_html_with_arrays(raw_str: str) -> dict[str, list[list[int]]]:
             # Convert "[0, 4]" → [0, 4]
             try:
                 value = ast.literal_eval(text)
-            except:
+            except Exception as e:
+                print(e)
                 value = text
 
             items.append(value)

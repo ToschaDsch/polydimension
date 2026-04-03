@@ -41,11 +41,6 @@ class Volume(GeometricObject):
         self.center: Point = Point(coordinates=get_center_from_list_of_points(list_of_points=points_for_center), bus=self.bus)
 
 
-    def correct_center_of_surfaces(self):
-        for surface in self.list_of_surfaces:
-            surface.center = self.center
-            surface.change_coordinate()
-
     def _get_list_of_points_for_center(self) -> list[Point]:
         if self.list_of_points:
             return self.list_of_points.copy()
