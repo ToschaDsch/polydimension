@@ -6,6 +6,7 @@ from geometry.class_point import Point
 from objects.class_draw_interface import NDimensionalObject
 import numpy as np
 
+from variables.class_state import MyState
 from variables.graphics import MyColors
 
 
@@ -17,13 +18,13 @@ class Line2dWeb(NDimensionalObject):
     def make_volumes(self):
         pass
 
-    def __init__(self, bus: EventBus, a: int, n: int, z: float=-1):
+    def __init__(self, state: MyState, bus: EventBus, a: int, n: int, z: float=-1):
         self.a = a/n  # size of a cell
         self.n = n  # numbers of the cells
         self.z = z
         self._list_of_points: list[list[Point]] = []    # 2d array to make lines
         default_color = QColor(*MyColors.web)
-        super().__init__(line_color=default_color, bus=bus)
+        super().__init__(line_color=default_color, bus=bus, state=state)
         print(self)
         self._solid = False
 
@@ -43,7 +44,7 @@ class Line2dWeb(NDimensionalObject):
                 coordinate.extend([0 for _ in range(self.dimensions-len(coordinate))])
 
                 coordinate = np.array(coordinate)
-                point_i = Point(coordinates=coordinate, bus=self.bus)
+                point_i = Point(coordinates=coordinate, bus=self.bus, state=self.state)
                 line_of_points.append(point_i)
             self._list_of_points.append(line_of_points)
             self._my_points.extend(line_of_points)
@@ -67,7 +68,3 @@ class Line2dWeb(NDimensionalObject):
                 )
                 self._my_lines.append(line_i)
 
-
-    @property
-    def solid(self):
-        return False

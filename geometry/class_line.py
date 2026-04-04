@@ -1,4 +1,5 @@
 from PySide6.QtGui import QColor
+from numpy.typing import NDArray
 
 from frontend.event_bus.event_bus import EventBus
 from frontend.event_bus.events import DrawLine
@@ -32,10 +33,11 @@ class Line(GeometricObject):
         self.bus = bus
         self.point_0 = point_0
         self.point_1 = point_1
+        self.state = self.point_0.state
         coord_0 = self.point_0.coord_0
         coord_1 = self.point_1.coord_0
-        coord_center: np.ndarray[np.float64] = np.median([coord_0, coord_1], axis=0)
-        self.center = Point(coordinates=coord_center, bus=self.bus)
+        coord_center: NDArray[np.float64] = np.median([coord_0, coord_1], axis=0)
+        self.center = Point(coordinates=coord_center, bus=self.bus, state=self.state)
         self.color: QColor = color if color else QColor(*MyColors.default_line_color)
         self.dimension: int = point_0.dimension
         self.name = name if name else ""

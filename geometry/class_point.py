@@ -1,22 +1,25 @@
 import numpy as np
 from PySide6.QtGui import QColor, QPen, QBrush
+from numpy.typing import NDArray
 
 from frontend.event_bus.event_bus import EventBus
 from frontend.event_bus.events import DrawPoint
+from variables.class_state import MyState
 from variables.graphics import MyColors
 
 
 class Point:
-    def __init__(self, bus: EventBus, coordinates: np.ndarray[np.float64] = None, color:QColor=None, width: int=6):
-        self._coordinates: np.ndarray[np.float64] = coordinates if coordinates is not None else np.array([0.0, 0.0, 0.0, 0.0], dtype=np.float64)
-        self.coord_n: np.ndarray[np.float64] = self._coordinates
-        self.coord_only_rotate: np.ndarray[np.float64] = self._coordinates
+    def __init__(self, state: MyState, bus: EventBus, coordinates: NDArray[np.float64] = None, color:QColor=None, width: int=6):
+        self._coordinates: NDArray[np.float64] = coordinates if coordinates is not None else np.array([0.0, 0.0, 0.0, 0.0], dtype=np.float64)
+        self.coord_n: NDArray[np.float64] = self._coordinates
+        self.coord_only_rotate: NDArray[np.float64] = self._coordinates
         self._dimension: int = len(self._coordinates)
         self._color = color if color else QColor(*MyColors.default_point_color)
         self._width = width
         self.brush: QBrush = QBrush(self._color)
         self.pen: QPen = QPen(self.brush, self._width)
         self.bus: EventBus = bus
+        self.state: MyState = state
 
     def draw_me(self):
         x0_y0 = self.coord_n
@@ -24,7 +27,7 @@ class Point:
                               brush=self.brush, pen=self.pen))
 
     @property
-    def z(self) -> np.ndarray[np.float64]:
+    def z(self) -> NDArray[np.float64]:
         return self.coord_n[2]
 
     @property
@@ -51,7 +54,7 @@ class Point:
         self.pen: QPen = QPen(self.brush, self.width)
 
     @property
-    def coord_0(self) -> np.ndarray[np.float64]:
+    def coord_0(self) -> NDArray[np.float64]:
         return self._coordinates
 
     @coord_0.setter

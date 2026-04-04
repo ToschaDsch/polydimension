@@ -2,26 +2,28 @@ import numpy as np
 
 from frontend.event_bus.event_bus import EventBus
 from geometry.class_point import Point
-from geometry.geometry_functions import find_lines, find_cycles, extract_dodecahedra_fast
+from geometry.geometry_functions import find_lines, find_cycles, extract_volumes
 from frontend.menus.single_functions import mirror_it, only_even_permutations
 from objects.class_draw_interface import NDimensionalObject, JSONData
 import json
 
+from variables.class_state import MyState
+
 
 class Cell1204d(NDimensionalObject):
 
-    def __init__(self, bus: EventBus, dimensions: int = 4, dz: float = 0,
-                 colorful: bool = False, size: float=1.0, raw_data: str = None):
+    def __init__(self, state: MyState, bus: EventBus, dimensions: int = 4, dz: float = 0,
+                 colorful: bool = False, size: float=1.0):
         raw_data_path = "cell_120.txt" # "cell_120.txt"
         super().__init__(dimensions=dimensions, dz=dz,
-                         colorful=colorful, size=size, raw_data_path=raw_data_path, bus=bus)
+                         colorful=colorful, size=size, raw_data_path=raw_data_path, bus=bus, state=state)
 
         self.name_of_the_object = "cell 120 4d"
         print(self)
-        self.find_all_volumes()
+        #self.find_all_volumes()
 
     def find_all_volumes(self):
-        volumes = extract_dodecahedra_fast(list_of_surfaces=self._my_surfaces)
+        volumes = extract_volumes(surfaces=self.json_data.surfaces, lines=self.json_data.lines)
         print("120cell volumes")
         print(len(volumes))
         volumes = [list(a) for a in volumes]
@@ -65,7 +67,7 @@ class Cell1204d(NDimensionalObject):
         for i in range(0, 4):
             init_coordinate = mirror_it(list_0=init_coordinate, axis=i)
         for i in init_coordinate:
-            self._my_points.append(Point(coordinates=np.array(i, dtype=np.float64), bus=self.bus))
+            self._my_points.append(Point(coordinates=np.array(i, dtype=np.float64), bus=self.bus, state=self.state))
 
         self.json_data = JSONData(points=init_coordinate,
                                     lines = [],

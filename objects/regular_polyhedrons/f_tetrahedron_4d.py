@@ -5,20 +5,20 @@ from geometry.class_line import Line
 from geometry.class_point import Point
 from objects.class_draw_interface import NDimensionalObject
 from objects.regular_polyhedrons.e_tetrahedron_3d import Tetrahedron3d
-from variables.graphics import Transparency
+from variables.class_state import MyState
 
 
 class Tetrahedron4d(NDimensionalObject):
 
-    def __init__(self, bus: EventBus, dimensions: int=4, dz: float=0,
+    def __init__(self, state: MyState, bus: EventBus, dimensions: int=4, dz: float=0,
                  colorful: bool = False, size: float=2.0,
-                 init_point: list[int]=None,
-                 transparent: Transparency=Transparency.transparent):
+                 init_point: list[int]=None):
         self._init_points = init_point if init_point else [0, 1, 2]
         super().__init__(dimensions=dimensions, dz=dz,
-                         colorful=colorful, size=size, bus=bus)
+                         colorful=colorful, size=size, bus=bus, state=state)
         self.name_of_the_object = "16Cell 4d"
         print(self)
+        print(len(self._my_surfaces))
 
     def make_points(self):
         w, h = self.dimensions, self.dimensions
@@ -27,9 +27,9 @@ class Tetrahedron4d(NDimensionalObject):
             init_coordinate[i][i] = self.size
 
         point_0 = np.array([0 for _ in range(self.dimensions)], dtype=np.float64)
-        self._my_points.append(Point(coordinates=point_0, bus=self.bus))
+        self._my_points.append(Point(coordinates=point_0, bus=self.bus,state=self.state))
         for coord_i in init_coordinate:
-            self._my_points.append(Point(coordinates=np.array(coord_i, dtype=np.float64), bus=self.bus))
+            self._my_points.append(Point(coordinates=np.array(coord_i, dtype=np.float64), bus=self.bus, state=self.state))
         self.points_to_show = self._my_points.copy()
 
 
@@ -49,7 +49,7 @@ class Tetrahedron4d(NDimensionalObject):
                        [0, 2, 3],
                        [0, 1, 2])
         for list_of_init_spaces in init_spaces:
-            octa_i = Tetrahedron3d(dimensions=4, init_point=list_of_init_spaces, bus=self.bus)
+            octa_i = Tetrahedron3d(dimensions=4, init_point=list_of_init_spaces, bus=self.bus, state=self.state)
             volume_i = self._get_a_volume_surfaces_and_points_form_another_object(obj=octa_i)
             self._my_volumes.append(volume_i)
 

@@ -1,6 +1,6 @@
 from typing import Literal, Callable
 
-from frontend.event_bus.decorators import subscribe, timer
+from frontend.event_bus.decorators import subscribe
 from frontend.event_bus.event_bus import EventBus
 from frontend.event_bus.events import DrawWithPoints, DrawWithPerspective, DrawWithWeb, DrawTransparent, DrawColorful, \
     RecalculateAndDrawAllPrimitives, DrawWithNormals
@@ -42,8 +42,8 @@ class DrawAll:
         self._geometry: GeometryChangePoint = GeometryChangePoint(init_scale=self.state.CoordinatesScreen.scale)
         self._draw_object: NDimensionalObject = draw_object
 
-        self._web_object: NDimensionalObject = Line2dWeb(a=self._length_axes, n=n_web, z=-size, bus=self.bus)
-        self._axis_object: Axis = Axis(dimension=initial_dimensions, bus=self.bus)
+        self._web_object: NDimensionalObject = Line2dWeb(a=self._length_axes, n=n_web, z=-size, bus=self.bus, state=self.state)
+        self._axis_object: Axis = Axis(dimension=initial_dimensions, bus=self.bus, state=self.state)
         self._web = True
         self._list_of_draw_objects: list[NDimensionalObject] = self._get_object_to_draw()
         self._list_of_all_points: list[Point] = self._take_all_the_points(
@@ -63,7 +63,7 @@ class DrawAll:
         """remove the old draw object, add the new one"""
         with_normal = self._draw_object.draw_with_normal
         self._draw_object = obj(dimensions=dimensions, colorful=self._colorful, dz=dz,
-                                size=size, bus=self.bus)
+                                size=size, bus=self.bus, state=self.state)
         self._draw_object.draw_with_normal = with_normal
         self._draw_object.change_color(colorful=self._colorful)
         self._list_of_draw_objects: list[NDimensionalObject] = self._get_object_to_draw()

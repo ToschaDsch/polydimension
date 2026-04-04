@@ -1,13 +1,13 @@
 import math
-from collections import defaultdict, deque
-from itertools import combinations
+from itertools import chain
 
 import numpy as np
+from numpy.typing import NDArray
+
 from geometry.class_point import Point
-from rich.progress import track
 
 
-def get_center_from_list_of_points(list_of_points: list[Point]) -> np.ndarray[np.float64]:
+def get_center_from_list_of_points(list_of_points: list[Point]) -> NDArray[np.float64]:
     array_1 = np.array([x.coord_0 for x in list_of_points])
     coordinate_of_the_center = np.sum(array_1, axis=0)/len(list_of_points)
     return coordinate_of_the_center
@@ -19,31 +19,37 @@ def get_rotate_matrix(sin: list[float], cos: list[float], dimensional: int = 3) 
     :param dimensional: 3d, 4d
     :return: rotate matrix. for 3d -> Ra*Rb*Rg
     """
-    r = []
-    if dimensional == 3:
-        r.append(np.array([[cos[0], -sin[0], 0],
-                         [sin[0], cos[0], 0],
-                         [0, 0, 1]
-                         ]))
-        r.append(np.array([[cos[1], 0, sin[1]],
-                         [0, 1, 0],
-                         [-sin[1], 0, cos[1]]
-                         ]))
-        r.append(np.array([[1, 0, 0],
-                         [0, cos[2], -sin[2]],
-                         [0, sin[2], cos[2]]
-                         ]))
-    elif dimensional == 4:
-        n = 0
-        order = [(0,1), (0, 2), (1,2), (1,3), (2,3), (0, 3)]
-        for i, j in order:
-            r.append(rotation_matrix_4d(axis_1=i, axis_2=j, sin_i=sin[n], cos_i=cos[n]))
-            n+=1
-
+    # Start with the identity matrix of the given dimensionality
     result_matrix = np.identity(dimensional, dtype=np.float64)
 
-    for r_i in r:
-        result_matrix = np.dot(r_i, result_matrix)
+    if dimensional == 3:
+        result_matrix = np.array([
+            [[cos[0], -sin[0], 0],
+             [sin[0], cos[0], 0],
+             [0, 0, 1]],
+
+            [[cos[1], 0, sin[1]],
+             [0, 1, 0],
+             [-sin[1], 0, cos[1]]],
+
+            [[1, 0, 0],
+             [0, cos[2], -sin[2]],
+             [0, sin[2], cos[2]]]
+        ], dtype=np.float64)
+    elif dimensional == 4:
+        # Pairs of axes for 4D rotations
+        order = [(0,1), (0,2), (1,2), (1,3), (2,3), (0,3)]
+
+        # Create an array of rotation matrices
+        # Shape: (number_of_rotations, dimensional, dimensional)
+        r = np.array([
+            rotation_matrix_4d(axis_1=i, axis_2=j, sin_i=sin[n], cos_i=cos[n])
+            for n, (i, j) in enumerate(order)
+        ], dtype=np.float64)
+
+        # Multiply all rotation matrices in sequence
+        for r_i in r:
+            result_matrix = r_i @ result_matrix  # np.dot could also be used
     return result_matrix
 
 def rotation_matrix_4d(axis_1: int, axis_2: int, cos_i: float, sin_i: float) -> np.ndarray:
@@ -61,7 +67,7 @@ def rotation_matrix_4d(axis_1: int, axis_2: int, cos_i: float, sin_i: float) -> 
 
 
 
-def get_2d_coordinate_with_perspective(xyz: np.ndarray, diameter: float=400) -> np.ndarray:
+def get_2d_coordinate_with_perspective(xyz: NDArray[np.float64], diameter: float=400) -> NDArray:
     """
     Projects a 3D point (x, y, z) into 2D space,
     with perspective
@@ -69,19 +75,19 @@ def get_2d_coordinate_with_perspective(xyz: np.ndarray, diameter: float=400) -> 
     return flat_perspective(xyz=xyz)
     return sphere_perspective(x=x, y=y, z=z)
 
-def flat_perspective(xyz: np.ndarray) -> np.ndarray:
+def flat_perspective(xyz: NDArray[np.float64]) -> NDArray:
     a = -5.0
     x, y, z, w = xyz  # unpack once
     z_shifted = z + a
     # avoid division instability
     if abs(z_shifted) < 1e-9:
-        return np.array([400.0, 400.0, 0.0])
+        return np.array([400.0, 400.0, 0.0], dtype=np.float64)
     factor = a / z_shifted
     return np.array([
         x * factor,
         y * factor,
         z_shifted - a
-    ])
+    ], dtype=np.float64)
 
 def sphere_perspective(x: float, y: float, z: float, diameter: float=400) -> np.ndarray:
     max_l = diameter * 10000.0
@@ -251,212 +257,139 @@ def point_key(p):
     return tuple(np.round(p.coord_0, 8))
 
 
-def extract_volumes_fast(list_of_surfaces):
-    """only for 3 points faces and 4 points volumes"""
-    face_map = {}  # face -> index of the face
-    adjacency = defaultdict(set)
 
-    # 1. preparation
-    for i, surface in enumerate(list_of_surfaces):
-        pts = [point_key(p) for p in surface.list_of_points]
-        face = frozenset(pts)
+def find_surfaces(lines):
+    # --- 1. граф смежности ---
+    graph = {}
+    for a, b in lines:
+        graph.setdefault(a, set()).add(b)
+        graph.setdefault(b, set()).add(a)
 
-        face_map[face] = i
+    surfaces = set()
 
-        for p in pts:
-            adjacency[p].update(pts)
+    # --- 2. поиск циклов длины 5 ---
+    def dfs(path, start):
+        if len(path) == 5:
+            # проверяем замыкание
+            if start in graph[path[-1]]:
+                cycle = path[:]
 
-    volumes = set()
+                # каноническая форма (убираем дубликаты)
+                min_idx = min(range(5), key=lambda i: cycle[i])
+                cycle = cycle[min_idx:] + cycle[:min_idx]
 
-    # 2. find all volumes
-    for face, idx in face_map.items():
-        pts = list(face)
+                # ещё нужно учесть обратный обход
+                rev = list(reversed(cycle))
+                min_idx_rev = min(range(5), key=lambda i: rev[i])
+                rev = rev[min_idx_rev:] + rev[:min_idx_rev]
 
-        # candidates for 4 points
-        candidates = set(adjacency[pts[0]])
-        for p in pts[1:]:
-            candidates &= adjacency[p]
+                surfaces.add(tuple(min(cycle, rev)))
+            return
 
-        for p4 in candidates:
-            if p4 in face:
+        last = path[-1]
+
+        for nxt in graph[last]:
+            if nxt in path:
                 continue
+            dfs(path + [nxt], start)
 
-            tetra_points = set(pts + [p4])
+    # --- 3. запускаем ---
+    for v in graph:
+        dfs([v], v)
 
-            faces = [
-                frozenset(f) for f in combinations(tetra_points, 3)
-            ]
-
-            if all(f in face_map for f in faces):
-                # save index of the face
-                face_indices = tuple(sorted(face_map[f] for f in faces))
-                volumes.add(face_indices)
-
-    return list(volumes)
+    return [list(s) for s in surfaces]
 
 
-def build_face_adjacency(face_map):
-    faces = list(face_map.keys())
-    adjacency = {f: set() for f in faces}
+def extract_volumes(surfaces, lines=None):
+    # Преобразуем каждый surface в set заранее
+    surfaces_sets = [set(surface) for surface in surfaces]
+    n = 0
+    cells = []
+    for idx_combo in combinations(range(len(surfaces)), 12):
+        # объединяем все точки из выбранных 12 поверхностей
+        combined_points = set(chain.from_iterable(surfaces_sets[i] for i in idx_combo))
 
-    for i in range(len(faces)):
-        for j in range(i + 1, len(faces)):
-            if len(faces[i] & faces[j]) == 2:
-                adjacency[faces[i]].add(faces[j])
-                adjacency[faces[j]].add(faces[i])
-    return adjacency
+        if len(combined_points) == 20:
+            # сохраняем не индексы, а сами поверхности
+            cells.append([surfaces[i] for i in idx_combo])
+            n+=1
+            print(n)
 
-def build_face_adjacency(face_map):
-    edge_map = defaultdict(list)
+    return cells
 
-    for face in face_map:
-        for edge in combinations(face, 2):
-            edge_map[frozenset(edge)].append(face)
+from itertools import combinations
 
-    adjacency = {f: set() for f in face_map}
+def extract_volumes_fast(lines, surfaces):
+    # --- 1. нормализация рёбер ---
+    def normalize_edge(a, b):
+        return (a, b) if a < b else (b, a)
 
-    for faces in edge_map.values():
-        for f1 in faces:
-            for f2 in faces:
-                if f1 != f2:
-                    adjacency[f1].add(f2)
+    lines_set = set(normalize_edge(a, b) for a, b in lines)
+    edge_index = {e: i for i, e in enumerate(lines_set)}
+    num_edges = len(edge_index)
 
-    return adjacency
+    # --- 2. поверхности → рёбра ---
+    surface_edges = []
+    for surf in surfaces:
+        n = len(surf)
+        edges = []
+        for i in range(n):
+            a = surf[i]
+            b = surf[(i + 1) % n]
+            e = normalize_edge(a, b)
+            edges.append(edge_index[e])
+        surface_edges.append(edges)
 
-def extract_cells_120(list_of_surfaces):
-    face_map = {}
-    vertex_to_faces = defaultdict(set)
+    # --- 3. ребро → поверхности ---
+    edge_to_surfaces = [[] for _ in range(num_edges)]
+    for i, edges in enumerate(surface_edges):
+        for e in edges:
+            edge_to_surfaces[e].append(i)
 
-    # --- собираем грани ---
-    for i, s in enumerate(list_of_surfaces):
-        pts = [point_key(p) for p in s.list_of_points]
+    # --- 4. строим граф граней по общим рёбрам ---
+    neighbors = [[] for _ in range(len(surfaces))]
+    for edge_surfs in edge_to_surfaces:
+        if len(edge_surfs) == 2:
+            a, b = edge_surfs
+            neighbors[a].append(b)
+            neighbors[b].append(a)
 
-        if len(pts) != 5:
-            continue
+    # --- 5. построение ячеек ---
+    cells = set()
 
-        f = frozenset(pts)
-        face_map[f] = i
+    for i in range(len(surfaces)):
+        # начальная ячейка
+        cell = {i}
+        edge_count = [0] * num_edges
+        for e in surface_edges[i]:
+            edge_count[e] = 1
 
-        for p in pts:
-            vertex_to_faces[p].add(f)
+        # очередь добавления соседей
+        queue = [i]
+        while queue:
+            curr = queue.pop()
+            for n in neighbors[curr]:
+                if n in cell:
+                    continue
 
-    faces = list(face_map.keys())
-    volumes = set()
+                # проверяем, что новые рёбра не превышают 2
+                can_add = True
+                for e in surface_edges[n]:
+                    if edge_count[e] >= 2:
+                        can_add = False
+                        break
+                if not can_add:
+                    continue
 
-    # --- перебираем стартовую грань ---
-    for f0 in faces:
-        vertices = set(f0)
+                # добавляем грань
+                cell.add(n)
+                queue.append(n)
+                for e in surface_edges[n]:
+                    edge_count[e] += 1
 
-        # кандидаты = все грани, которые касаются этих вершин
-        candidate_faces = set()
-        for v in f0:
-            candidate_faces |= vertex_to_faces[v]
+        # проверяем корректность: должно быть 12 граней и все рёбра используются 0 или 2 раза
+        if len(cell) == 12 and all(c in (0, 2) for c in edge_count if c > 0):
+            cells.add(tuple(sorted(cell)))
 
-        # расширяем кандидатов
-        expanded = set(candidate_faces)
-        for f in candidate_faces:
-            for v in f:
-                expanded |= vertex_to_faces[v]
-
-        # теперь пробуем комбинации
-        for combo in combinations(expanded, 12):
-            combo = set(combo)
-
-            # --- быстрый фильтр ---
-            all_vertices = set()
-            for f in combo:
-                all_vertices |= f
-
-            if len(all_vertices) != 20:
-                continue
-
-            # --- проверка вершины ---
-            ok = True
-            for v in all_vertices:
-                count = sum(1 for f in combo if v in f)
-                if count != 3:
-                    ok = False
-                    break
-
-            if not ok:
-                continue
-
-            volumes.add(
-                tuple(sorted(face_map[f] for f in combo))
-            )
-            print(len(volumes))
-
-    return list(volumes)
-
-
-def build_adjacency(faces):
-    edge_map = defaultdict(list)
-
-    for f in faces:
-        for e in combinations(f, 2):
-            edge_map[frozenset(e)].append(f)
-
-    adjacency = {f: set() for f in faces}
-
-    for edge_faces in edge_map.values():
-        for f1 in edge_faces:
-            for f2 in edge_faces:
-                if f1 != f2:
-                    adjacency[f1].add(f2)
-
-    return adjacency
-
-
-def point_key(p):
-    return tuple(np.round(p.coord_0, 8))
-
-
-def extract_dodecahedra_fast(list_of_surfaces):
-    # --- 1. грани ---
-    face_map = {}
-
-    for i, s in enumerate(list_of_surfaces):
-        pts = [point_key(p) for p in s.list_of_points]
-        if len(pts) != 5:
-            continue
-        face_map[frozenset(pts)] = i
-
-    faces = list(face_map.keys())
-
-    # --- 2. adjacency ---
-    adjacency = build_adjacency(faces)
-
-    volumes = set()
-
-    # --- 3. ищем додекаэдры ---
-    for f0 in track(faces):
-        neigh1 = adjacency[f0]
-
-        # кандидаты = сама грань + соседи + соседи соседей
-        candidate = set([f0]) | neigh1
-        for f in neigh1:
-            candidate |= adjacency[f]
-
-        # теперь важно: candidate обычно ~30-40 граней
-        if len(candidate) < 12:
-            continue
-
-        # --- перебор только внутри локальной области ---
-        for combo in combinations(candidate, 12):
-            combo = set(combo)
-
-            # каждая грань должна иметь 5 соседей внутри
-            ok = True
-            for f in combo:
-                if len(adjacency[f] & combo) != 5:
-                    ok = False
-                    break
-
-            if not ok:
-                continue
-
-            volumes.add(
-                tuple(sorted(face_map[f] for f in combo))
-            )
-
-    return list(volumes)
+    # --- 6. возвращаем как список списков ---
+    return [list(c) for c in cells]

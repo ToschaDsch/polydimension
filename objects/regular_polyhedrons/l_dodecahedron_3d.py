@@ -10,18 +10,17 @@ from geometry.class_surface import Surface
 from geometry.geometry_functions import get_center_from_list_of_points
 from frontend.menus.single_functions import mirror_it
 from objects.class_draw_interface import NDimensionalObject
-from variables.graphics import Transparency
+from variables.class_state import MyState
 
 
 class Dodecahedron3d(NDimensionalObject):
 
-    def __init__(self, bus: EventBus, dimensions: int=4, dz: float=0,
+    def __init__(self, state: MyState, bus: EventBus, dimensions: int=4, dz: float=0,
                  colorful: bool = False, size: float=1.0,
-                 init_point: list[int]=None,
-                 transparent: Transparency=Transparency.transparent):
+                 init_point: list[int]=None):
         self._init_points = init_point if init_point else [0, 1, 2]
         super().__init__(dimensions=dimensions, dz=dz,
-                         colorful=colorful, size=size, bus=bus)
+                         colorful=colorful, size=size, bus=bus, state=state)
         self.name_of_the_object = "Dodecahedron 3d"
         print(self)
 
@@ -38,7 +37,7 @@ class Dodecahedron3d(NDimensionalObject):
         for point in init_coordinate:
             point = np.array(point)
             point.resize( (self.dimensions, ))
-            self._my_points.append(Point(coordinates=np.array(point, dtype=np.float64), bus=self.bus))
+            self._my_points.append(Point(coordinates=np.array(point, dtype=np.float64), bus=self.bus, state=self.state))
 
         self.points_to_show = self._my_points.copy()
 
@@ -70,7 +69,7 @@ class Dodecahedron3d(NDimensionalObject):
                 if result:
                     number_of_points.append(result)
 
-        center = Point(coordinates=get_center_from_list_of_points(self._my_points), bus=self.bus)
+        center = Point(coordinates=get_center_from_list_of_points(self._my_points), bus=self.bus, state=self.state)
         for list_of_points_i in number_of_points:
             self._my_surfaces.append(Surface(list_of_points=list_of_points_i, init_center_of_the_volume=center, bus=self.bus))
 

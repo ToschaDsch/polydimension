@@ -7,19 +7,18 @@ from geometry.class_surface import Surface
 from geometry.geometry_functions import get_center_from_list_of_points, space_between_two_points
 from frontend.menus.single_functions import mirror_it
 from objects.class_draw_interface import NDimensionalObject
-from variables.graphics import Transparency
+from variables.class_state import MyState
 
 
 class Icosahedron3d(NDimensionalObject):
 
-    def __init__(self, bus: EventBus, dimensions: int=4, dz: float = 0,
+    def __init__(self, state: MyState, bus: EventBus, dimensions: int=4, dz: float = 0,
                  colorful: bool = False, size: float = 2.0,
-                 position_for_addition_coordination_4d: int = 3,
-                 transparent: Transparency=Transparency.transparent):
+                 position_for_addition_coordination_4d: int = 3):
         self._position_for_addition_coordination_4d = position_for_addition_coordination_4d
 
         super().__init__(dimensions=dimensions, dz=dz,
-                         colorful=colorful, size=size, bus=bus)
+                         colorful=colorful, size=size, bus=bus, state=state)
         self.name_of_the_object = "Tetrahedron 3d"
         print(self)
 
@@ -40,7 +39,7 @@ class Icosahedron3d(NDimensionalObject):
             coord_i.insert(self._position_for_addition_coordination_4d, 0.0)
 
         for coord_i in init_coordinate:
-            self._my_points.append(Point(coordinates=np.array(coord_i, dtype=np.float64), bus=self.bus))
+            self._my_points.append(Point(coordinates=np.array(coord_i, dtype=np.float64), bus=self.bus, state=self.state))
         self.points_to_show = self._my_points.copy()
 
 
@@ -64,7 +63,7 @@ class Icosahedron3d(NDimensionalObject):
     def make_surfaces(self):
         """the function make 3D coordinates of icos surfaces
         """
-        center = Point(coordinates=get_center_from_list_of_points(self._my_points), bus=self.bus)
+        center = Point(coordinates=get_center_from_list_of_points(self._my_points), bus=self.bus, state=self.state)
         points_for_surfaces: list[set[Point]] = []
         for i in range(len(self._my_lines)):
             for j in range(i + 1, len(self._my_lines)):

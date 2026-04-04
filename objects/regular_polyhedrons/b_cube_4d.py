@@ -7,16 +7,17 @@ from geometry.class_line import Line
 from geometry.class_point import Point
 from objects.class_draw_interface import NDimensionalObject
 from objects.regular_polyhedrons.a_cube_3d import Cube3d
+from variables.class_state import MyState
 from variables.graphics import Transparency
 
 
 class Cube4d(NDimensionalObject):
 
-    def __init__(self, bus: EventBus, dz: int = 0,
+    def __init__(self, state: MyState, bus: EventBus, dz: int = 0,
                  dimensions: int = 4, colorful: bool = False, size: float=1.0,
                  transparent: Transparency=Transparency.transparent):
         super().__init__(dimensions=dimensions, colorful=colorful, size=size,
-                         bus=bus, dz=dz)
+                         bus=bus, dz=dz, state=state)
         self.name_of_the_object = "Cube 4d"
         print(self)
 
@@ -27,7 +28,7 @@ class Cube4d(NDimensionalObject):
         init_list_of_coordinates = np.array([np.array(x) for x in itertools.product(initial_set,repeat=4)])
         for coordinate in init_list_of_coordinates:
             new_coordinate = np.resize(coordinate, self.dimensions)
-            self._my_points.append(Point(coordinates=np.array(new_coordinate, dtype=np.float64), bus=self.bus))
+            self._my_points.append(Point(coordinates=np.array(new_coordinate, dtype=np.float64), bus=self.bus, state=self.state))
         self.points_to_show = self._my_points.copy()
 
 
@@ -50,6 +51,6 @@ class Cube4d(NDimensionalObject):
         """the function make a cube in 3d, shifts it in one of dimension in 4d and get the surfaces of it"""
         for i in range(4):
             for j in (1, -1):
-                cube_i = Cube3d(dimensions=3, dimension_shift_number=i, dimension_shift_length=j, bus=self.bus)
+                cube_i = Cube3d(dimensions=3, dimension_shift_number=i, dimension_shift_length=j, bus=self.bus, state=self.state)
                 volume_i = self._get_a_volume_surfaces_and_points_form_another_object(obj=cube_i)
                 self._my_volumes.append(volume_i)

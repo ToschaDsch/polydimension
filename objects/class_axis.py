@@ -5,14 +5,15 @@ from frontend.event_bus.event_bus import EventBus
 from geometry.class_line import Line
 from geometry.class_point import Point
 from objects.class_draw_interface import NDimensionalObject
+from variables.class_state import MyState
 
 
 class Axis(NDimensionalObject):
-    def __init__(self, bus: EventBus, dimension: int):
+    def __init__(self, state: MyState, bus: EventBus, dimension: int):
         self.dimension = dimension
         self.k1: float = 1.2
         self.k2: float = 0.2
-        super().__init__(bus=bus)
+        super().__init__(bus=bus, state=state)
         self._solid = False
         self.name_of_the_object = "Axis"
         print(self)
@@ -39,8 +40,8 @@ class Axis(NDimensionalObject):
             coord_i1[i] = self.size*self.k1
             coord_i2 = init_coordinate.copy()
             coord_i2[i] = -self.size*self.k2
-            list_of_the_points.append(Point(coordinates=coord_i1, bus=self.bus))
-            list_of_the_points.append(Point(coordinates=coord_i2, bus=self.bus))
+            list_of_the_points.append(Point(coordinates=coord_i1, bus=self.bus, state=self.state))
+            list_of_the_points.append(Point(coordinates=coord_i2, bus=self.bus, state=self.state))
         self._my_points = list_of_the_points
 
     @property

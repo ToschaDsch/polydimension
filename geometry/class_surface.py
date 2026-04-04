@@ -2,6 +2,7 @@
 import numpy as np
 from PySide6.QtCore import QPoint
 from PySide6.QtGui import QColor, QBrush, QPen, QPolygon
+from numpy._typing import NDArray
 
 from frontend.event_bus.event_bus import EventBus
 from frontend.event_bus.events import DrawPolygon
@@ -41,20 +42,21 @@ class Surface(GeometricObject):
         self.list_of_lines: list[Line] = []
         self.make_lines()
         self.dimension: int = list_of_points[0].dimension
-        self.center: Point = Point(coordinates=get_center_from_list_of_points(list_of_points=self._list_of_points), bus=self.bus)
-        self.init_center_of_the_volume = init_center_of_the_volume if init_center_of_the_volume else Point(bus=self.bus)
+        self.state = self._list_of_points[0].state
+        self.center: Point = Point(coordinates=get_center_from_list_of_points(list_of_points=self._list_of_points), bus=self.bus, state=self.state)
+        self.init_center_of_the_volume = init_center_of_the_volume if init_center_of_the_volume else Point(bus=self.bus, state=self.state)
         normal: np.ndarray = calculate_normal(points=self._list_of_points,
                                             vector_center=self.center.coord_0 - self.init_center_of_the_volume.coord_0)
         self._init_color = color
-        self._source_of_light: np.ndarray = source_of_light if source_of_light else np.array(SourceOfLight.coordinate)
-        coord_for_normal: np.ndarray[np.float64] = np.resize(normal, (len(self.center.coord_0),))
+        self._source_of_light: NDArray = source_of_light if source_of_light else np.array(SourceOfLight.coordinate)
+        coord_for_normal: NDArray[np.float64] = np.resize(normal, (len(self.center.coord_0),))
         self.normal: Point = Point(
-            coordinates=coord_for_normal,bus=self.bus)  # if it more as 3d space
+            coordinates=coord_for_normal,bus=self.bus, state=self.state)  # if it more as 3d space
         self._update_color()
 
         # add normal line
-        coord_for_normal: np.ndarray[np.float64] = self.center.coord_0 + 0.5*self.normal.coord_0
-        point_1 = Point(coordinates=coord_for_normal,bus=self.bus)    #end of normal line
+        coord_for_normal: NDArray[np.float64] = self.center.coord_0 + 0.5*self.normal.coord_0
+        point_1 = Point(coordinates=coord_for_normal,bus=self.bus, state=self.state)    #end of normal line
 
         self.normal_line = Line(point_0=self.center,
                                 point_1=point_1, name="normal", width=2, style="dash_line",

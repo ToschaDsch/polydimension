@@ -5,9 +5,9 @@ from sortedcontainers import SortedDict
 
 from geometry.class_geometric_object import GeometricObject
 from geometry.class_point import Point
-from geometry.class_surface import Surface
 from geometry.geometry_functions import get_rotate_matrix, get_2d_coordinate_with_perspective
 from variables.menus import Menus
+from numpy.typing import NDArray
 
 
 class  GeometryChangePoint:
@@ -24,14 +24,15 @@ class  GeometryChangePoint:
                                     0.0, 0.0, 0.0]) # xy, xz, xd1, yz, yd1, zd1
         self.sin: list[float] = [math.sin(x) for x in self.angles]
         self.cos: list[float] = [math.cos(x) for x in self.angles]
-        self.dxi: np.ndarray = np.array([0,0])
-        self.rotation_matrix: np.ndarray = get_rotate_matrix(sin=self.sin,
+        self.dxi: NDArray[np.float64] = np.array([0, 0], dtype=np.float64)
+        self.rotation_matrix: np.ndarray[np.float64] = get_rotate_matrix(sin=self.sin,
                                                              cos=self.cos,
                                                              dimensional=self.dimensional)
 
-        self.x0y0: np.ndarray= np.array([int(Menus.display_width / 2),
-                                        int(Menus.display_height / 2),
-                                         0])
+        self.x0y0: NDArray[np.float64] = np.array([
+            int(Menus.display_width / 2),
+            int(Menus.display_height / 2),
+        0], dtype=np.float64)
 
         self.scale: float = init_scale
 
@@ -43,7 +44,7 @@ class  GeometryChangePoint:
         self.sin: list[float] = [math.sin(x) for x in self.angles]
         self.cos: list[float] = [math.cos(x) for x in self.angles]
 
-        self.rotation_matrix: np.ndarray = get_rotate_matrix(sin=self.sin,
+        self.rotation_matrix: np.ndarray[np.float64] = get_rotate_matrix(sin=self.sin,
                                                              cos=self.cos,
                                                              dimensional=self.dimensional)
 
@@ -64,14 +65,14 @@ class  GeometryChangePoint:
             self._rotate_and_shift_a_point(point=point)
 
     def _rotate_and_shift_a_point(self, point: Point):
-        coord_0 = np.asarray(point.coord_0)  # fast, no unnecessary stacking
+        coord_0 = point.coord_0  # fast, no unnecessary stacking
         # matrix multiplication
         x0_y0 = self.rotation_matrix @ coord_0
         # store rotated only (no resize)
         point.coord_only_rotate = x0_y0.copy()
         # perspective transform (if needed)
         if self.draw_with_perspective:
-            x0_y0 = get_2d_coordinate_with_perspective(xyz=x0_y0)
+            x0_y0: NDArray = get_2d_coordinate_with_perspective(xyz=x0_y0)
         else:
             x0_y0=x0_y0[:3]
         # final transform (avoid resize)

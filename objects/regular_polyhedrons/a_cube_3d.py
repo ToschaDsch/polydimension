@@ -8,12 +8,13 @@ from geometry.class_point import Point
 from geometry.class_surface import Surface
 from geometry.geometry_functions import get_center_from_list_of_points
 from objects.class_draw_interface import NDimensionalObject
+from variables.class_state import MyState
 from variables.graphics import Transparency
 
 
 class Cube3d(NDimensionalObject):
 
-    def __init__(self, bus: EventBus, dz: float = 0,
+    def __init__(self, state: MyState, bus: EventBus, dz: float = 0,
                  dimensions: int=4, colorful: bool = False, size: float=1.0,
                  dimension_shift_number: int=0,
                  dimension_shift_length: int=0,
@@ -26,7 +27,7 @@ class Cube3d(NDimensionalObject):
                               [1, 3, 7, 5]]
         self._dimension_shift_number = dimension_shift_number
         self._dimension_shift_length = dimension_shift_length
-        super().__init__(dimensions=dimensions, colorful=colorful, size=size, bus=bus, dz=dz)
+        super().__init__(dimensions=dimensions, colorful=colorful, size=size, bus=bus, dz=dz, state=state)
         self.name_of_the_object = "Cube 3d"
         print(self)
 
@@ -38,7 +39,7 @@ class Cube3d(NDimensionalObject):
         for coordinate in init_list_of_coordinates:
             new_coordinate = coordinate.copy()
             new_coordinate.resize( (self.dimensions, ))
-            self._my_points.append(Point(coordinates=np.array(new_coordinate, dtype=np.float64), bus=self.bus))
+            self._my_points.append(Point(coordinates=np.array(new_coordinate, dtype=np.float64), bus=self.bus, state=self.state))
         if self._dimension_shift_length:    # shift all the points for a cube in 4d
             self.dimensions+=1
             for point in self._my_points:
@@ -60,7 +61,7 @@ class Cube3d(NDimensionalObject):
 
 
     def make_surfaces(self):
-        center = Point(coordinates=get_center_from_list_of_points(self._my_points), bus=self.bus)
+        center = Point(coordinates=get_center_from_list_of_points(self._my_points), bus=self.bus, state=self.state)
         for numbers_of_points in self.list_of_point:
             points_for_surface_i = [self._my_points[i] for i in numbers_of_points]
             self._my_surfaces.append(Surface(list_of_points=points_for_surface_i,

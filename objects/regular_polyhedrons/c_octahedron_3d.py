@@ -7,17 +7,16 @@ from geometry.class_point import Point
 from geometry.class_surface import Surface
 from geometry.geometry_functions import get_center_from_list_of_points
 from objects.class_draw_interface import NDimensionalObject
-from variables.graphics import Transparency
+from variables.class_state import MyState
 
 
 class Octahedron3d(NDimensionalObject):
 
-    def __init__(self, bus: EventBus, dimensions: int=4, dz: float = 0,
+    def __init__(self, state: MyState, bus: EventBus, dimensions: int=4, dz: float = 0,
                  colorful: bool = False, size: float=1.0,
-                 init_point: list[int]=None,
-                 transparent: Transparency=Transparency.transparent):
-        self._init_points = init_point if init_point else [0, 1, 2]
-        super().__init__(dimensions=dimensions, dz=dz, colorful=colorful, size=size, bus=bus)
+                 init_point: list[int]=None):
+        self._init_points: list[int] = init_point if init_point else [0, 1, 2]
+        super().__init__(dimensions=dimensions, dz=dz, colorful=colorful, size=size, bus=bus, state=state)
         self.name_of_the_object = "Octahedron 3d"
         print(self)
 
@@ -28,7 +27,7 @@ class Octahedron3d(NDimensionalObject):
             init_coordinate[i][self._init_points[i]] = self.size
             init_coordinate[i + 3][self._init_points[i]] = -self.size
         for coord_i in init_coordinate:
-            self._my_points.append(Point(coordinates=np.array(coord_i, dtype=np.float64), bus=self.bus))
+            self._my_points.append(Point(coordinates=np.array(coord_i, dtype=np.float64), bus=self.bus, state=self.state))
         self.points_to_show = self._my_points.copy()
 
 
@@ -56,7 +55,7 @@ class Octahedron3d(NDimensionalObject):
                             [3, 4, 5],
                             [0, 5, 1],
                             [3, 5, 1]]
-        center = Point(coordinates=get_center_from_list_of_points(self._my_points), bus=self.bus)
+        center = Point(coordinates=get_center_from_list_of_points(self._my_points), bus=self.bus, state=self.state)
         for list_of_points_i in number_of_points:
             list_of_points = [self._my_points[i] for i in list_of_points_i]
             self._my_surfaces.append(Surface(list_of_points=list_of_points, init_center_of_the_volume=center, bus=self.bus))

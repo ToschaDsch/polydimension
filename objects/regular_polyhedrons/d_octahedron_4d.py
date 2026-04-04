@@ -6,19 +6,19 @@ from geometry.class_line import Line
 from geometry.class_point import Point
 from objects.class_draw_interface import NDimensionalObject
 from objects.regular_polyhedrons.c_octahedron_3d import Octahedron3d
+from variables.class_state import MyState
 from variables.graphics import Transparency
 
 
 class Cell164d(NDimensionalObject):
 
-    def __init__(self, bus: EventBus, dimensions: int=4, dz: float = 0, colorful: bool = False, size: float=1.0,
+    def __init__(self, state: MyState, bus: EventBus, dimensions: int=4, dz: float = 0, colorful: bool = False, size: float=1.0,
                  dimension_shift_number: int=0,
-                 dimension_shift_length: int=0,
-                 transparent: Transparency=Transparency.transparent):
+                 dimension_shift_length: int=0):
         self._dimension_shift_number = dimension_shift_number
         self._dimension_shift_length = dimension_shift_length
         super().__init__(dimensions=dimensions, dz=dz,
-                         colorful=colorful, size=size, bus=bus)
+                         colorful=colorful, size=size, bus=bus, state=state)
         self.name_of_the_object = "16Cell 4d"
         print(self)
 
@@ -31,7 +31,7 @@ class Cell164d(NDimensionalObject):
                 list_i[i] = a_i
                 init_coordinate.append(list_i)
         for coord_i in init_coordinate:
-            self._my_points.append(Point(coordinates=np.array(coord_i, dtype=np.float64), bus=self.bus))
+            self._my_points.append(Point(coordinates=np.array(coord_i, dtype=np.float64), bus=self.bus, state=self.state))
         self.points_to_show = self._my_points.copy()
 
 
@@ -60,7 +60,7 @@ class Cell164d(NDimensionalObject):
                        [0, 2, 3],
                        [0, 1, 2])
         for list_of_init_spaces in init_spaces:
-            octa_i = Octahedron3d(dimensions=4, init_point=list_of_init_spaces, bus=self.bus, size=self.size)
+            octa_i = Octahedron3d(dimensions=4, init_point=list_of_init_spaces, bus=self.bus, size=self.size, state=self.state)
             volume_i = self._get_a_volume_surfaces_and_points_form_another_object(obj=octa_i)
             self._my_volumes.append(volume_i)
         self.change_color(colorful=self.colorful)

@@ -36,9 +36,11 @@ class Volume(GeometricObject):
         self.list_of_points: list[Point] = list_of_points if list_of_points is not None else []
         self.list_of_lines: list[Line] = list_of_lines if list_of_lines is not None else []
         self.list_of_surfaces: list[Surface] = list_of_surfaces if list_of_surfaces is not None else []
+        self.state = self.list_of_surfaces[0].list_of_points[0].state
         self._color = QColor(*MyColors.default_volume_color) if color is None else color
         points_for_center = self._get_list_of_points_for_center()
-        self.center: Point = Point(coordinates=get_center_from_list_of_points(list_of_points=points_for_center), bus=self.bus)
+        self.center: Point = Point(coordinates=get_center_from_list_of_points(list_of_points=points_for_center),
+                                   bus=self.bus, state=self.state)
 
 
     def _get_list_of_points_for_center(self) -> list[Point]:

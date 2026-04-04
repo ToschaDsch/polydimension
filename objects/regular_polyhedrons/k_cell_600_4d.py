@@ -8,18 +8,17 @@ from frontend.menus.single_functions import even_permutations, mirror_it, only_e
 from objects.class_draw_interface import NDimensionalObject
 import json
 
-from variables.graphics import Transparency
+from variables.class_state import MyState
 
 
 class Cell6004d(NDimensionalObject):
 
-    def __init__(self, bus: EventBus, dimensions: int = 4, dz: float  = 0,
-                 colorful: bool = False, size: float=1.0, raw_data: str = None,
-                 transparent: Transparency=Transparency.transparent):
+    def __init__(self, state: MyState, bus: EventBus, dimensions: int = 4, dz: float  = 0,
+                 colorful: bool = False, size: float=1.0):
         raw_data_path = "cell_600.txt"
         super().__init__(dimensions=dimensions, dz=dz,
                          colorful=colorful, size=size, raw_data_path=raw_data_path,
-                         bus=bus)
+                         bus=bus, state=state)
         self.name_of_the_object = "cell 600 4d"
         print(self)
         #self.find_all_volumes()
@@ -63,7 +62,7 @@ class Cell6004d(NDimensionalObject):
         #print("json_", json_)
 
         for i in init_coordinate:
-            self._my_points.append(Point(coordinates=np.array(i, dtype=np.float64), bus=self.bus))
+            self._my_points.append(Point(coordinates=np.array(i, dtype=np.float64), bus=self.bus, state=self.state))
         self.json_data.points = init_coordinate
 
 

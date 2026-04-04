@@ -28,7 +28,8 @@ class TextDraw(GeometricObject):
         super().__init__()
         self.bus=bus
         self.point_0 = point_0
-        self.center = Point(coordinates=point_0.coord_0, bus=self.bus)
+        self.state = point_0.state
+        self.center = Point(coordinates=point_0.coord_0, bus=self.bus, state=self.state)
         self.color = QColor(*MyColors.default_line_color)
         self.text: str = text
 

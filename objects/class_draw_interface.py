@@ -13,6 +13,7 @@ from geometry.class_surface import Surface
 from geometry.class_volume import Volume
 from geometry.geometry_functions import get_center_from_list_of_points
 from frontend.menus.single_functions import open_and_read_a_file
+from variables.class_state import MyState
 from variables.graphics import Transparency, MyColors, default_palette
 from variables.menus import Menus
 
@@ -25,9 +26,10 @@ class JSONData:
     volumes: list[list[int]] = None
 
 class NDimensionalObject(ABC):
-    def __init__(self, bus: EventBus, dimensions: int = 4,
+    def __init__(self, state: MyState, bus: EventBus, dimensions: int = 4,
                  size: float = 1, dz = 0,
                  line_color: QColor=None, colorful: bool = False, raw_data_path: str = None):
+        self.state = state
         self.bus = bus
         self.dz = dz
         self.colorful = colorful
@@ -38,7 +40,7 @@ class NDimensionalObject(ABC):
         self._my_lines: list[Line] = []
         self._my_surfaces: list[Surface] = []
         self._my_volumes: list[Volume] = []
-        self._solid: bool = True
+        self._solid = True
         self._transparent: Transparency = Transparency.transparent
         self.line_color: QColor = line_color if line_color else QColor(*MyColors.default_line_color)
         self.size: float = size
@@ -83,10 +85,10 @@ class NDimensionalObject(ABC):
 
     def make_geometry_from_json(self):
         for coord in self.json_data.points:
-            self._my_points.append(Point(coordinates=self.size*np.array(coord, dtype=np.float64), bus=self.bus))
+            self._my_points.append(Point(coordinates=self.size*np.array(coord, dtype=np.float64), bus=self.bus, state=self.state))
         self.correct_all_points()
         self.points_to_show = self._my_points.copy()
-        center = Point(coordinates=get_center_from_list_of_points(list_of_points=self._my_points), bus=self.bus)
+        center = Point(coordinates=get_center_from_list_of_points(list_of_points=self._my_points), bus=self.bus, state=self.state)
         for i, j in self.json_data.lines:
             self._my_lines.append(Line(point_0=self._my_points[i], point_1=self._my_points[j], bus=self.bus))
         for list_of_points_i in self.json_data.surfaces:
@@ -182,13 +184,7 @@ class NDimensionalObject(ABC):
             color = map(lambda x: k*x if k*x <= 255 else 255, color)
             color_element.color = QColor(*color)
 
-    @property
-    def solid(self)->bool:
-        return self._solid
 
-    @solid.setter
-    def solid(self, solid: bool):
-        self._solid = solid
 
     def get_geometric_objects(self, transparency: Transparency = Transparency.transparent) \
             -> list[Line] | list[Surface] | list[Volume] | None:
@@ -197,7 +193,8 @@ class NDimensionalObject(ABC):
         else:
             lines = self._my_lines
         if not self._solid:
-            return lines
+            return self._my_lines
+
         match transparency:
             case Transparency.full:
                 return self._my_surfaces
@@ -236,17 +233,3 @@ class NDimensionalObject(ABC):
                         surface.list_of_points[index] = point_j
                         continue
         return Volume(list_of_points=list(set_of_points), list_of_lines=None, list_of_surfaces=list_of_surfaces, bus=self.bus)
-
-
-    def lists_of_surfaces_list_of_volumes(self, list_of_surfaces: list[list[Surface]]) ->list[Volume]:
-        list_of_volumes = []
-        for list_of_surf_i in list_of_surfaces:
-            list_of_volumes.append(self.list_of_surfaces_to_a_Volume(list_of_surf_i))
-        return list_of_volumes
-
-    def list_of_surfaces_to_a_Volume(self, list_of_surfaces: list[Surface]) -> Volume:
-            set_of_points: set[Point] = set()
-            for surface in list_of_surfaces:
-                set_of_points.update(set(surface.list_of_points))
-            points = list(set_of_points)
-            return Volume(bus=self.bus, list_of_surfaces=list_of_surfaces, list_of_points=points)
