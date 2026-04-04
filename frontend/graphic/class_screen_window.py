@@ -71,14 +71,14 @@ class ScreenWindow(QWidget):
             case QtCore.Qt.MouseButton.NoButton:
                 #  the function checks collapse by mouse motion
                 pass
-            case QtCore.Qt.MouseButton.RightButton|QtCore.Qt.MouseButton.MiddleButton:
-                rotate_the_object(x=event.x(), y=event.y(), bus=self.bus, state=self.state)
             case QtCore.Qt.MouseButton.LeftButton:
-                shift_the_object(x=event.x(), y=event.y(), bus=self.bus, state=self.state)
-            case QtCore.Qt.MouseButton.RightButton:
-                pass
+                rotate_the_object(x=event.x(), y=event.y(), bus=self.bus, state=self.state, button=0)
             case QtCore.Qt.MouseButton.MiddleButton:
-                pass
+                rotate_the_object(x=event.x(), y=event.y(), bus=self.bus, state=self.state, button=1)
+            case QtCore.Qt.MouseButton.RightButton|QtCore.Qt.MouseButton.MiddleButton:
+                rotate_the_object(x=event.x(), y=event.y(), bus=self.bus, state=self.state, button=2)
+
+
 
     def mouseDoubleClickEvent(self, event):
         print("mause_double_click")

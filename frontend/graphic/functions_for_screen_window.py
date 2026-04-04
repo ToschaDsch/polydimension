@@ -41,10 +41,16 @@ def shift(state: MyState, x: int, y: int):
     state.MyCoordinates.displacement[1] = state.MyCoordinates.displacement[1] + y
 
 
-def rotate_the_object(state: MyState, x: int, y: int, bus: EventBus):
+def rotate_the_object(state: MyState, x: int, y: int, bus: EventBus, button: int=0):
     old_number_of_rotation = state.MyCoordinates.current_rotation
     dxy = [x - state.MyCoordinates.x0_y0[0],y - state.MyCoordinates.x0_y0[1]]
-    order = {0:dxy[0], 2:dxy[1]}
+    match button:
+        case 0:
+            order = {0:dxy[0], 2:dxy[1]}
+        case 1:
+            order = {1: dxy[0], 3: dxy[1]}
+        case 2|_:
+            order = {5: dxy[0], 4: dxy[1]}
     for ni, di in order.items():  # xy, xz angles
         state.MyCoordinates.current_rotation = ni
         rotation = int(-di + state.MyCoordinates.angles[ni]/math.pi*180)  #   in grad
