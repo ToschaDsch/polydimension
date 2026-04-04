@@ -12,17 +12,17 @@ def get_center_from_list_of_points(list_of_points: list[Point]) -> NDArray[np.fl
     coordinate_of_the_center = np.sum(array_1, axis=0)/len(list_of_points)
     return coordinate_of_the_center
 
-def get_rotate_matrix(sin: list[float], cos: list[float], dimensional: int = 3) -> np.ndarray[np.float64]:
+def get_rotate_matrix(sin: list[float], cos: list[float], dimension: int = 3) -> np.ndarray[np.float64]:
     """
     :param sin: list of sin a, b, g
     :param cos: list of cos a, b, g
-    :param dimensional: 3d, 4d
+    :param dimension: 3d, 4d
     :return: rotate matrix. for 3d -> Ra*Rb*Rg
     """
     # Start with the identity matrix of the given dimensionality
-    result_matrix = np.identity(dimensional, dtype=np.float64)
+    result_matrix = np.identity(dimension, dtype=np.float64)
 
-    if dimensional == 3:
+    if dimension == 3:
         result_matrix = np.array([
             [[cos[0], -sin[0], 0],
              [sin[0], cos[0], 0],
@@ -36,7 +36,7 @@ def get_rotate_matrix(sin: list[float], cos: list[float], dimensional: int = 3) 
              [0, cos[2], -sin[2]],
              [0, sin[2], cos[2]]]
         ], dtype=np.float64)
-    elif dimensional == 4:
+    elif dimension == 4:
         # Pairs of axes for 4D rotations
         order = [(0,1), (0,2), (1,2), (1,3), (2,3), (0,3)]
 
@@ -88,6 +88,39 @@ def flat_perspective(xyz: NDArray[np.float64]) -> NDArray:
         y * factor,
         z_shifted - a
     ], dtype=np.float64)
+
+import numpy as np
+from numpy.typing import NDArray
+
+def flat_perspective_ndarray(xyz: NDArray[np.float64]) -> NDArray[np.float64]:
+    """
+    Apply flat perspective projection to an array of points in vectorized form.
+
+    Parameters
+    ----------
+    xyz : NDArray[np.float64]
+        Input array of shape (N, 4), each row is [x, y, z, w].
+
+    Returns
+    -------
+    NDArray[np.float64]
+        Projected points array of shape (N, 3).
+    """
+    a = -5.0
+    xyz = np.asarray(xyz, dtype=np.float64)  # ensure float64
+    z_shifted = xyz[:, 2] + a  # column z + shift
+
+    # Projection factor, safely avoiding division by zero
+    factor = np.where(np.abs(z_shifted) < 1e-9, 0.0, a / z_shifted)
+
+    # Compute projected coordinates
+    proj = np.empty((xyz.shape[0], 3), dtype=np.float64)
+    proj[:, 0] = xyz[:, 0] * factor  # x
+    proj[:, 1] = xyz[:, 1] * factor  # y
+    proj[:, 2] = z_shifted           # z_shifted - a = (z + a) - a = z? keep original
+    proj[:, 2] -= a                  # z component after perspective
+
+    return proj
 
 def sphere_perspective(x: float, y: float, z: float, diameter: float=400) -> np.ndarray:
     max_l = diameter * 10000.0

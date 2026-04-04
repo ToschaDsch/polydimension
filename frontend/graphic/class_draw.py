@@ -1,5 +1,7 @@
 from typing import Literal, Callable
 
+from numpy.typing import NDArray
+
 from frontend.event_bus.decorators import subscribe
 from frontend.event_bus.event_bus import EventBus
 from frontend.event_bus.events import DrawWithPoints, DrawWithPerspective, DrawWithWeb, DrawTransparent, DrawColorful, \
@@ -12,6 +14,7 @@ from frontend.graphic.functions_for_screen_window import get_scale
 from objects.class_axis import Axis
 from objects.class_draw_interface import NDimensionalObject
 from objects.class_web import Line2dWeb
+from objects.regular_polyhedrons.a_cube_3d import Cube3d
 from variables.class_state import MyState
 from variables.graphics import Transparency
 from variables.menus import Menus
@@ -24,7 +27,7 @@ class DrawAll:
     sends all object to dict for draw (objects there are sorted by z coordinate) - modul send_to_draw_doct
     draws all object from the dict - modul draw_from_draw_dict"""
 
-    def __init__(self, state: MyState, bus: EventBus, draw_object: NDimensionalObject,
+    def __init__(self, state: MyState, bus: EventBus,
                  initial_dimensions: int = 3,  #2d
                  n_web: int=10, size: float=1.0):
         """
@@ -39,13 +42,16 @@ class DrawAll:
         self.bus = bus
 
         # a class to change coordinates of the objects
-        self._geometry: GeometryChangePoint = GeometryChangePoint(init_scale=self.state.CoordinatesScreen.scale)
-        self._draw_object: NDimensionalObject = draw_object
+        self._geometry: GeometryChangePoint = GeometryChangePoint(init_scale=self.state.CoordinatesScreen.scale, state=self.state)
 
         self._web_object: NDimensionalObject = Line2dWeb(a=self._length_axes, n=n_web, z=-size, bus=self.bus, state=self.state)
         self._axis_object: Axis = Axis(dimension=initial_dimensions, bus=self.bus, state=self.state)
+        self._points_for_state_without_object: NDArray[np.float64]=self.state.MyCoordinates.coordinate_for_all_points.copy()
         self._web = True
+
+        self._draw_object: NDimensionalObject = Cube3d(size=size, bus=self.bus, state=self.state)
         self._list_of_draw_objects: list[NDimensionalObject] = self._get_object_to_draw()
+
         self._list_of_all_points: list[Point] = self._take_all_the_points(
             list_of_draw_objects=self._list_of_draw_objects) # take all the points of the objects
         self._dimensions: int = initial_dimensions
@@ -62,6 +68,7 @@ class DrawAll:
     def new_object(self, obj: Callable, dimensions: int=4, size: float=1.0, dz=0) -> None:
         """remove the old draw object, add the new one"""
         with_normal = self._draw_object.draw_with_normal
+        self.state.MyCoordinates.coordinate_for_all_points = self._points_for_state_without_object.copy()  # null to all old points of the object
         self._draw_object = obj(dimensions=dimensions, colorful=self._colorful, dz=dz,
                                 size=size, bus=self.bus, state=self.state)
         self._draw_object.draw_with_normal = with_normal

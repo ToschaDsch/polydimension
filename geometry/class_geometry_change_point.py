@@ -5,7 +5,8 @@ from sortedcontainers import SortedDict
 
 from geometry.class_geometric_object import GeometricObject
 from geometry.class_point import Point
-from geometry.geometry_functions import get_rotate_matrix, get_2d_coordinate_with_perspective
+from geometry.geometry_functions import get_rotate_matrix, get_2d_coordinate_with_perspective, flat_perspective_ndarray
+from variables.class_state import MyState
 from variables.menus import Menus
 from numpy.typing import NDArray
 
@@ -16,23 +17,22 @@ class  GeometryChangePoint:
     """
     corner_init: float = math.pi * 0.25
 
-    def __init__(self, init_scale: float):
-        self.dimensional: int = 4
+    def __init__(self, state: MyState, init_scale: float):
+        self.state = state
+        self.dimension: int = 4
         self.angles: np.ndarray = np.array([GeometryChangePoint.corner_init,
                                     GeometryChangePoint.corner_init,
                                     GeometryChangePoint.corner_init,
                                     0.0, 0.0, 0.0]) # xy, xz, xd1, yz, yd1, zd1
         self.sin: list[float] = [math.sin(x) for x in self.angles]
         self.cos: list[float] = [math.cos(x) for x in self.angles]
-        self.dxi: NDArray[np.float64] = np.array([0, 0], dtype=np.float64)
+        self.dxi: NDArray[np.float64] = np.zeros(3, dtype=np.float64)
         self.rotation_matrix: np.ndarray[np.float64] = get_rotate_matrix(sin=self.sin,
-                                                             cos=self.cos,
-                                                             dimensional=self.dimensional)
+                                                                         cos=self.cos,
+                                                                         dimension=self.dimension)
 
-        self.x0y0: NDArray[np.float64] = np.array([
-            int(Menus.display_width / 2),
-            int(Menus.display_height / 2),
-        0], dtype=np.float64)
+        self.x0y0: NDArray[np.float64] = np.array([int(Menus.display_width / 2), int(Menus.display_height / 2),0],
+                                                  dtype=np.float64)
 
         self.scale: float = init_scale
 
@@ -45,8 +45,8 @@ class  GeometryChangePoint:
         self.cos: list[float] = [math.cos(x) for x in self.angles]
 
         self.rotation_matrix: np.ndarray[np.float64] = get_rotate_matrix(sin=self.sin,
-                                                             cos=self.cos,
-                                                             dimensional=self.dimensional)
+                                                                         cos=self.cos,
+                                                                         dimension=self.dimension)
 
     def calculate_new_coordinates_for_the_list_of_points(self, angles: np.ndarray=None, dx: np.ndarray=None,
                                                          points: list[Point]=None, scale: float=None):
@@ -61,8 +61,14 @@ class  GeometryChangePoint:
         self.rotate_all_points(points)
 
     def rotate_all_points(self, points: list[Point]):
-        for point in points:
-            self._rotate_and_shift_a_point(point=point)
+        self.rotate_and_shift_all_points()
+
+
+    def rotate_and_shift_all_points(self):
+        x0_y0 = self.state.MyCoordinates.coordinate_for_all_points @ self.rotation_matrix.T
+        self.state.MyCoordinates.coordinate_only_rotate = x0_y0.copy()
+        x0_y0 = flat_perspective_ndarray(x0_y0)* self.scale + self.x0y0 + self.dxi
+        self.state.MyCoordinates.new_coordinate_for_all_points = x0_y0
 
     def _rotate_and_shift_a_point(self, point: Point):
         coord_0 = point.coord_0  # fast, no unnecessary stacking

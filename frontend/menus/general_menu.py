@@ -11,7 +11,6 @@ from frontend.graphic.class_screen_window import ScreenWindow
 from frontend.menus.single_functions import get_button
 from frontend.menus.submenus.menu_3_input import Menu3Input
 from frontend.menus.submenus.menu_1_table_with_objects import MenuWithObjects
-from objects.regular_polyhedrons.a_cube_3d import Cube3d
 from variables.class_state import MyState
 from variables.menus import Menus
 
@@ -66,8 +65,8 @@ class GeneralWindow(QMainWindow):
 
         # draw the object
         size = 1
-        self.my_object = Cube3d(size=size, bus=self.bus, state=self.state)
-        self.animation = DrawAll(draw_object=self.my_object, initial_dimensions=4, size=size,
+
+        self.animation = DrawAll(initial_dimensions=4, size=size,
                                  bus=self.bus, state=self.state)
         self.setCentralWidget(widget)
         event = RecalculateAndDrawAllPrimitives(angles=self.state.MyCoordinates.angles,

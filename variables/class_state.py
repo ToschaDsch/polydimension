@@ -2,6 +2,7 @@ import math
 from dataclasses import dataclass
 
 import numpy as np
+from numpy.typing import NDArray
 
 
 @dataclass
@@ -26,5 +27,8 @@ class MyState:
         angles_0: np.ndarray = np.array([init_angle, init_angle, 0, 0.0, 0.0, 0.0])
         displacement_0 = np.array([0, 0, 0.0, 0.0, 0])
         x0_y0: list[int] = [0, 0]  # init position of the mouse
+        coordinate_for_all_points: NDArray = np.empty(shape=(0, dimensions))
+        coordinate_only_rotate: NDArray = np.empty(shape=(0, dimensions))
+        new_coordinate_for_all_points: NDArray = np.empty(shape=(0, dimensions))
     class VariablesScreen:
         shapes_is_full: bool = False
