@@ -100,8 +100,8 @@ class NDimensionalObject(ABC):
 
 
     def correct_all_points(self):
+        print("correct point for", self.name_of_the_object, "dz", self.dz)
         dz = np.zeros(self.dimensions, dtype=np.float64)
-        print(dz[2])
         dz[2] = self.dz
         for i, point in enumerate(self._my_points):
             point.coord_0 += dz

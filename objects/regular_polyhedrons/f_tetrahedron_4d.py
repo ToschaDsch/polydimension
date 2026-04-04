@@ -18,7 +18,6 @@ class Tetrahedron4d(NDimensionalObject):
                          colorful=colorful, size=size, bus=bus, state=state)
         self.name_of_the_object = "16Cell 4d"
         print(self)
-        print(len(self._my_surfaces))
 
     def make_points(self):
         w, h = self.dimensions, self.dimensions
@@ -49,7 +48,7 @@ class Tetrahedron4d(NDimensionalObject):
                        [0, 2, 3],
                        [0, 1, 2])
         for list_of_init_spaces in init_spaces:
-            octa_i = Tetrahedron3d(dimensions=4, init_point=list_of_init_spaces, bus=self.bus, state=self.state)
+            octa_i = Tetrahedron3d(dimensions=4, init_point=list_of_init_spaces, bus=self.bus, state=self.state, dz=self.dz)
             volume_i = self._get_a_volume_surfaces_and_points_form_another_object(obj=octa_i)
             self._my_volumes.append(volume_i)
 

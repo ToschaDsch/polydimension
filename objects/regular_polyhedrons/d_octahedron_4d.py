@@ -7,7 +7,6 @@ from geometry.class_point import Point
 from objects.class_draw_interface import NDimensionalObject
 from objects.regular_polyhedrons.c_octahedron_3d import Octahedron3d
 from variables.class_state import MyState
-from variables.graphics import Transparency
 
 
 class Cell164d(NDimensionalObject):
@@ -60,7 +59,7 @@ class Cell164d(NDimensionalObject):
                        [0, 2, 3],
                        [0, 1, 2])
         for list_of_init_spaces in init_spaces:
-            octa_i = Octahedron3d(dimensions=4, init_point=list_of_init_spaces, bus=self.bus, size=self.size, state=self.state)
+            octa_i = Octahedron3d(dimensions=4, init_point=list_of_init_spaces, bus=self.bus, size=self.size, state=self.state, dz=self.dz)
             volume_i = self._get_a_volume_surfaces_and_points_form_another_object(obj=octa_i)
             self._my_volumes.append(volume_i)
         self.change_color(colorful=self.colorful)
