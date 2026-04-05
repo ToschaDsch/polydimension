@@ -47,6 +47,10 @@ class DrawAll:
         self._web_object: NDimensionalObject = Line2dWeb(a=self._length_axes, n=n_web, z=-size, bus=self.bus, state=self.state)
         self._axis_object: Axis = Axis(dimension=initial_dimensions, bus=self.bus, state=self.state)
         self._points_for_state_without_object: NDArray[np.float64]=self.state.MyCoordinates.coordinate_for_all_points.copy()
+
+        self._centers_for_state_without_object = self.state.MyCoordinates.centers
+        self._normals_for_state_without_object = self.state.MyCoordinates.normals
+        self._colors_for_state_without_object = self.state.MyCoordinates.init_colors
         self._web = True
 
         self._draw_object: NDimensionalObject = Cube3d(size=size, bus=self.bus, state=self.state)

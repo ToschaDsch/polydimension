@@ -7,6 +7,7 @@ from numpy.typing import NDArray
 
 @dataclass
 class MyState:
+
     class CoordinatesScreen:
         dx_dy: tuple[int, int] = 0, 0
         df_dj = 0, 0
@@ -27,8 +28,17 @@ class MyState:
         angles_0: np.ndarray = np.array([init_angle, init_angle, 0, 0.0, 0.0, 0.0])
         displacement_0 = np.array([0, 0, 0.0, 0.0, 0])
         x0_y0: list[int] = [0, 0]  # init position of the mouse
+
         coordinate_for_all_points: NDArray = np.empty(shape=(0, dimensions))
         coordinate_only_rotate: NDArray = np.empty(shape=(0, dimensions))
         new_coordinate_for_all_points: NDArray = np.empty(shape=(0, dimensions))
+
+        # data to calculate color
+        centers: np.ndarray = np.empty(shape=(0, dimensions))
+        normals: np.ndarray = np.empty(shape=(0, dimensions))
+        init_colors: np.ndarray[np.integer] = np.empty(shape=(0, 3))
+        visibility: NDArray[np.bool_] = np.empty(shape=(0, 1))
+        rgb_colors: NDArray[np.integer] = np.empty(shape=(0, 3))
+
     class VariablesScreen:
         shapes_is_full: bool = False

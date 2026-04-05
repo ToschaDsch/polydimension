@@ -2,7 +2,7 @@
 import numpy as np
 from PySide6.QtCore import QPoint
 from PySide6.QtGui import QColor, QBrush, QPen, QPolygon
-from numpy._typing import NDArray
+from numpy.typing import NDArray
 
 from frontend.event_bus.event_bus import EventBus
 from frontend.event_bus.events import DrawPolygon
@@ -12,6 +12,7 @@ from geometry.class_point import Point
 from geometry.class_source_of_light import SourceOfLight
 from geometry.color_for_surface import give_me_return_color, calculate_normal
 from geometry.geometry_functions import get_center_from_list_of_points
+from variables.class_state import MyState
 from variables.graphics import MyColors, Transparency
 
 
@@ -42,16 +43,22 @@ class Surface(GeometricObject):
         self.list_of_lines: list[Line] = []
         self.make_lines()
         self.dimension: int = list_of_points[0].dimension
-        self.state = self._list_of_points[0].state
+        self.state: MyState = self._list_of_points[0].state
         self.center: Point = Point(coordinates=get_center_from_list_of_points(list_of_points=self._list_of_points), bus=self.bus, state=self.state)
         self.init_center_of_the_volume = init_center_of_the_volume if init_center_of_the_volume else Point(bus=self.bus, state=self.state)
         normal: np.ndarray = calculate_normal(points=self._list_of_points,
                                             vector_center=self.center.coord_0 - self.init_center_of_the_volume.coord_0)
         self._init_color = color
+        self._init_color_rgb: NDArray[int] = np.array(color.getRgb())[:3]
+        self._alpha = color.alpha()
         self._source_of_light: NDArray = source_of_light if source_of_light else np.array(SourceOfLight.coordinate)
         coord_for_normal: NDArray[np.float64] = np.resize(normal, (len(self.center.coord_0),))
         self.normal: Point = Point(
             coordinates=coord_for_normal,bus=self.bus, state=self.state)  # if it more as 3d space
+        self._id = 0
+        self._add_parameters_to_state_colors()
+
+
         self._update_color()
 
         # add normal line
@@ -63,11 +70,17 @@ class Surface(GeometricObject):
                                 color=QColor(*MyColors.normal_line_color), bus=self.bus)
         self.list_of_points_change_coordinate = self._list_of_points + [self.center, point_1, self.normal]
 
+    def _add_parameters_to_state_colors(self):
+        self._id = len(self._list_of_points)
+        self.state.MyCoordinates.centers = np.append(self.state.MyCoordinates.centers, [self.center.coord_n], axis=0)
+        self.state.MyCoordinates.normals = np.append(self.state.MyCoordinates.normals, [self.normal.coord_n], axis=0)
+        self.state.MyCoordinates.init_colors = np.append(self.state.MyCoordinates.init_colors, [self._init_color_rgb], axis=0)
+
+
     def _update_color(self):
         return_color = give_me_return_color(center=self.center,
                                             base_color=self._init_color, lamp=self._source_of_light,
                                             normal=self.normal.coord_only_rotate)
-
         self._color = return_color.color
         self.brush: QBrush = QBrush(self._color)
         self.pen: QPen = QPen(self.brush, self.width)
